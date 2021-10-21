@@ -11,7 +11,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
 
 @Dependent
-public class DiscordBotConfiguration extends DiscordClientConfiguration {
+public class DiscordBotConfiguration {
 
     @Produces
     public DiscordClient discordClient(DiscordTokenProvider discordTokenProvider) {

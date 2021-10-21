@@ -13,6 +13,6 @@ public class DiscordTokenProvider {
                 .getConfig()
                 .getOptionalValue(DiscordConfigurationKeys.DISCORD_API_TOKEN, String.class);
 
-        return discordApiToken.orElseThrow(MissingDiscordApiToken::new);
+        return discordApiToken.orElseThrow(MissingDiscordApiTokenException::new);
     }
 }
