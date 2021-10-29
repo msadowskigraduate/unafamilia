@@ -1,9 +1,9 @@
-package com.unfamilia.eggbot.application.events;
+package com.unfamilia.eggbot.application.events.handlers;
 
-import com.unfamilia.eggbot.application.EventHandler;
 import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.object.entity.User;
+import io.quarkus.logging.Log;
 import reactor.core.publisher.Mono;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,9 +18,9 @@ public class OnReadyEventHandler implements EventHandler {
 
     @Override
     public Mono<Void> handle(Event event) {
-        return Mono.fromRunnable(() -> {
-            final User self = ((ReadyEvent) event).getSelf();
-            System.out.printf("Logged in as %s#%s%n", self.getUsername(), self.getDiscriminator());
-        });
+        Log.info("Handling event:" + event);
+        final User self = ((ReadyEvent) event).getSelf();
+        Log.info(String.format("Logged in as %s#%s%n", self.getUsername(), self.getDiscriminator()));
+        return Mono.empty();
     }
 }

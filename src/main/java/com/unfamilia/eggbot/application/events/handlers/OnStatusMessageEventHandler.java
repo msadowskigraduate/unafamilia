@@ -1,4 +1,4 @@
-package com.unfamilia.eggbot.application.events;
+package com.unfamilia.eggbot.application.events.handlers;
 
 import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -25,8 +25,8 @@ public class OnStatusMessageEventHandler implements MessageEventHandler {
     @Override
     public Mono<Message> handle(Event event) {
         final Message message = ((MessageCreateEvent) event).getMessage();
-        final MessageChannel channel = message.getChannel().block();
-        return channel.createMessage(createStatusMessage()).log();
+        return message.getChannel()
+                .flatMap(channel -> channel.createMessage(createStatusMessage()));
     }
 
     @Override

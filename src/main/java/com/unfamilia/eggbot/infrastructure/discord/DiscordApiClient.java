@@ -1,6 +1,6 @@
 package com.unfamilia.eggbot.infrastructure.discord;
 
-import com.unfamilia.eggbot.application.CompositeEventHandler;
+import com.unfamilia.eggbot.application.events.CompositeEventHandler;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.Event;
 import io.quarkus.runtime.StartupEvent;

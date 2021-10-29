@@ -6,12 +6,20 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 
 @ApplicationScoped
-public class DiscordTokenProvider {
+public class DiscordBotConfigurationProvider {
 
     public String getToken() {
+        return get(DiscordConfigurationKeys.DISCORD_API_TOKEN);
+    }
+
+    public String getForKey(String key) {
+        return get(key);
+    }
+
+    private String get(String key) {
         Optional<String> discordApiToken = ConfigProvider
                 .getConfig()
-                .getOptionalValue(DiscordConfigurationKeys.DISCORD_API_TOKEN, String.class);
+                .getOptionalValue(key, String.class);
 
         return discordApiToken.orElseThrow(MissingDiscordApiTokenException::new);
     }
