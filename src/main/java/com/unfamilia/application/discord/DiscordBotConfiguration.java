@@ -10,6 +10,7 @@ import discord4j.gateway.GatewayOptions;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
+import javax.inject.Singleton;
 
 @Dependent
 public class DiscordBotConfiguration {
@@ -20,13 +21,13 @@ public class DiscordBotConfiguration {
     }
 
     @Produces
-    @ApplicationScoped
+    @Singleton
     public EventDispatcher eventDispatcher() {
         return EventDispatcher.builder().build();
     }
 
     @Produces
-    @ApplicationScoped
+    @Singleton
     public GatewayDiscordClient gatewayDiscordClient(DiscordClient discordClient, EventDispatcher eventDispatcher) {
         GatewayBootstrap<GatewayOptions> gateway = discordClient.gateway();
         return gateway
