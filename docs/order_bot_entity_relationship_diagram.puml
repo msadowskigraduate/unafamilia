@@ -13,6 +13,7 @@ entity "Order" as order {
     *order_time : datetime
     *fulfilled : boolean
     *paid : boolean
+    *message_id : number
 }
 
 entity "OrderEntry" as order_entry{
