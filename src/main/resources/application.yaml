@@ -1,0 +1,16 @@
+application:
+  discord:
+    token: OTAyOTQzNTY5Mjk4NDg5MzY0.YXlxug.HLFV-xubi57Fr_MDu6n7vHDy4Bc
+    raidpackage:
+      channels:
+        initializeOrder: orders-package
+        confirmOrder: orders
+quarkus:
+  datasource:
+    db-kind: postgresql
+    reactive:
+      ~: true
+      max-size: 20
+      url: postgresql://localhost:5432/fruits
+  log:
+    level: INFO
