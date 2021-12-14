@@ -1,14 +1,13 @@
-package com.unfamilia.eggbot.application.events.discordcommands;
+package com.unfamilia.eggbot.infrastructure.discord.events.discordcommands;
 
 import discord4j.core.GatewayDiscordClient;
-import discord4j.core.object.entity.Guild;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
-import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class DiscordCommandRegistrar {
@@ -28,13 +27,13 @@ public class DiscordCommandRegistrar {
             Log.warn("Application Id resolved as null! Something smells fishy here...");
         }
 
-        commandHandlers.stream()
-                .map(DiscordCommandHandler::build)
-                .forEach(request -> gatewayDiscordClient
-                        .getRestClient()
-                        .getApplicationService()
-                        .bulkOverwriteGuildApplicationCommand(applicationId, guildId, List.of(request))
-                        .subscribe()
-                );
+        gatewayDiscordClient
+                .getRestClient()
+                .getApplicationService()
+                .bulkOverwriteGuildApplicationCommand(
+                        applicationId,
+                        guildId,
+                        commandHandlers.stream().map(DiscordCommandHandler::build).collect(Collectors.toList()))
+                .subscribe();
     }
 }

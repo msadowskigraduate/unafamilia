@@ -1,7 +1,6 @@
-package com.unfamilia.eggbot.application.raidpackage.channel;
+package com.unfamilia.eggbot.domain.raidpackage.channel;
 
 import com.unfamilia.application.discord.DiscordBotConfigurationProvider;
-import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.TextChannel;
 
 import javax.enterprise.context.ApplicationScoped;

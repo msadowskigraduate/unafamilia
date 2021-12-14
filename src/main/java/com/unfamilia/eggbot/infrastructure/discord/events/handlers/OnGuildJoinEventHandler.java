@@ -1,6 +1,6 @@
-package com.unfamilia.eggbot.application.events.handlers;
+package com.unfamilia.eggbot.infrastructure.discord.events.handlers;
 
-import com.unfamilia.eggbot.application.raidpackage.channel.RaidPackageChannelProvider;
+import com.unfamilia.eggbot.domain.raidpackage.channel.RaidPackageChannelProvider;
 import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.object.entity.Guild;
@@ -15,7 +15,6 @@ import java.util.Optional;
 public class OnGuildJoinEventHandler implements EventHandler {
 
     private final RaidPackageChannelProvider channelProvider;
-//    private final RaidPackageEmbedProvider RaidPackageEmbedProvider
 
     public OnGuildJoinEventHandler(RaidPackageChannelProvider channelProviders) {
         this.channelProvider = channelProviders;

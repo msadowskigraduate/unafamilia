@@ -1,6 +1,6 @@
-package com.unfamilia.eggbot.application.events;
+package com.unfamilia.eggbot.infrastructure.discord.events;
 
-import com.unfamilia.eggbot.application.events.handlers.EventHandler;
+import com.unfamilia.eggbot.infrastructure.discord.events.handlers.EventHandler;
 import discord4j.core.event.domain.Event;
 import reactor.core.publisher.Mono;
 
