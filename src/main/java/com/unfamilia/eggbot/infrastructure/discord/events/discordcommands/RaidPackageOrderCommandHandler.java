@@ -13,6 +13,7 @@ import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.util.Color;
 import io.quarkus.logging.Log;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -21,16 +22,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
     private final static String COMMAND_NAME = "raidpackage";
     private final RaidPackageOrderOptionProvider optionsProvider;
     private final CommandBus commandBus;
-
-    public RaidPackageOrderCommandHandler(RaidPackageOrderOptionProvider optionsProvider, CommandBus commandBus) {
-        this.optionsProvider = optionsProvider;
-        this.commandBus = commandBus;
-    }
-
 
     @Override
     public Boolean supports(Event event) {

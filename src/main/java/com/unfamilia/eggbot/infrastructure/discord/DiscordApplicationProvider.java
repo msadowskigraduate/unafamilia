@@ -2,18 +2,15 @@ package com.unfamilia.eggbot.infrastructure.discord;
 
 import discord4j.core.GatewayDiscordClient;
 import io.quarkus.logging.Log;
+import lombok.RequiredArgsConstructor;
 
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class DiscordApplicationProvider {
     private final GatewayDiscordClient client;
-
     private Long applicationId;
-
-    public DiscordApplicationProvider(GatewayDiscordClient client) {
-        this.client = client;
-    }
 
     public Long getApplicationId() {
         Long applicationId = this.client.getRestClient().getApplicationId().block();
