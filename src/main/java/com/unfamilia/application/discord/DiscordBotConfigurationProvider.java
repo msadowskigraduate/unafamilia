@@ -12,6 +12,10 @@ public class DiscordBotConfigurationProvider {
         return get(DiscordConfigurationKeys.DISCORD_API_TOKEN);
     }
 
+    public String getOriginGuild() {
+        return get(DiscordConfigurationKeys.ORIGIN_GUILD_ID_CONFIGURATION_KEY);
+    }
+
     public String getForKey(String key) {
         return get(key);
     }

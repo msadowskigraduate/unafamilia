@@ -1,6 +1,8 @@
 application:
   discord:
-    token: OTAyOTQzNTY5Mjk4NDg5MzY0.YXlxug.dG0hkLC2x5RealQCNH77J0O7XDE
+    origin:
+      guild:
+        id:
     raidpackage:
       channels:
         initializeOrder: orders-package

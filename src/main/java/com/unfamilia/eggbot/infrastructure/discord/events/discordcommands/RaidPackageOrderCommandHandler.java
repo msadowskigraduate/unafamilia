@@ -11,20 +11,18 @@ import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
-import discord4j.discordjson.json.ImmutableApplicationCommandOptionData;
 import discord4j.rest.util.Color;
 import io.quarkus.logging.Log;
 import reactor.core.publisher.Mono;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
-    private final static String COMMAND_NAME = "order";
+    private final static String COMMAND_NAME = "raidpackage";
     private final RaidPackageOrderOptionProvider optionsProvider;
     private final CommandBus commandBus;
 
@@ -52,10 +50,8 @@ public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
         NewOrderCommand order = NewOrderCommandFactory.from(slashCommand);
         commandBus.handle(order);
 
-        return slashCommand.reply(spec ->
-                spec.setEphemeral(true)
-                        .addEmbed(embed -> confirmRaidPackageEmbed(embed, order.toString()))
-        );
+        return slashCommand.reply()
+                .withEmbeds(embedBuilder(order.toString()).build());
     }
 
     @Override
@@ -83,12 +79,12 @@ public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
         return COMMAND_NAME;
     }
 
-    private EmbedCreateSpec confirmRaidPackageEmbed(EmbedCreateSpec spec, String order) {
-        return spec
-                .setTitle("Raid Package Order")
-                .setColor(Color.BISMARK)
-                .setTimestamp(Instant.now())
-                .setDescription("Thank you for your order!")
+    private EmbedCreateSpec.Builder embedBuilder(String order) {
+        return EmbedCreateSpec.builder()
+                .title("Raid Package Order")
+                .color(Color.BISMARK)
+                .timestamp(Instant.now())
+                .description("Thank you for your order!")
                 .addField(
                         "Delivery and Payment",
                         "An officer will mail you the items," +

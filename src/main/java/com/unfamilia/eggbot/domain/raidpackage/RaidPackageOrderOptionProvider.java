@@ -8,9 +8,9 @@ public class RaidPackageOrderOptionProvider {
 
     public List<Item> getAvailableItems() {
         List<Item> fakeItems = List.of(
-                getFakeItem(1L, "Potion of Str", ItemCategory.POTION, 1.0),
-                getFakeItem(2L, "Potion of Int", ItemCategory.POTION, 1.0),
-                getFakeItem(3L, "Potion of Agi", ItemCategory.POTION, 1.0)
+                getFakeItem(1L, "potion_str", ItemCategory.POTION, 1.0),
+                getFakeItem(2L, "potion_int", ItemCategory.POTION, 1.0),
+                getFakeItem(3L, "potion_agi", ItemCategory.POTION, 1.0)
                 );
         return fakeItems;
     }
