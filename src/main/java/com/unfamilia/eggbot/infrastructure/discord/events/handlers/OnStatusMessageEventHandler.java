@@ -1,9 +1,8 @@
-package com.unfamilia.eggbot.application.events.handlers;
+package com.unfamilia.eggbot.infrastructure.discord.events.handlers;
 
 import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.channel.MessageChannel;
 import reactor.core.publisher.Mono;
 
 import javax.enterprise.context.ApplicationScoped;

@@ -1,6 +1,6 @@
-package com.unfamilia.eggbot.application.events.discordcommands;
+package com.unfamilia.eggbot.infrastructure.discord.events.discordcommands;
 
-import com.unfamilia.eggbot.application.events.handlers.EventHandler;
+import com.unfamilia.eggbot.infrastructure.discord.events.handlers.EventHandler;
 import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;

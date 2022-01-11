@@ -7,7 +7,6 @@ import discord4j.core.shard.GatewayBootstrap;
 import discord4j.core.shard.ShardingStrategy;
 import discord4j.gateway.GatewayOptions;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;

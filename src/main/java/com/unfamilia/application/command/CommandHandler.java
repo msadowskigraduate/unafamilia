@@ -1,5 +1,6 @@
 package com.unfamilia.application.command;
 
-public interface CommandBus {
+public interface CommandHandler {
+    boolean supports(Command command);
     void handle(Command command);
 }

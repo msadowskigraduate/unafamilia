@@ -1,4 +1,4 @@
-package com.unfamilia.eggbot.application.events.handlers;
+package com.unfamilia.eggbot.infrastructure.discord.events.handlers;
 
 interface HandlerPriority {
     Integer MIN = Integer.MIN_VALUE;
