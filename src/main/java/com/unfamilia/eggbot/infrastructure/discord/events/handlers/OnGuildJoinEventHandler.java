@@ -11,25 +11,19 @@ import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.channel.GuildChannel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.TextChannelCreateSpec;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class OnGuildJoinEventHandler implements EventHandler {
-
     private final RaidPackageChannelProvider channelProvider;
     private final DiscordCommandRegistrar commandRegistrar;
     private final DiscordApplicationProvider applicationProvider;
     private final CommandBus commandBus;
-
-    public OnGuildJoinEventHandler(RaidPackageChannelProvider channelProviders, DiscordCommandRegistrar commandRegistrar, DiscordApplicationProvider applicationProvider, CommandBus commandBus) {
-        this.channelProvider = channelProviders;
-        this.commandRegistrar = commandRegistrar;
-        this.applicationProvider = applicationProvider;
-        this.commandBus = commandBus;
-    }
 
     @Override
     public Boolean supports(Event event) {

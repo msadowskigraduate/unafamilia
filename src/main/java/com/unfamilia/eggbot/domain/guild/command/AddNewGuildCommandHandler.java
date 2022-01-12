@@ -3,12 +3,13 @@ package com.unfamilia.eggbot.domain.guild.command;
 import com.unfamilia.application.command.Command;
 import com.unfamilia.application.command.CommandHandler;
 import com.unfamilia.eggbot.domain.guild.Guild;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @ApplicationScoped
+@Transactional
 public class AddNewGuildCommandHandler implements CommandHandler {
     @Override
     public boolean supports(Command command) {
@@ -16,8 +17,9 @@ public class AddNewGuildCommandHandler implements CommandHandler {
     }
 
     @Override
+    @Transactional
     public void handle(Command command) {
-        Optional<PanacheEntityBase> guild = Guild.findByIdOptional(((AddNewGuildCommand) command).getGuildId());
+        Optional<Guild> guild = Guild.findByIdOptional(((AddNewGuildCommand) command).getGuildId());
 
         if(guild.isPresent()) {
             return;
