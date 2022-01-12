@@ -7,8 +7,3 @@ application:
       channels:
         initializeOrder: orders-package
         confirmOrder: orders
-quarkus:
-  datasource:
-    db-kind: postgresql
-  log:
-    level: INFO

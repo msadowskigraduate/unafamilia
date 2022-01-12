@@ -11,4 +11,7 @@ public class Item extends PanacheEntity {
     private String name;
     private ItemCategory itemCategory;
     private Double itemPrice;
+    private String slug;
+    private Integer maxAmount;
+    private String expansionLevel;
 }
