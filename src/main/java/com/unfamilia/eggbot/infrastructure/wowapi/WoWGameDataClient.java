@@ -1,5 +1,7 @@
 package com.unfamilia.eggbot.infrastructure.wowapi;
 
+import com.unfamilia.eggbot.domain.wowtoken.WoWToken;
+import io.vertx.core.json.Json;
 import lombok.RequiredArgsConstructor;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,7 +14,7 @@ import java.net.http.HttpResponse;
 public class WoWGameDataClient {
     private final WoWApiClient client;
 
-    public void getWoWTokenPrice() throws Exception {
+    public WoWToken getWoWTokenPrice() throws Exception {
         var accessToken = client.getAccessToken();
 
         var uri = UriBuilder.fromUri("https://eu.api.blizzard.com/data/wow/token/index")
@@ -27,6 +29,6 @@ public class WoWGameDataClient {
                 .build();
 
         HttpResponse<String> response = client.getClient().send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
+        return Json.decodeValue(response.body(), WoWToken.class);
     }
 }

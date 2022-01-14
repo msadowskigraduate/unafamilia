@@ -26,6 +26,7 @@ class WoWApiClient {
     private final HttpClient client = HttpClient.newBuilder()
             .executor(executorService)
             .build();
+
     private WoWApiAccessToken token;
 
     void login() throws Exception {
