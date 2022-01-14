@@ -9,7 +9,6 @@ import java.util.List;
 @Entity
 public class OrderItem extends PanacheEntity {
     private Item itemId;
-    @Basic
     private Integer quatity;
     @ManyToMany
     @JoinTable(
