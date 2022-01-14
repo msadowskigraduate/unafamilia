@@ -34,6 +34,6 @@ public class OnStatusMessageEventHandler implements MessageEventHandler {
     }
 
     private String createStatusMessage() {
-        return "Online and Connected! Cuba/Artio Sucks huge VPS COCKS.";
+        return "Online and Connected! Nyly is a giant poop";
     }
 }
