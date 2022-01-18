@@ -1,10 +1,8 @@
 package com.unfamilia.eggbot.infrastructure.wowapi;
 
 import io.vertx.core.json.Json;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -16,20 +14,25 @@ import java.util.Base64;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+abstract class WoWApiClient {
+    protected static final String PROTOCOL = "https://";
+    protected static final String DEFAULT_REGION = "eu";
 
-@ApplicationScoped
-@RequiredArgsConstructor
-class WoWApiClient {
-    private final WoWApiConfig config;
+    protected static final String ACCESS_TOKEN = "access_token";
+    protected static final String NAMESPACE = "namespace";
+    protected static final String LOCALE = "locale";
+
+
     private final ExecutorService executorService = Executors.newCachedThreadPool();
-    @Getter
-    private final HttpClient client = HttpClient.newBuilder()
+    protected final HttpClient client = HttpClient.newBuilder()
             .executor(executorService)
             .build();
 
+    @Inject
+    protected WoWApiConfig config;
     private WoWApiAccessToken token;
 
-    void login() throws Exception {
+    protected void login() throws Exception {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create("https://eu.battle.net/oauth/token"))
                 .header("Authorization", String.format("Basic %s", basicAuth()))

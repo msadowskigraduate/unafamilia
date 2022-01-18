@@ -3,7 +3,6 @@ package com.unfamilia.eggbot.infrastructure.discord.events.handlers;
 import com.unfamilia.application.command.CommandBus;
 import com.unfamilia.eggbot.domain.guild.command.AddNewGuildCommand;
 import com.unfamilia.eggbot.domain.raidpackage.channel.RaidPackageChannelProvider;
-import com.unfamilia.eggbot.infrastructure.discord.DiscordApplicationProvider;
 import com.unfamilia.eggbot.infrastructure.discord.events.discordcommands.DiscordCommandRegistrar;
 import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
@@ -22,7 +21,6 @@ import java.util.Optional;
 public class OnGuildJoinEventHandler implements EventHandler {
     private final RaidPackageChannelProvider channelProvider;
     private final DiscordCommandRegistrar commandRegistrar;
-    private final DiscordApplicationProvider applicationProvider;
     private final CommandBus commandBus;
 
     @Override
@@ -35,7 +33,7 @@ public class OnGuildJoinEventHandler implements EventHandler {
         Guild guild = ((GuildCreateEvent) event).getGuild();
         checkOrCreateOrderConfirmChannel(guild);
         checkOrCreateOrderInitChannel(guild);
-        this.commandRegistrar.registerCommands(applicationProvider.getApplicationId(), guild.getId().asLong());
+        this.commandRegistrar.registerCommandsForGuild(guild.getId().asLong());
         commandBus.handle(AddNewGuildCommand.of(guild.getId().asLong(), guild.getName()));
         return Mono.empty();
     }

@@ -2,24 +2,33 @@ package com.unfamilia.eggbot.domain.raidpackage;
 
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class OrderItem extends PanacheEntity {
-    private Item itemId;
-    private Integer quatity;
-    @ManyToMany
-    @JoinTable(
-            name = "OrderItemItem",
-            joinColumns = @JoinColumn(name = "orderItemId", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "itemId", referencedColumnName = "ID")
-    )
-    private List<Item> items;
+@NoArgsConstructor
+@Setter
+@Getter
+public class OrderItem extends PanacheEntityBase {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_item_id")
+    private Long id;
+    private Integer quantity;
 
-    public void addItem(Item item) {
-        this.items.add(item);
+    @OneToOne
+    private Item item;
+
+    public static OrderItem of(Integer quantity, Item item) {
+        var orderItem = new OrderItem();
+        orderItem.setQuantity(quantity);
+        orderItem.setItem(item);
+        return orderItem;
     }
 }
-

@@ -1,4 +1,4 @@
-package com.unfamilia.application.controllers;
+package com.unfamilia.application.wow;
 
 import com.unfamilia.eggbot.infrastructure.wowapi.WoWGameDataClient;
 import lombok.RequiredArgsConstructor;
