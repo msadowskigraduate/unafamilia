@@ -16,7 +16,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = false)
 public class Item extends PanacheEntityBase {
     @Id
-    @Column(name = "order_item_id")
+    @Column(name = "item_id")
     private Long id;
     private String name;
 
@@ -24,8 +24,11 @@ public class Item extends PanacheEntityBase {
     @JoinColumn(name = "item_subclass_id")
     private ItemSubclass itemSubclass;
 
+    @Column(name = "item_price")
     private Double itemPrice;
     private String slug;
+
+    @Column(name = "max_amount")
     private Integer maxAmount;
 
     public void setItemSubclass(ItemSubclass itemSubclass) {
