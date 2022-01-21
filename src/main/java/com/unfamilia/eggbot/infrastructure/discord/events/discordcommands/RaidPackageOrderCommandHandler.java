@@ -2,7 +2,6 @@ package com.unfamilia.eggbot.infrastructure.discord.events.discordcommands;
 
 import com.unfamilia.application.command.CommandBus;
 import com.unfamilia.eggbot.domain.raidpackage.Item;
-import com.unfamilia.eggbot.domain.raidpackage.RaidPackageOrderOptionProvider;
 import com.unfamilia.eggbot.domain.raidpackage.command.NewOrderCommand;
 import com.unfamilia.eggbot.domain.raidpackage.command.NewOrderCommandFactory;
 import discord4j.core.event.domain.Event;
@@ -17,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
     private final static String COMMAND_NAME = "raidpackage";
-    private final RaidPackageOrderOptionProvider optionsProvider;
     private final CommandBus commandBus;
 
     @Override
@@ -47,17 +46,18 @@ public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
         commandBus.handle(order);
 
         return slashCommand.reply()
-                .withEmbeds(embedBuilder(order.toString()).build());
+                .withEmbeds(embedBuilder(order).build());
     }
 
     @Override
+    @Transactional
     public ApplicationCommandRequest build() {
-        List<Item> offeredItems = this.optionsProvider.getAvailableItems();
+        List<Item> offeredItems = Item.listAll();
 
         List<ApplicationCommandOptionData> optionData = offeredItems.stream()
                 .map(item -> ApplicationCommandOptionData.builder()
-                        .name(item.getName())
-                        .description(item.getItemCategory().toString())
+                        .name(item.getSlug())
+                        .description(item.getItemSubclass().getName())
                         .type(ApplicationCommandOption.Type.INTEGER.getValue())
                         .required(false)
                         .build())
@@ -75,8 +75,8 @@ public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
         return COMMAND_NAME;
     }
 
-    private EmbedCreateSpec.Builder embedBuilder(String order) {
-        return EmbedCreateSpec.builder()
+    private EmbedCreateSpec.Builder embedBuilder(NewOrderCommand order) {
+        var builder = EmbedCreateSpec.builder()
                 .title("Raid Package Order")
                 .color(Color.BISMARK)
                 .timestamp(Instant.now())
@@ -85,10 +85,14 @@ public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
                         "Delivery and Payment",
                         "An officer will mail you the items," +
                                 " and message you the price to deposit into the guild bank before the raid begins.",
-                        false)
-                .addField(
-                        "Your Order",
-                        order,
                         false);
+
+        order.getOrderedItems()
+                .forEach(orderItem -> builder.addField(
+                        orderItem.getItemName(),
+                        orderItem.getQuantity().toString(),
+                        false));
+
+        return builder;
     }
 }

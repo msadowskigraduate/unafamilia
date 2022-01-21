@@ -21,5 +21,5 @@ abstract class DiscordCommandHandler implements EventHandler {
     }
 
     abstract ApplicationCommandRequest build();
-    abstract String getCommand();
+    public abstract String getCommand();
 }

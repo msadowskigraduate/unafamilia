@@ -1,4 +1,4 @@
-package com.unfamilia.application.controllers;
+package com.unfamilia.application.bonanza;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
