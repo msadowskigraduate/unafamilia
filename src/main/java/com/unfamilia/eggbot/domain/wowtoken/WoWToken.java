@@ -19,13 +19,13 @@ import static lombok.AccessLevel.PROTECTED;
 public class WoWToken {
      public final static String STATIC_IMAGE = "";
      private Date lastUpdatedTimestamp;
-     private Integer price;
+     private Double price;
 
      public void setLastUpdatedTimestamp(Long lastUpdatedTimestamp) {
           this.lastUpdatedTimestamp = new Date(lastUpdatedTimestamp);
      }
 
      public void setPrice(Double price) {
-          this.price = price.intValue() / 10000;
+          this.price = price / 10000;
      }
 }

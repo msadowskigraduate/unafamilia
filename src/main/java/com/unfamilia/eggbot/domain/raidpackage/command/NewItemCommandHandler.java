@@ -29,12 +29,12 @@ public class NewItemCommandHandler implements CommandHandler {
     public void handle(Command command) {
         var newItemCommand = (NewItemCommand) command;
 
-        if (Item.findByIdOptional(newItemCommand.getItemDto().getId()).isPresent()) {
+        if (Item.findByIdOptional(newItemCommand.getId()).isPresent()) {
             return;
         }
 
         handle(newItemCommand,
-                client.getWowItem(newItemCommand.getItemDto().getId()));
+                client.getWowItem(newItemCommand.getId()));
 
         commandRegistrar.registerCommandsForAllGuilds();
     }
@@ -56,8 +56,8 @@ public class NewItemCommandHandler implements CommandHandler {
                 wowItem.getName(),
                 subclass,
                 0.0,
-                newItemCommand.getItemDto().getSlug(),
-                newItemCommand.getItemDto().getMaxAmount()
+                newItemCommand.getSlug(),
+                newItemCommand.getMaxAmount()
         );
 
         item.persist();
