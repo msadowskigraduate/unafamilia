@@ -45,8 +45,8 @@ public class DiscordController {
     @POST
     @Path("/item")
     public Response addItem(ItemDto item) {
-        var command = NewItemCommand.of(item);
-        var location = UriBuilder.fromUri("/discord/item/" + command.getItemDto().getId()).build();
+        var command = new NewItemCommand(item.getId(), item.getMaxAmount(), item.getSlug());
+        var location = UriBuilder.fromUri("/discord/item/" + command.getId()).build();
         commandBus.handle(command);
         return Response.created(location).build();
     }
