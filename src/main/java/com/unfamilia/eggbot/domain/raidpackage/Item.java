@@ -14,6 +14,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@Table(name = "item", indexes = {
+        @Index(name = "slug", columnList = "slug")
+})
 public class Item extends PanacheEntityBase {
     @Id
     @Column(name = "item_id")

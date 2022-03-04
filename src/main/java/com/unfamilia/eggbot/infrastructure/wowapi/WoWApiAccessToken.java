@@ -1,5 +1,6 @@
 package com.unfamilia.eggbot.infrastructure.wowapi;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -12,10 +13,13 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public
 class WoWApiAccessToken {
     private String accessToken;
     private String tokenType;
     private Instant expiresIn;
+    private String scope;
     private String sub;
 
     public boolean isExpired() {

@@ -20,6 +20,16 @@ abstract class DiscordCommandHandler implements EventHandler {
         return event.getClass().isAssignableFrom(ChatInputInteractionEvent.class);
     }
 
+    @Override
+    public Boolean supports(Event event) {
+        if (!isSlashCommand(event)) {
+            return false;
+        }
+
+        ChatInputInteractionEvent slashCommand = (ChatInputInteractionEvent) event;
+        return slashCommand.getCommandName().equalsIgnoreCase(this.getCommand());
+    }
+
     abstract ApplicationCommandRequest build();
     public abstract String getCommand();
 }

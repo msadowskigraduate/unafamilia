@@ -4,6 +4,7 @@ import io.vertx.core.json.Json;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -17,6 +18,7 @@ import java.util.concurrent.Executors;
 abstract class WoWApiClient {
     protected static final String PROTOCOL = "https://";
     protected static final String DEFAULT_REGION = "eu";
+    protected static final String PROFILE_DATA_BASE = PROTOCOL + DEFAULT_REGION + ".api.blizzard.com/profile/";
 
     protected static final String ACCESS_TOKEN = "access_token";
     protected static final String NAMESPACE = "namespace";
@@ -60,9 +62,18 @@ abstract class WoWApiClient {
         return token.getAccessToken();
     }
 
-    private String basicAuth() {
+    protected String basicAuth() {
         return Base64.getEncoder()
                 .encodeToString((config.clientId() + ":" + config.clientSecret())
                         .getBytes(StandardCharsets.UTF_8));
+    }
+
+    protected HttpResponse<String> get(URI uri) throws IOException, InterruptedException {
+        var request = HttpRequest.newBuilder()
+                .uri(uri)
+                .GET()
+                .build();
+
+        return this.client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }
