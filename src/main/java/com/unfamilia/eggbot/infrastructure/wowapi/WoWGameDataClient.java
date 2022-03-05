@@ -3,15 +3,9 @@ package com.unfamilia.eggbot.infrastructure.wowapi;
 import com.unfamilia.eggbot.domain.wowtoken.WoWToken;
 import com.unfamilia.eggbot.infrastructure.wowapi.model.WowItem;
 import io.vertx.core.json.Json;
-import lombok.RequiredArgsConstructor;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 
 @ApplicationScoped
@@ -43,14 +37,5 @@ public class WoWGameDataClient extends WoWApiClient {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    private HttpResponse<String> get(URI uri) throws IOException, InterruptedException {
-        var request = HttpRequest.newBuilder()
-                .uri(uri)
-                .GET()
-                .build();
-
-        return this.client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

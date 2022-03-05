@@ -28,16 +28,6 @@ public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
     private final CommandBus commandBus;
 
     @Override
-    public Boolean supports(Event event) {
-        if (!isSlashCommand(event)) {
-            return false;
-        }
-
-        ChatInputInteractionEvent slashCommand = (ChatInputInteractionEvent) event;
-        return slashCommand.getCommandName().equalsIgnoreCase(this.getCommand());
-    }
-
-    @Override
     public Mono handle(Event event) {
         ChatInputInteractionEvent slashCommand = (ChatInputInteractionEvent) event;
         Log.info("Handling event: " + event);
