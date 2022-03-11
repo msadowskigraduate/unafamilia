@@ -7,3 +7,65 @@ application:
       channels:
         initializeOrder: orders-package
         confirmOrder: orders
+#    wow:
+#      data:
+#        - id: 1
+#          name: Warrior
+#          specialiations:
+#            - id: 71
+#              name: Arms
+#              role: DAMAGE
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_warrior_savageblow.jpg
+#            - id: 72
+#              name: Fury
+#              role: DAMAGE
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_warrior_innerrage.jpg
+#            - id: 73
+#              name: Protection
+#              role: TANK
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_warrior_defensivestance.jpg
+#        - id: 2
+#          name: Paladin
+#          specialiations:
+#            - id: 65
+#              name: Holy
+#              role: HEALER
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_warrior_savageblow.jpg
+#            - id: 66
+#              name: Protection
+#              role: DAMAGE
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_warrior_innerrage.jpg
+#            - id: 70
+#              name: Retribution
+#              role: TANK
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_warrior_defensivestance.jpg
+#        - id: 3
+#          name: Hunter
+#          specialiations:
+#            - id: 253
+#              name: Beast Mastery
+#              role: DAMAGE
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_hunter_bestialdiscipline.jpg
+#            - id: 254
+#              name: Marksmanship
+#              role: DAMAGE
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_hunter_focusedaim.jpg
+#            - id: 255
+#              name: Survival
+#              role: DAMAGE
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_hunter_camouflage.jpg
+#        - id: 4
+#          name: Rogue
+#          specialiations:
+#            - id: 253
+#              name: Rogue
+#              role: DAMAGE
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_rogue_deadlybrew.jpg
+#            - id: 254
+#              name: Outlaw
+#              role: DAMAGE
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_rogue_waylay.jpg
+#            - id: 255
+#              name: Subtlety
+#              role: DAMAGE
+#              icon: https://render-eu.worldofwarcraft.com/icons/56/ability_stealth.jpg

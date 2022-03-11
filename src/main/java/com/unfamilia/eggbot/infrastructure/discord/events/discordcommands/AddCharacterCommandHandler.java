@@ -55,6 +55,11 @@ public class AddCharacterCommandHandler extends DiscordCommandHandler {
     public Mono handle(Event event) {
         ChatInputInteractionEvent slashCommand = (ChatInputInteractionEvent) event;
         Log.info("Handling event: " + event);
+
+        if(!isUserRegistered(slashCommand.getInteraction().getUser().getId().asLong())) {
+            return registerResponse(slashCommand.getInteraction().getUser(), slashCommand);
+        }
+
         slashCommand.reply("Processing...").subscribe();
 
         Map<String, String> options = slashCommand.getOptions().stream()
@@ -76,16 +81,11 @@ public class AddCharacterCommandHandler extends DiscordCommandHandler {
     }
 
     private EmbedCreateSpec.Builder embedBuilder(Character character, CharacterMedia characterMedia) {
-        String imageUrl = characterMedia.getAssets()
-                .stream()
-                .filter(asset -> asset.getKey().equalsIgnoreCase("inset"))
-                .findFirst().get().getValue();
-
         var builder = EmbedCreateSpec.builder()
                 .title(character.getName())
                 .color(Color.BISMARK)
                 .timestamp(Instant.now())
-                .image(imageUrl)
+                .image(characterMedia.getInset())
                 .addField("Class", character.getCharacterClass().getName(), false)
                 .addField("Specialization", character.getSpecializations().getHref(), false)
                 .addField("Level", character.getLevel().toString(), false);

@@ -6,7 +6,4 @@ import reactor.core.publisher.Mono;
 public interface EventHandler {
     Boolean supports(Event event);
     Mono handle(Event event);
-    default Integer getPriority() {
-        return HandlerPriority.NORMAL;
-    }
 }

@@ -1,5 +1,6 @@
 package com.unfamilia.application.discord;
 
+import com.unfamilia.application.ApplicationConfigProvider;
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.EventDispatcher;
@@ -15,8 +16,8 @@ import javax.inject.Singleton;
 public class DiscordBotConfiguration {
 
     @Produces
-    public DiscordClient discordClient(DiscordBotConfigurationProvider discordBotConfigurationProvider) {
-        return DiscordClient.create(discordBotConfigurationProvider.getToken());
+    public DiscordClient discordClient(ApplicationConfigProvider configProvider) {
+        return DiscordClient.create(configProvider.discord().token());
     }
 
     @Produces

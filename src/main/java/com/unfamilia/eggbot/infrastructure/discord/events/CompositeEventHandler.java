@@ -14,18 +14,6 @@ public class CompositeEventHandler {
     @Inject
     Instance<EventHandler> eventHandlers;
 
-//    public Mono handle(Event discordEvent) {
-//        Optional<EventHandler> handler = eventHandlers.stream()
-//                .filter(eventHandler -> eventHandler.supports(discordEvent))
-//                .findFirst();
-//
-//        if(handler.isPresent()) {
-//            return handler.get().handle(discordEvent);
-//        }
-//
-//        return Mono.empty();
-//    }
-
     public Mono handle(Event discordEvent) {
         return eventHandlers.stream()
                 .filter(eventHandler -> eventHandler.supports(discordEvent))

@@ -1,5 +1,7 @@
 package com.unfamilia.eggbot.infrastructure.wowapi;
 
+import com.unfamilia.application.ApplicationConfigProvider;
+import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import io.vertx.core.json.Json;
 import lombok.RequiredArgsConstructor;
 
@@ -17,25 +19,26 @@ import java.util.Map;
 @ApplicationScoped
 @RequiredArgsConstructor
 public class BattleNetAuthClient extends WoWApiClient {
-    private final WoWApiConfig config;
+    private final ApplicationConfigProvider config;
     private WoWApiAccessToken accessToken;
 
-    public URI getAuthorizationCode() {
+    public URI getAuthorizationCode(String sessionToken) {
+        var token = SessionToken.get(sessionToken);
         var redirectUri = UriBuilder.fromUri("https://eu.battle.net/oauth/authorize")
                 .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId())
-                .queryParam("redirect_uri", "http://localhost:9000/wow/callback")
+                .queryParam("client_id", config.wowApi().clientId())
+                .queryParam("redirect_uri", "http://localhost:9000/wow/callback?session_token=" + token.getToken())
                 .queryParam("scope", "wow.profile");
 
         return redirectUri.build();
     }
 
-    public String getLogin(String code) throws Exception {
+    public String getLogin(String code, String sessionToken) throws Exception {
         try {
 
             var values = new HashMap<String, String>();
             values.put("grant_type", "authorization_code");
-            values.put("redirect_uri", "http://localhost:9000/wow/callback");
+            values.put("redirect_uri", "http://localhost:9000/wow/callback?session_token=" + sessionToken);
             values.put("scope", "wow.profile");
             values.put(URLEncoder.encode("code", StandardCharsets.UTF_8), URLEncoder.encode(code, StandardCharsets.UTF_8));
 
