@@ -26,8 +26,9 @@ public class WowProfile {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Character {
         private String name;
-        private String id;
+        private Long id;
         private Long level;
+        private com.unfamilia.eggbot.infrastructure.wowapi.model.Character.Realm realm;
 
         @JsonProperty("playable_class")
         private com.unfamilia.eggbot.infrastructure.wowapi.model.Character.CharacterClass playableClass;

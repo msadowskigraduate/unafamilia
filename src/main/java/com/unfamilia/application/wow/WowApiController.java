@@ -71,7 +71,10 @@ public class WowApiController {
                     .flatMap(x -> x.getCharacters().stream())
                     .collect(Collectors.toList());
 
-            return success.data("characters", characters);
+            return success
+                    .data("name", token.getUser().getUserData().username())
+                    .data("characters", characters)
+                    .data("userid", token.getUser().getId().asString());
         } catch (InvalidTokenException e) {
             return error.data("login.errorCode", "401", "login.errorMessage", "Invalid token!");
         }

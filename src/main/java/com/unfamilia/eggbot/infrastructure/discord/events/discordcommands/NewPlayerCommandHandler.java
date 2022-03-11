@@ -1,17 +1,22 @@
 package com.unfamilia.eggbot.infrastructure.discord.events.discordcommands;
 
+import com.unfamilia.application.ApplicationConfigProvider;
+import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import io.quarkus.logging.Log;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class NewPlayerCommandHandler extends DiscordCommandHandler {
-
+    private final ApplicationConfigProvider configProvider;
     @Override
     ApplicationCommandRequest build() {
         return ApplicationCommandRequest.builder()
@@ -28,10 +33,14 @@ public class NewPlayerCommandHandler extends DiscordCommandHandler {
     @Override
     public Mono handle(Event event) {
         Log.info("Handling event: " + event);
-        ChatInputInteractionEvent slashCommand = (ChatInputInteractionEvent) event;
-        var user = slashCommand.getInteraction().getUser();
-        SessionToken token = SessionToken.generateForUser(user);
-        var url = "http://localhost:9000/discord?session_token=" + token.getToken();
-        return slashCommand.reply().withContent("Visit " + url).withEphemeral(true);
+        var command = (ChatInputInteractionEvent) event;
+        var user = command.getInteraction().getUser();
+        if (!isUserRegistered(user.getId().asLong())) {
+            return registerResponse(user, command);
+        }
+
+        return command.reply()
+                .withEphemeral(true)
+                .withContent("You have already registered!");
     }
 }

@@ -2,39 +2,37 @@ package com.unfamilia.eggbot.domain.raidpackage;
 
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "raidpackage_order")
+@Table(name = "raid_package_order")
+@NoArgsConstructor
 public class Order extends PanacheEntityBase {
-    private Long orderMessageId;
-    private Long orderUserId;
-
-    private Boolean orderFulfilled;
-    private Boolean orderPaid;
-    private Instant orderDateTime;
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @JoinTable(name = "order_item_id")
-    private List<OrderItem> orderItems = new ArrayList<>();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long orderMessageId;
+    private Long orderUserId;
+    private Boolean orderFulfilled;
+    private Boolean orderPaid;
+    private Instant orderDateTime;
+
+    @OneToMany
+    private List<Item> orderItems = new ArrayList<>();
 
     public static Order of(
             Long orderMessageId,
@@ -42,7 +40,7 @@ public class Order extends PanacheEntityBase {
             Boolean orderFulfilled,
             Boolean orderPaid,
             Instant orderDateTime,
-            List<OrderItem> items) {
+            List<Item> items) {
         var order = new Order();
         order.setOrderMessageId(orderMessageId);
         order.setOrderUserId(orderUserId);

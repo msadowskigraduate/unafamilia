@@ -6,6 +6,7 @@ import com.unfamilia.eggbot.domain.guild.Guild;
 import lombok.RequiredArgsConstructor;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.NotFoundException;
 import java.util.NoSuchElementException;
 
 @ApplicationScoped

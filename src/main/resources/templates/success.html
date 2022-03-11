@@ -5,7 +5,7 @@
     <title>Success!</title>
 </head>
 <body>
-<div>Login was successful! Return to discord.</div>
+<div>Login was successful {name}! Return to discord.</div>
 
 <div>
     <table>
@@ -17,7 +17,9 @@
             <td>{character.playableClass.name}</td>
             <td>{character.faction.name}</td>
             <td>
-                <form action="/wow/login"><input type="submit" value="Make Main"/></form>
+                <form action="/player/{userid}/{character.id}" method="post">
+                    <button type="submit">Make Main</button>
+                </form>
             <td>
         </tr>
         {/for}

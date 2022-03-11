@@ -25,4 +25,13 @@ public class CharacterMedia {
         private String key;
         private String value;
     }
+
+    public String getInset() {
+        return this.getAssets()
+                .stream()
+                .filter(asset -> asset.getKey().equalsIgnoreCase("inset"))
+                .findFirst()
+                .get()
+                .getValue();
+    }
 }

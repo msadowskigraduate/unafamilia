@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 
 @ApplicationScoped
 @RequiredArgsConstructor

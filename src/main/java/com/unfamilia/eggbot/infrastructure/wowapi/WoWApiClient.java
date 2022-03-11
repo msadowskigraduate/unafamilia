@@ -1,5 +1,6 @@
 package com.unfamilia.eggbot.infrastructure.wowapi;
 
+import com.unfamilia.application.ApplicationConfigProvider;
 import io.vertx.core.json.Json;
 
 import javax.inject.Inject;
@@ -31,7 +32,7 @@ abstract class WoWApiClient {
             .build();
 
     @Inject
-    protected WoWApiConfig config;
+    protected ApplicationConfigProvider config;
     private WoWApiAccessToken token;
 
     protected void login() throws Exception {
@@ -64,7 +65,7 @@ abstract class WoWApiClient {
 
     protected String basicAuth() {
         return Base64.getEncoder()
-                .encodeToString((config.clientId() + ":" + config.clientSecret())
+                .encodeToString((config.wowApi().clientId() + ":" + config.wowApi().clientSecret())
                         .getBytes(StandardCharsets.UTF_8));
     }
 

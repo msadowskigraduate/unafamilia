@@ -22,7 +22,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
 
 @Path("/discord")
 @RequiredArgsConstructor
@@ -71,7 +70,7 @@ public class DiscordController {
                 );
             } else {
                 return error.data(
-                        "error", LoginData.builder()
+                        "login", LoginData.builder()
                         .errorCode(Response.Status.UNAUTHORIZED.toString())
                         .errorMessage("Invalid Token! Return to Discord and restart the process.")
                         .build()
@@ -79,7 +78,7 @@ public class DiscordController {
             }
         } catch (InvalidTokenException e) {
             return error.data(
-                    "error", LoginData.builder()
+                    "login", LoginData.builder()
                             .errorCode(Response.Status.FORBIDDEN.toString())
                             .errorMessage("Return to Discord and restart the process.")
                             .build()

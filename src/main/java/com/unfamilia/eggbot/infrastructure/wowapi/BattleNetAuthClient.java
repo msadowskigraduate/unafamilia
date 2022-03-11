@@ -1,5 +1,6 @@
 package com.unfamilia.eggbot.infrastructure.wowapi;
 
+import com.unfamilia.application.ApplicationConfigProvider;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import io.vertx.core.json.Json;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +19,14 @@ import java.util.Map;
 @ApplicationScoped
 @RequiredArgsConstructor
 public class BattleNetAuthClient extends WoWApiClient {
-    private final WoWApiConfig config;
+    private final ApplicationConfigProvider config;
     private WoWApiAccessToken accessToken;
 
     public URI getAuthorizationCode(String sessionToken) {
         var token = SessionToken.get(sessionToken);
         var redirectUri = UriBuilder.fromUri("https://eu.battle.net/oauth/authorize")
                 .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId())
+                .queryParam("client_id", config.wowApi().clientId())
                 .queryParam("redirect_uri", "http://localhost:9000/wow/callback?session_token=" + token.getToken())
                 .queryParam("scope", "wow.profile");
 

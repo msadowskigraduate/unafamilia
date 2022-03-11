@@ -32,6 +32,10 @@ public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
         ChatInputInteractionEvent slashCommand = (ChatInputInteractionEvent) event;
         Log.info("Handling event: " + event);
 
+        if(!isUserRegistered(slashCommand.getInteraction().getUser().getId().asLong())) {
+            return registerResponse(slashCommand.getInteraction().getUser(), slashCommand);
+        }
+
         NewOrderCommand order = NewOrderCommandFactory.from(slashCommand);
         commandBus.handle(order);
 
@@ -42,9 +46,7 @@ public class RaidPackageOrderCommandHandler extends DiscordCommandHandler {
     @Override
     @Transactional
     public ApplicationCommandRequest build() {
-        List<Item> offeredItems = Item.listAll();
-
-        List<ApplicationCommandOptionData> optionData = offeredItems.stream()
+        List<ApplicationCommandOptionData> optionData = Item.<Item>findAll().stream()
                 .map(item -> ApplicationCommandOptionData.builder()
                         .name(item.getSlug())
                         .description(item.getItemSubclass().getName())

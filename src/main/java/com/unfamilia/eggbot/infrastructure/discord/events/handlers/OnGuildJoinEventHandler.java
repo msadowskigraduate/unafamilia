@@ -34,7 +34,8 @@ public class OnGuildJoinEventHandler implements EventHandler {
         checkOrCreateOrderConfirmChannel(guild);
         checkOrCreateOrderInitChannel(guild);
         this.commandRegistrar.registerCommandsForGuild(guild.getId().asLong());
-        commandBus.handle(AddNewGuildCommand.of(guild.getId().asLong(), guild.getName()));
+        var roles = guild.getRoles().buffer().blockFirst();
+        commandBus.handle(AddNewGuildCommand.of(guild.getId().asLong(), guild.getName(), false, roles));
         return Mono.empty();
     }
 
