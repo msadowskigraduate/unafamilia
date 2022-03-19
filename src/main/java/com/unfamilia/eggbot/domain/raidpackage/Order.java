@@ -32,7 +32,7 @@ public class Order extends PanacheEntityBase {
     private Instant orderDateTime;
 
     @OneToMany
-    private List<Item> orderItems = new ArrayList<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     public static Order of(
             Long orderMessageId,
@@ -40,14 +40,14 @@ public class Order extends PanacheEntityBase {
             Boolean orderFulfilled,
             Boolean orderPaid,
             Instant orderDateTime,
-            List<Item> items) {
+            List<OrderItem> orderItems) {
         var order = new Order();
         order.setOrderMessageId(orderMessageId);
         order.setOrderUserId(orderUserId);
         order.setOrderFulfilled(orderFulfilled);
         order.setOrderPaid(orderPaid);
         order.setOrderDateTime(orderDateTime);
-        order.setOrderItems(items);
+        order.setOrderItems(orderItems);
         return order;
     }
 }
