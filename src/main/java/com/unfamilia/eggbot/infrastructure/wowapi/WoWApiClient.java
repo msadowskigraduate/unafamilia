@@ -24,6 +24,7 @@ abstract class WoWApiClient {
     protected static final String ACCESS_TOKEN = "access_token";
     protected static final String NAMESPACE = "namespace";
     protected static final String LOCALE = "locale";
+    protected static final String HTTPS_EU_BATTLE_NET_OAUTH_TOKEN = "https://eu.battle.net/oauth/token";
 
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
@@ -37,7 +38,7 @@ abstract class WoWApiClient {
 
     protected void login() throws Exception {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create("https://eu.battle.net/oauth/token"))
+                .uri(URI.create(HTTPS_EU_BATTLE_NET_OAUTH_TOKEN))
                 .header("Authorization", String.format("Basic %s", basicAuth()))
                 .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
                 .POST(HttpRequest.BodyPublishers.ofString(

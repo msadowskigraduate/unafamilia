@@ -1,0 +1,12 @@
+{#include base}
+{#title}Una Familia - {principal}{/title}
+{#body}
+<script>
+    sessionStorage.setItem("jwt", "{jwt}");
+    fetch("http://localhost:9000/secured")
+        .then(response => console.log(response.body));
+</script>
+
+
+{/body}
+{/include}

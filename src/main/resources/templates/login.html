@@ -21,12 +21,16 @@
         border-radius: 50%;
     }
 </style>
-
+<script>
+    function getAuthorization() {
+        window.location.href='{baseLoginUrl}?client_id={client_id}&redirect_uri={redirect_uri}&scope=openid&response_type=code&response_mode=query&prompt=login';
+    }
+</script>
 {#include base}
 {#title}Una Familia - Login{/title}
 {#body}
 <main class="text-center form-signin bg-opacity-75">
-    <form action="{login.loginUrl}">
+    <form>
         <img class="una-logo"
              src="https://render.worldofwarcraft.com/eu/guild/crest/98/emblem-98-dfa55a-232323.jpg"
              alt
@@ -34,7 +38,7 @@
              height="72">
         <h1 class="h2 mb-3 fw-bold">Una Familia</h1>
         <h2 class="h4 mb-3 fw-normal">Sign in</h2>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">
+        <button class="w-100 btn btn-lg btn-primary" onclick="getAuthorization()" type="button">
             Login with Battle.net
         </button>
     </form>
