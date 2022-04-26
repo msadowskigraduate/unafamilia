@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autonumber
+actor User as user
+participant Discord as disc
+participant "Una Familia Backend" as bot
+participant Battle.net as bnet
+
+user -> disc: /link Application Command
+disc -> bot: /discord?session_token={session_token}
+bot -> user: login.html
+user -> bot: /login?session_token={session_token}
+bot -> bnet: /oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope=openid&response_type=code&response_mode=query&prompt=login
+bnet -> bot: /callback?code={authorization_code}
+bot -> user: /user
+@enduml

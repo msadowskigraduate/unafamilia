@@ -7,6 +7,8 @@ import com.unfamilia.eggbot.infrastructure.wowapi.model.WowProfile;
 import io.vertx.core.json.Json;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -52,14 +54,13 @@ public class WoWProfileApiClient extends WoWApiClient implements WoWProfileClien
         }
     }
 
-
     @Override
     public CharacterMedia queryCharacterMedia(Character character) {
         return queryCharacterMedia(character.getRealm().getSlug().toLowerCase(), character.getName().toLowerCase());
     }
 
     @Override
-    public WowProfile queryWowProfile(String authCode) {
+    public WowProfile queryWowProfile(String authCode) throws WebApplicationException {
         try {
             var uri = UriBuilder.fromUri(PROFILE_DATA_BASE + "user")
                     .path("wow")
@@ -68,6 +69,10 @@ public class WoWProfileApiClient extends WoWApiClient implements WoWProfileClien
                     .queryParam(ACCESS_TOKEN, authCode)
                     .build();
             HttpResponse<String> json = get(uri);
+
+            if(json.statusCode() > 300) {
+                throw new WebApplicationException(Response.status(json.statusCode()).entity(json.body()).build());
+            }
             return Json.decodeValue(json.body(), WowProfile.class);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e.getMessage());

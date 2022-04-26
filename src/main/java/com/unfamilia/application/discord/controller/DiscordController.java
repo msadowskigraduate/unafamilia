@@ -2,6 +2,7 @@ package com.unfamilia.application.discord.controller;
 
 import com.unfamilia.application.command.CommandBus;
 import com.unfamilia.application.discord.model.ItemDto;
+import com.unfamilia.application.model.ErrorResponse;
 import com.unfamilia.eggbot.domain.guild.command.SetGuildAsOriginCommand;
 import com.unfamilia.eggbot.domain.raidpackage.Item;
 import com.unfamilia.eggbot.domain.raidpackage.command.NewItemCommand;
@@ -22,6 +23,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Path("/discord")
 @RequiredArgsConstructor
@@ -60,37 +64,26 @@ public class DiscordController {
     }
 
     @GET
-    public TemplateInstance linkAccount(@QueryParam("session_token") String token) {
+    public Response linkAccount(@QueryParam("session_token") String token) {
         try {
             var sessionToken = SessionToken.get(token);
             if(sessionToken.isValid()) {
-                return login.data("login", LoginData.builder()
-                        .loginUrl("/wow/login/" + sessionToken.getToken())
-                        .build()
-                );
+                return Response.seeOther(URI.create("/login?session_token=" + sessionToken.getToken() + "&redirect_uri=" + URLEncoder.encode("/user", StandardCharsets.UTF_8))).build();
             } else {
-                return error.data(
-                        "login", LoginData.builder()
-                        .errorCode(Response.Status.UNAUTHORIZED.toString())
-                        .errorMessage("Invalid Token! Return to Discord and restart the process.")
+                return Response.status(Response.Status.UNAUTHORIZED.getStatusCode()).entity(error.data(
+                        "login", ErrorResponse.builder()
+                        .errorCode(Response.Status.UNAUTHORIZED.getStatusCode())
+                        .error("Invalid Token! Return to Discord and restart the process.")
                         .build()
-                );
+                ).render()).build();
             }
         } catch (InvalidTokenException e) {
-            return error.data(
-                    "login", LoginData.builder()
-                            .errorCode(Response.Status.FORBIDDEN.toString())
-                            .errorMessage("Return to Discord and restart the process.")
+            return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(error.data(
+                    "login", ErrorResponse.builder()
+                            .errorCode(Response.Status.FORBIDDEN.getStatusCode())
+                            .error("Invalid Token! Return to Discord and restart the process.")
                             .build()
-            );
+            ).render()).build();
         }
-    }
-
-    @Builder
-    @Getter
-    private static class LoginData {
-        private String loginUrl;
-        private String errorCode;
-        private String errorMessage;
     }
 }

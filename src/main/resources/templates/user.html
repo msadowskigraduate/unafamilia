@@ -1,0 +1,92 @@
+{#include base}
+{#scripts}
+<script>const whTooltips = { colorLinks: true, iconizeLinks: true, renameLinks: true };</script>
+<script src="https://wow.zamimg.com/widgets/power.js">
+    sessionStorage.setItem("jwt", {jwt});
+    sessionStorage.setItem("authorization", {authCode});
+</script>
+{/scripts}
+
+{#title}Una Familia - Welcome {name}! {/title}
+{#navbar}
+<ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+    <li><a href="#" class="nav-link px-2 text-white">Welcome {name}!</a></li>
+</ul>
+{/navbar}
+{#body}
+<div class="container-fluid">
+    <section class="py-5 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h3 class="fw-light">{name}, choose your main character</h3>
+            </div>
+        </div>
+    </section>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {#for character in characters}
+        <div class="col">
+            <div class="card shadow-sm bg-secondary text-white" id="{character.id}" style="width: 18rem;">
+                <script>
+                    fetch('https://raider.io/api/v1/characters/profile?region=eu&realm={character.realm.slug}&name={character.name}&fields=gear%2C%20mythic_plus_scores_by_season')
+                        .then(function (response) {
+                            return response.json()
+                        })
+                        .then(function (data) {
+                            const card = document.getElementById({character.id});
+                            const cardBody = card.querySelector('.card-body');
+                            const raiderProfile = {
+                                image: data['thumbnail_url'],
+                                item_level: data['gear']?.['item_level_equipped'] || "Undefined"
+                            };
+                            <!-- Thumbnail -->
+                            let image = document.createElement("img");
+                            image.src = raiderProfile.image || 'https://render.worldofwarcraft.com/shadow/avatar/1-1.jpg';
+                            image.alt = "{character.name} render";
+                            image.class = "card-img-top";
+                            image.style.borderRadius = "50%";
+                            image.style.maxHeight = "75px";
+                            image.style.maxWidth = "75px";
+                            card.insertBefore(image, cardBody);
+
+                            <!-- Items -->
+                            const itemSlots_left = ["head", "shoulder", "back", "chest", "feet", "wrist", "hands", "neck"];
+                            const itemSlots_right = ["mainhand", "waist", "legs", "finger1", "finger2", "trinket1", "trinket2"];
+                            let leftItems = document.getElementById("{character.id}-left");
+                            let rightItems = document.getElementById("{character.id}-right");
+
+                            for (const itemSlot of itemSlots_left) {
+                                let item = data['gear']?.['items'][itemSlot];
+                                if (item) {
+                                    let itemElement = document.createElement("div");
+                                    itemElement.innerHTML = '<div class="col"><a class href="//wowhead.com/item=' + item['item_id'] + '" rel="bonus=' + item['bonuses'].join(':') + '&ilvl=' + item['item_level'] + '"><img alt src="https://cdnassets.raider.io/images/wow/icons/large/' + item['icon'] + '.jpg"></a>' + item['item_level'] + '</div>';
+                                    leftItems.appendChild(itemElement);
+                                }
+                            }
+
+                            for (const itemSlot of itemSlots_right) {
+                                let item = data['gear']?.['items'][itemSlot];
+                                if (item) {
+                                    let itemElement = document.createElement("div");
+                                    itemElement.innerHTML = '<div class="col"><a class href="//wowhead.com/item=' + item['item_id'] + '" rel="bonus=' + item['bonuses'].join(':') + '&ilvl=' + item['item_level'] + '"><img alt src="https://cdnassets.raider.io/images/wow/icons/large/' + item['icon'] + '.jpg"></a>' + item['item_level'] + '</div>';
+                                    rightItems.appendChild(itemElement);
+                                }
+                            }
+
+                        }).catch(console.error);
+                </script>
+                <div class="card-body">
+                    <div class="card-header">{character.name}</div>
+                    <h5 class="card-title">Level {character.level} {character.playableClass.name}</h5>
+                    <div class="container">
+                        <div class="row" id="{character.id}-left"></div>
+                        <div class="row" id="{character.id}-right"></div>
+                    </div>
+                    <a href="/player/{userid}/{character.id}" methods="POST" class="btn btn-primary">Make main</a>
+                </div>
+            </div>
+        </div>
+        {/for}
+    </div>
+</div>
+{/body}
+{/include}
