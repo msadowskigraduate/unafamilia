@@ -28,12 +28,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @RequiredArgsConstructor
 public class WowApiController {
     private final WoWGameDataClient gameDataClient;
-    private final BattleNetAuthClient battleNetAuthClient;
-    private final QueryBus bus;
-    private final CommandBus commandBus;
-
-    @Inject Template success;
-    @Inject Template error;
 
     @GET
     @Path("/token")
@@ -43,40 +37,5 @@ public class WowApiController {
         return Response
                 .ok(token)
                 .build();
-    }
-
-    @GET
-    @Path("/login/{session_token}")
-    @Produces(APPLICATION_JSON)
-    public Response startBattleNetOAuthLoginFlow(@NotNull @PathParam("session_token") String sessionToken) throws Exception {
-        return Response.seeOther(battleNetAuthClient.getAuthorizationCode(sessionToken)).build();
-    }
-
-    @GET
-    @Path("/callback")
-    @Produces(APPLICATION_JSON)
-    public TemplateInstance callback(@NotNull @QueryParam("code") String code, @NotNull @QueryParam("session_token") String sessionToken) throws Exception {
-        try {
-            var token = SessionToken.get(sessionToken);
-            if (!token.isValid()) {
-                return error.data("login.errorCode", "403", "login.errorMessage", "Invalid token!");
-            }
-
-            var authorizationCode = battleNetAuthClient.getLogin(code, token.getToken());
-            WoWProfileQuery query = WoWProfileQuery.of(authorizationCode);
-            var result = bus.handle(query);
-            commandBus.handle(RegisterNewPlayerCommand.of(result, token.getUser()));
-
-            var characters = result.getWowAccounts().stream()
-                    .flatMap(x -> x.getCharacters().stream())
-                    .collect(Collectors.toList());
-
-            return success
-                    .data("name", token.getUser().getUserData().username())
-                    .data("characters", characters)
-                    .data("userid", token.getUser().getId().asString());
-        } catch (InvalidTokenException e) {
-            return error.data("login.errorCode", "401", "login.errorMessage", "Invalid token!");
-        }
     }
 }

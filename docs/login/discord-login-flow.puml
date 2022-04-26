@@ -12,5 +12,5 @@ bot -> user: login.html
 user -> bot: /login?session_token={session_token}
 bot -> bnet: /oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope=openid&response_type=code&response_mode=query&prompt=login
 bnet -> bot: /callback?code={authorization_code}
-bot -> user: /me
+bot -> user: /user
 @enduml

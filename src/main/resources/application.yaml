@@ -15,4 +15,6 @@ quarkus:
       secret: ${application.wow-api.client-secret}
     authentication:
       error-path: /error
+      scopes:
+        - 'wow.profile'
     application-type: web-app
