@@ -1,47 +1,71 @@
 <style>
-    html,
-    body {
-        height: 100%;
-        background-image: url("https://cdna.artstation.com/p/assets/images/images/012/060/904/large/fain-xel-whtiemane-nonwter.jpg");
-    }
-
-    .form-signin {
-        width: 100%;
-        max-width: 330px;
-        min-height: 200px;
-        min-width: 150px;
-        padding: 15px;
-        margin: auto;
-        border: lightgray solid 1px;
-        background-color: #dedede;
-        margin-top: 10rem!important;
-    }
-
     .una-logo {
         border-radius: 50%;
+        max-width: 175px;
+        height: auto;
     }
+
+    .login-image-container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-image {
+        height: 100%;
+        position: absolute;
+        top: -9999px;
+        bottom: -9999px;
+        left: -9999px;
+        right: -9999px;
+        margin: auto;
+    }
+
+
 </style>
-<script>
-    function getAuthorization() {
-        window.location.href='{baseLoginUrl}?client_id={client_id}&redirect_uri={redirect_uri}&scope=openid&response_type=code&response_mode=query&prompt=login';
-    }
-</script>
+
 {#include base}
 {#title}Una Familia - Login{/title}
-{#body}
-<main class="text-center form-signin bg-opacity-75">
-    <form>
-        <img class="una-logo"
-             src="https://render.worldofwarcraft.com/eu/guild/crest/98/emblem-98-dfa55a-232323.jpg"
-             alt
-             width="72"
-             height="72">
-        <h1 class="h2 mb-3 fw-bold">Una Familia</h1>
-        <h2 class="h4 mb-3 fw-normal">Sign in</h2>
-        <button class="w-100 btn btn-lg btn-primary" onclick="getAuthorization()" type="button">
-            Login with Battle.net
-        </button>
-    </form>
-</main>
-{/body}
+{#content}
+    <main class="container-fluid p-0">
+        <div class="row h-100 mw-100 m-0">
+            <div class="col-sm-4 text-black mt-auto mb-auto">
+
+                <div class="px-5 mt-5 ms-xl-4 d-flex justify-content-center">
+                    <img class="una-logo"
+                         src="https://render.worldofwarcraft.com/eu/guild/crest/98/emblem-98-dfa55a-232323.jpg"
+                         alt="Una Familia Logo"
+                    >
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
+
+                    <form style="width: 23rem;">
+
+                        <h3 class="d-flex justify-content-center fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign in!</h3>
+
+                        <div class="pt-1 mb-4">
+                            <button class="w-100 btn btn-lg btn-primary" onclick="getAuthorization()" type="button">
+                            Login with Battle.net
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+            <div class="col-sm-8 px-0 d-none d-sm-block login-image-container">
+                <img src="https://cdna.artstation.com/p/assets/images/images/012/060/904/large/fain-xel-whtiemane-nonwter.jpg"
+                     alt="Login image" class="login-image">
+            </div>
+        </div>
+    </main>
+{/content}
+{#scripts}
+    <script>
+        function getAuthorization() {
+            window.location.href='{baseLoginUrl}?client_id={client_id}&redirect_uri={redirect_uri}&scope=openid&response_type=code&response_mode=query&prompt=login';
+        }
+    </script>
+{/scripts}
 {/include}
