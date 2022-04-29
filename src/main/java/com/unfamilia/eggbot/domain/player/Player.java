@@ -6,18 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.MapsId;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Entity
@@ -28,6 +19,8 @@ import java.util.stream.Collectors;
 public class Player extends PanacheEntityBase {
     @Id
     private Long id;
+    private Long discordUserId;
+    private String battleTag;
 
     @OneToMany(
             cascade = CascadeType.ALL,
@@ -50,6 +43,29 @@ public class Player extends PanacheEntityBase {
                 .findFirst()
                 .ifPresent(character -> this.mainCharacter = character);
         return this;
+    }
+
+    public Player setBattleTag(String battleTag) {
+        this.battleTag = battleTag;
+        return this;
+    }
+
+    public Player setDiscordUserId(Long id) {
+        this.discordUserId = id;
+        return this;
+    }
+
+    public Player setRoles(List<Role> roles) {
+        this.role = roles;
+        return this;
+    }
+
+    public boolean hasLinkedWithDiscord() {
+        return this.discordUserId != null;
+    }
+
+    public static Optional<Player> findByDiscordUserId(Long discordUserId) {
+        return Optional.ofNullable(Player.<Player>find("discordUserId", discordUserId).firstResult());
     }
 
     public static List<Player> findByRole(Role role) {

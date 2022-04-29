@@ -44,7 +44,7 @@ abstract class DiscordCommandHandler implements EventHandler {
 
     @Transactional
     protected boolean isUserRegistered(Long userId) {
-        return Player.findByIdOptional(userId).isPresent();
+        return Player.findByDiscordUserId(userId).isPresent();
     }
 
     protected Mono registerResponse(User user, ChatInputInteractionEvent command) {

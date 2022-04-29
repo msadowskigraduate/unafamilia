@@ -1,7 +1,9 @@
-package com.unfamilia.eggbot.domain.player;
+package com.unfamilia.eggbot.domain.player.handler;
 
 import com.unfamilia.application.command.Command;
 import com.unfamilia.application.command.CommandHandler;
+import com.unfamilia.eggbot.domain.player.Player;
+import com.unfamilia.eggbot.domain.player.command.MakeMainCommand;
 import lombok.RequiredArgsConstructor;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -21,7 +23,7 @@ public class MakeMainCommandHandler implements CommandHandler {
     @Transactional
     public void handle(Command command) {
         MakeMainCommand makeMain = (MakeMainCommand) command;
-        Optional<Player> optionalPlayer = Player.findByIdOptional(makeMain.getUser().getId().asLong());
+        Optional<Player> optionalPlayer = Player.findByDiscordUserId(makeMain.getUser().getId().asLong());
         if(optionalPlayer.isEmpty()) {
             throw new NotFoundException("No user with Id: " + makeMain.getUser().getId().asLong() + " was found!");
         }

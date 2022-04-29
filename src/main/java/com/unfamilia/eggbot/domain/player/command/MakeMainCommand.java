@@ -1,4 +1,4 @@
-package com.unfamilia.eggbot.domain.player;
+package com.unfamilia.eggbot.domain.player.command;
 
 import com.unfamilia.application.command.Command;
 import discord4j.core.object.entity.User;

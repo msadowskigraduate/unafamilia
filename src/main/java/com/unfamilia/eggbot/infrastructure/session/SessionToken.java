@@ -1,7 +1,6 @@
 package com.unfamilia.eggbot.infrastructure.session;
 
 import discord4j.core.object.entity.Member;
-import discord4j.core.object.entity.User;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -9,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.unfamilia.eggbot.infrastructure.session.SessionToken.NullSessionToken.nullToken;
 
 @Getter
 public class SessionToken {
@@ -36,7 +37,23 @@ public class SessionToken {
     }
 
     public static SessionToken get(String token) {
+        if(token == null) return NullSessionToken.nullToken();
         return Optional.ofNullable(cache.get(token))
                 .orElseThrow(InvalidTokenException::new);
+    }
+
+    public static class NullSessionToken extends SessionToken {
+        private NullSessionToken() {
+            super(null, null, null);
+        }
+
+        @Override
+        public boolean isValid() {
+            return false;
+        }
+
+        protected static SessionToken nullToken() {
+            return new NullSessionToken();
+        }
     }
 }

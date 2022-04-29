@@ -13,7 +13,7 @@
     <li><a href="#" class="nav-link px-2 text-white">Welcome {name}!</a></li>
 </ul>
 {/navbar}
-{#body}
+{#content}
 <div class="container-fluid">
     <section class="py-5 text-center container">
         <div class="row py-lg-5">
@@ -22,6 +22,17 @@
             </div>
         </div>
     </section>
+    {#if isDiscordUser}
+    <section class="py-4 text-center container">
+        <div class="row py-lg-5">
+            {#for role in roles}
+                <span class="label label-primary">{role}</span>
+            {/for}
+        </div>
+    </section>
+    {#else}
+
+    {/if}
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         {#for character in characters}
         <div class="col">
@@ -88,5 +99,5 @@
         {/for}
     </div>
 </div>
-{/body}
+{/content}
 {/include}

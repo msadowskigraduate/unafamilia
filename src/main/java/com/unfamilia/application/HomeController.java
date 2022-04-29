@@ -1,5 +1,9 @@
 package com.unfamilia.application;
 
+import com.unfamilia.application.command.CommandBus;
+import com.unfamilia.eggbot.domain.player.Player;
+import com.unfamilia.eggbot.domain.player.command.RegisterNewPlayerCommand;
+import com.unfamilia.eggbot.domain.player.command.RegisterNewPlayerFromDiscordCommand;
 import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import io.quarkus.oidc.AccessTokenCredential;
@@ -12,15 +16,13 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -28,12 +30,14 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 @Path("/")
 public class HomeController {
     private final String DEFAULT_REDIRECT_PAGE = "/user";
+
     @Inject
     Template base;
     @Inject
     Template login;
     @Inject
     Template error;
+
     @Inject
     ApplicationConfigProvider configProvider;
 
@@ -42,14 +46,15 @@ public class HomeController {
     JsonWebToken idToken;
     @Inject
     AccessTokenCredential accessToken;
-
     @Inject
     RefreshToken refreshToken;
 
+    @Inject
+    CommandBus commandBus;
+
     @GET
-    @Authenticated
-    public TemplateInstance getHome() {
-        return base.instance();
+    public Response getHome() {
+        return Response.seeOther(URI.create("/login")).build();
     }
 
     @GET
@@ -60,8 +65,27 @@ public class HomeController {
 
     @GET
     @Path("login")
-    public TemplateInstance login(@QueryParam("session_token") String sessionToken,
-                                  @QueryParam("redirect_uri") String redirectUri) {
+    public Response login(@QueryParam("session_token") String sessionToken,
+                          @QueryParam("redirect_uri") String redirectUri) {
+        var sessionToken1 = SessionToken.get(sessionToken);
+
+        if(idToken.getSubject() != null && !sessionToken1.isValid()) {
+            return Response.seeOther(UriBuilder.fromUri("/user").build()).build();
+        }
+
+        if (idToken.getSubject() != null && sessionToken1.isValid()) {
+            this.commandBus.handle(RegisterNewPlayerFromDiscordCommand.of(
+                    accessToken.getToken(),
+                    sessionToken1,
+                    this.idToken.<String>getClaim("battle_tag"),
+                    Long.valueOf(idToken.getSubject())
+                )
+            );
+            return Response
+                    .seeOther(URI.create(redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri))
+                    .build();
+        }
+
         UriBuilder redirectUriBuilder = UriBuilder.fromUri("http://localhost:9000/callback")
                 .queryParam("redirect_uri", redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri);
 
@@ -69,25 +93,33 @@ public class HomeController {
             redirectUriBuilder.queryParam("session_token", sessionToken);
         }
 
-        return login
-                .data("baseLoginUrl", "https://eu.battle.net/oauth/authorize")
-                .data("client_id", configProvider.wowApi().clientId())
-                .data("redirect_uri", redirectUriBuilder.build());
+        return Response
+                .ok(login
+                        .data("baseLoginUrl", "https://eu.battle.net/oauth/authorize")
+                        .data("client_id", configProvider.wowApi().clientId())
+                        .data("redirect_uri", URLEncoder.encode(redirectUriBuilder.toTemplate(), StandardCharsets.UTF_8))
+                        .render())
+                .build();
     }
 
     @GET
     @Path("callback")
     @Produces(APPLICATION_JSON)
+    @Authenticated
     public Response callback(
             @NotNull @QueryParam("code") String authorizationCode,
             @QueryParam("session_token") String sessionToken,
             @NotNull @QueryParam("redirect_uri") String redirectUri) {
         try {
-            if (sessionToken != null && !SessionToken.get(sessionToken).isValid()) {
-                TemplateInstance template = error.data("login.errorCode", "403", "login.errorMessage", "Invalid token!");
-                return Response.status(Response.Status.FORBIDDEN).entity(template.render()).build();
+            var sessionToken1 = SessionToken.get(sessionToken);
+            var wowProfileId = Long.valueOf(this.idToken.getClaim("sub"));
+            var battleTag = this.idToken.<String>getClaim("battle_tag");
+            this.commandBus.handle(
+                    sessionToken1.isValid() ?
+                            RegisterNewPlayerFromDiscordCommand.of(accessToken.getToken(), sessionToken1, battleTag, wowProfileId) :
+                            RegisterNewPlayerCommand.of(accessToken.getToken(), battleTag, wowProfileId)
+            );
 
-            }
 
             return Response
                     .seeOther(URI.create(URLDecoder.decode(redirectUri, StandardCharsets.UTF_8)))

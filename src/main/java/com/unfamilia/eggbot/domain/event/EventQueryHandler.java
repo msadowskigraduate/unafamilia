@@ -30,7 +30,7 @@ public class EventQueryHandler implements QueryHandler<Event, EventQuery> {
     public Event handle(EventQuery query) {
         var role = Role.<Role>find("name", query.getRole()).firstResult();
         var players = Player.findByRole(role);
-        var organizer = Player.<Player>findById(query.getOrganizer().getId().asLong());
+        var organizer = Player.findByDiscordUserId(query.getOrganizer().getId().asLong()).get();
         var characters = players.stream()
                 .map(Player::getMainCharacter)
                 .collect(Collectors.toList());

@@ -21,7 +21,7 @@ public class NotifyUsersTimer extends TimerTask {
     @Override
     public void run() {
         players.stream()
-                .map(player -> client.getUserById(Snowflake.of(player.getId())))
+                .map(player -> client.getUserById(Snowflake.of(player.getDiscordUserId())))
                 .map(Mono::block).filter(Objects::nonNull)
                 .map(User::getPrivateChannel)
                 .map(Mono::block).filter(Objects::nonNull)

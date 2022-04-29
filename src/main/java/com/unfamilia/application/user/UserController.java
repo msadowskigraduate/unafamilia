@@ -1,14 +1,14 @@
 package com.unfamilia.application.user;
 
 import com.unfamilia.application.command.CommandBus;
-import com.unfamilia.eggbot.domain.player.MakeMainCommand;
-import com.unfamilia.eggbot.infrastructure.wowapi.WoWGameDataClient;
+import com.unfamilia.eggbot.domain.player.Player;
+import com.unfamilia.eggbot.domain.player.Role;
+import com.unfamilia.eggbot.domain.player.command.MakeMainCommand;
 import com.unfamilia.eggbot.infrastructure.wowapi.WoWProfileApiClient;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.oidc.IdToken;
-import io.quarkus.oidc.IdTokenCredential;
 import io.quarkus.qute.Template;
 import io.quarkus.security.Authenticated;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +16,11 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-
-import java.util.stream.Collectors;
+import java.net.URI;
 
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
@@ -54,7 +54,14 @@ public class UserController {
     @GET
     @NoCache
     @Authenticated
+    @Transactional
     public Response getPlayerInfo() {
+        var player = Player.<Player>findById(Long.valueOf(idToken.getClaim("sub")));
+
+        if(player == null) {
+            return Response.seeOther(URI.create("/callback?redirect_uri=/user")).build();
+        }
+
         try {
             var profileData = woWProfileApiClient.queryWowProfile(accessTokenCredential.getToken());
             var characters = profileData.getWowAccounts().stream()
@@ -67,6 +74,8 @@ public class UserController {
                                     .data("authCode", accessTokenCredential.getToken())
                                     .data("characters", characters)
                                     .data("userid", idToken.claim("sub"))
+                                    .data("isDiscordUser", player.hasLinkedWithDiscord())
+                                    .data("roles", player.getRole().stream().map(Role::getName).collect(toList()))
                     )
                     .header(HttpHeaders.SET_COOKIE, "authorization_code=" + accessTokenCredential.getToken() + "; HttpOnly")
                     .build();
