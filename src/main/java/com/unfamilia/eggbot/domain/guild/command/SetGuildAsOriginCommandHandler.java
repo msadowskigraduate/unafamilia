@@ -28,6 +28,6 @@ public class SetGuildAsOriginCommandHandler implements CommandHandler {
 
         Guild guild = (Guild) entityBase.get();
         guild.setIsOriginGuild(true);
-        guild.persistAndFlush();
+        guild.persist();
     }
 }

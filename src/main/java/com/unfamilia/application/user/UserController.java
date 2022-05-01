@@ -1,9 +1,11 @@
 package com.unfamilia.application.user;
 
 import com.unfamilia.application.command.CommandBus;
+import com.unfamilia.application.user.model.User;
 import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.domain.player.Role;
 import com.unfamilia.eggbot.domain.player.command.MakeMainCommand;
+import com.unfamilia.eggbot.domain.raidpackage.Order;
 import com.unfamilia.eggbot.infrastructure.wowapi.WoWProfileApiClient;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
@@ -63,19 +65,14 @@ public class UserController {
         }
 
         try {
-            var profileData = woWProfileApiClient.queryWowProfile(accessTokenCredential.getToken());
-            var characters = profileData.getWowAccounts().stream()
-                    .flatMap(x -> x.getCharacters().stream())
-                    .collect(toList());
+            var orders = Order.findAllOrdersForDiscordUser(player.getDiscordUserId());
             return Response.ok(
                             user
-                                    .data("name", idToken.getClaim("battle_tag"))
                                     .data("jwt", idToken.getRawToken())
                                     .data("authCode", accessTokenCredential.getToken())
-                                    .data("characters", characters)
-                                    .data("userid", idToken.claim("sub"))
-                                    .data("isDiscordUser", player.hasLinkedWithDiscord())
-                                    .data("roles", player.getRole().stream().map(Role::getName).collect(toList()))
+                                    .data("user", User.from(player))
+                                    .data("orders", orders)
+                                    .render()
                     )
                     .header(HttpHeaders.SET_COOKIE, "authorization_code=" + accessTokenCredential.getToken() + "; HttpOnly")
                     .build();

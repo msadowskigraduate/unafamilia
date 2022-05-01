@@ -35,8 +35,7 @@ public class RegisterNewPlayerCommandHandler extends CommonRegisterNewPlayerComm
                     null,
                     null
             );
-            player.persistAndFlush();
+            player.persist();
         }
     }
-
 }

@@ -32,7 +32,7 @@ public class MakeMainCommandHandler implements CommandHandler {
                 .stream()
                 .filter(character -> character.getId().equals(makeMain.getCharacterId()))
                 .findAny()
-                .ifPresentOrElse(character -> optionalPlayer.get().setMainCharacter(character.getId()).persistAndFlush(),
+                .ifPresentOrElse(character -> optionalPlayer.get().setMainCharacter(character.getId()).persist(),
                         () -> handleCharacterNotTiedToPlayer(makeMain.getCharacterId()));
     }
 

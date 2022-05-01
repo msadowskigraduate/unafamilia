@@ -62,11 +62,10 @@ public class AddNewItemCommandHandler extends DiscordCommandHandler {
         Log.info("newItemCommand created: " + newItemCommand);
         // Emit this command onto the command bus
         commandBus.handle(newItemCommand);
-        return Mono.empty();
+        return slashCommand.reply("Item: " + id + " has been added.");
     }
 
     @Override
-    @Transactional
     public ApplicationCommandRequest build() {
         return ApplicationCommandRequest.builder()
                 .name(getCommand())

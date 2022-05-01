@@ -33,6 +33,7 @@ public class Item extends PanacheEntityBase {
 
     @Column(name = "max_amount")
     private Integer maxAmount;
+    private String media;
 
     public void setItemSubclass(ItemSubclass itemSubclass) {
         this.itemSubclass = itemSubclass;
@@ -40,6 +41,10 @@ public class Item extends PanacheEntityBase {
 
     public ItemSubclass getItemSubclass() {
         return itemSubclass;
+    }
+
+    public String getMedia() {
+        return this.media;
     }
 
     public static Item findByName(String slug) {

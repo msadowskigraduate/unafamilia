@@ -57,7 +57,8 @@ public class NewItemCommandHandler implements CommandHandler {
                 subclass,
                 0.0,
                 newItemCommand.getSlug(),
-                newItemCommand.getMaxAmount()
+                newItemCommand.getMaxAmount(),
+                wowItem.getMediaLink()
         );
 
         item.persist();

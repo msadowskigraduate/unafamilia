@@ -7,36 +7,56 @@
 </script>
 {/scripts}
 
-{#title}Una Familia - Welcome {name}! {/title}
-{#navbar}
-<ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-    <li><a href="#" class="nav-link px-2 text-white">Welcome {name}!</a></li>
-</ul>
-{/navbar}
-{#content}
-<div class="container-fluid">
-    <section class="py-5 text-center container">
-        <div class="row py-lg-5">
-            <div class="col-lg-6 col-md-8 mx-auto">
-                <h3 class="fw-light">{name}, choose your main character</h3>
+    {#title}Una Familia - Welcome {user.name}! {/title}
+
+    {#navbar}
+        <div class="text-end">
+        <div class="d-block text-decoration-none">Welcome {user.name}!
+        <img src="https://render.worldofwarcraft.com/shadow/avatar/1-1.jpg" width="32" height="32"
+             class="rounded-circle" alt="pic">
+        </div>
+        </div>
+    {/navbar}
+
+    {#alert}
+        {#if ! user.isDiscordUser}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Zug Zug! Connect your Discord account with Una Familia Account! In Discord type /link and follow the
+                link presented.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {/if}
+    {/alert}
+
+    {#content}
+    <div class="container-fluid">
+        <div class="row container-fluid">
+            <div class="col py-5 text-center container">
+
+            </div>
+
+            <div class="col">
+                {#if user.isDiscordUser}
+                    <div class="py-4 text-center container">
+                    <div class="row py-lg-5">
+                    {#for role in user.roles}
+                        <h2><span class="badge bg-secondary">{role}</span></h2>
+                    {/for}
+                    </div>
+                    </div>
+                {/if}
             </div>
         </div>
-    </section>
-    {#if isDiscordUser}
-    <section class="py-4 text-center container">
-        <div class="row py-lg-5">
-            {#for role in roles}
-                <span class="label label-primary">{role}</span>
-            {/for}
-        </div>
-    </section>
-    {#else}
 
-    {/if}
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        {#for character in characters}
-        <div class="col">
-            <div class="card shadow-sm bg-secondary text-white" id="{character.id}" style="width: 18rem;">
+        {#if user.isARaider && !user.hasAMainCharacter}
+        <div class="row">
+            <div class="py-lg-5">
+                <h3 class="fw-light">{user.name}, choose your main character</h3>
+            </div>
+        </div>
+        <div class="row-3 g-3 container-fluid d-flex flex-wrap">
+            {#for character in user.characters}
+                <div class="card shadow-sm bg-secondary text-white" id="{character.id}" style="width: 18rem;">
                 <script>
                     fetch('https://raider.io/api/v1/characters/profile?region=eu&realm={character.realm.slug}&name={character.name}&fields=gear%2C%20mythic_plus_scores_by_season')
                         .then(function (response) {
@@ -86,18 +106,18 @@
                         }).catch(console.error);
                 </script>
                 <div class="card-body">
-                    <div class="card-header">{character.name}</div>
-                    <h5 class="card-title">Level {character.level} {character.playableClass.name}</h5>
-                    <div class="container">
-                        <div class="row" id="{character.id}-left"></div>
-                        <div class="row" id="{character.id}-right"></div>
-                    </div>
-                    <a href="/player/{userid}/{character.id}" methods="POST" class="btn btn-primary">Make main</a>
+                <div class="card-header">{character.name}</div>
+                <h5 class="card-title">Level {character.level} {character.playableClass.name}</h5>
+                <div class="container">
+                    <div class="row" id="{character.id}-left"></div>
+                    <div class="row" id="{character.id}-right"></div>
                 </div>
+                <a href="/player/{user.userid}/{character.id}" methods="POST" class="btn btn-primary">Make main</a>
+                </div>
+                </div>
+            {/for}
             </div>
+            {/if}
         </div>
-        {/for}
-    </div>
-</div>
-{/content}
+    {/content}
 {/include}

@@ -34,6 +34,6 @@ public class AddNewGuildCommandHandler implements CommandHandler {
                 ((AddNewGuildCommand) command).getRoles().stream()
                         .map(role -> Role.of(role.getId().asLong(), role.getName()))
                         .collect(Collectors.toList())
-        ).persistAndFlush();
+        ).persist();
     }
 }

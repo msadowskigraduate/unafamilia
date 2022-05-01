@@ -1,16 +1,11 @@
 package com.unfamilia.eggbot.domain.raidpackage;
 
-
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.Instant;
@@ -47,5 +42,10 @@ public class Order extends PanacheEntity {
         order.setOrderDateTime(orderDateTime);
         order.setOrderItems(orderItems);
         return order;
+    }
+
+    public static List<Order> findAllOrdersForDiscordUser(Long orderUserId) {
+        if(orderUserId == null) return null;
+        return find("orderUserId", orderUserId).list();
     }
 }

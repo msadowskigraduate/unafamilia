@@ -59,13 +59,13 @@ public class RegisterNewPlayerFromDiscordCommandHandler extends CommonRegisterNe
                 null,
                 roles
         );
-        player.persistAndFlush();
+        player.persist();
     }
 
     private void updatePlayerInformation(Player player, Long discordUserId, List<Role> roleList) {
         player
                 .setDiscordUserId(discordUserId)
                 .setRoles(roleList)
-                .persistAndFlush();
+                .persist();
     }
 }

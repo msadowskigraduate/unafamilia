@@ -16,7 +16,6 @@ import javax.transaction.Transactional;
 @ApplicationScoped
 @RequiredArgsConstructor
 public class NewPlayerCommandHandler extends DiscordCommandHandler {
-    private final ApplicationConfigProvider configProvider;
     @Override
     ApplicationCommandRequest build() {
         return ApplicationCommandRequest.builder()
