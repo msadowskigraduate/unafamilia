@@ -1,6 +1,7 @@
 package com.unfamilia.eggbot.domain.raidpackage;
 
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +22,7 @@ import java.util.List;
 @Setter
 @Table(name = "raid_package_order")
 @NoArgsConstructor
-public class Order extends PanacheEntityBase {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Order extends PanacheEntity {
     private Long orderMessageId;
     private Long orderUserId;
     private Boolean orderFulfilled;
@@ -32,7 +30,7 @@ public class Order extends PanacheEntityBase {
     private Instant orderDateTime;
 
     @OneToMany
-    private List<Item> orderItems = new ArrayList<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     public static Order of(
             Long orderMessageId,
@@ -40,14 +38,14 @@ public class Order extends PanacheEntityBase {
             Boolean orderFulfilled,
             Boolean orderPaid,
             Instant orderDateTime,
-            List<Item> items) {
+            List<OrderItem> orderItems) {
         var order = new Order();
         order.setOrderMessageId(orderMessageId);
         order.setOrderUserId(orderUserId);
         order.setOrderFulfilled(orderFulfilled);
         order.setOrderPaid(orderPaid);
         order.setOrderDateTime(orderDateTime);
-        order.setOrderItems(items);
+        order.setOrderItems(orderItems);
         return order;
     }
 }
