@@ -22,6 +22,7 @@ abstract class CommonRegisterNewPlayerCommandHandler implements CommandHandler {
                         wowCharacter.getLevel(),
                         wowCharacter.getPlayableClass().getId(),
                         wowCharacter.getPlayableClass().getName(),
+                        wowCharacter.getRealm().getSlug(),
                         wowCharacter.getFaction().getType()))
                 .collect(Collectors.toList());
     }

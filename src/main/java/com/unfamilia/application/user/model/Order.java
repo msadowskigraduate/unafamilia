@@ -19,7 +19,7 @@ public class Order {
 
     public static Order from(com.unfamilia.eggbot.domain.raidpackage.Order order) {
         return Order.builder()
-                .id(order.getId())
+                .id(order.id)
                 .isPaid(order.getOrderPaid())
                 .isFulfilled(order.getOrderFulfilled())
                 .orderItems(order.getOrderItems().stream()

@@ -27,6 +27,7 @@ public class Character extends PanacheEntityBase {
     private Long level;
     private Long characterClass;
     private String characterClassName;
+    private String realm;
     @Enumerated
     private com.unfamilia.eggbot.infrastructure.wowapi.model.Character.Faction.Type faction;
 }

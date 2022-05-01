@@ -58,7 +58,7 @@
             {#for character in user.characters}
                 <div class="card shadow-sm bg-secondary text-white" id="{character.id}" style="width: 18rem;">
                 <script>
-                    fetch('https://raider.io/api/v1/characters/profile?region=eu&realm={character.realm.slug}&name={character.name}&fields=gear%2C%20mythic_plus_scores_by_season')
+                    fetch('https://raider.io/api/v1/characters/profile?region=eu&realm={character.realm}&name={character.name}&fields=gear%2C%20mythic_plus_scores_by_season')
                         .then(function (response) {
                             return response.json()
                         })
@@ -112,7 +112,7 @@
                     <div class="row" id="{character.id}-left"></div>
                     <div class="row" id="{character.id}-right"></div>
                 </div>
-                <a href="/player/{user.userid}/{character.id}" methods="POST" class="btn btn-primary">Make main</a>
+                <a href="/player/{user.userId}/{character.id}" methods="POST" class="btn btn-primary">Make main</a>
                 </div>
                 </div>
             {/for}

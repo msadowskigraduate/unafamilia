@@ -60,7 +60,6 @@ public class NewItemCommandHandler implements CommandHandler {
                 newItemCommand.getMaxAmount(),
                 wowItem.getMediaLink()
         );
-
         item.persist();
     }
 }
