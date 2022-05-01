@@ -1,6 +1,7 @@
 package com.unfamilia.eggbot.domain.raidpackage.command;
 
 import com.unfamilia.application.command.Command;
+import com.unfamilia.eggbot.domain.raidpackage.OrderItem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

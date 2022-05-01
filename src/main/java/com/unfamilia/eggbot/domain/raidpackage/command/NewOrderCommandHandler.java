@@ -4,6 +4,7 @@ import com.unfamilia.application.command.Command;
 import com.unfamilia.application.command.CommandHandler;
 import com.unfamilia.eggbot.domain.raidpackage.Item;
 import com.unfamilia.eggbot.domain.raidpackage.Order;
+import com.unfamilia.eggbot.domain.raidpackage.OrderItem;
 import lombok.RequiredArgsConstructor;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -25,15 +26,21 @@ public class NewOrderCommandHandler implements CommandHandler {
     public void handle(Command command) {
         var newOrderCommand = (NewOrderCommand) command;
 
+        var orderItemsList = newOrderCommand.getOrderedItems().stream()
+                        .map(orderedItem -> OrderItem.of(
+                                Item.findByName(orderedItem.getItemName()),
+                                orderedItem.getQuantity()
+                        ))
+                .peek(orderItem -> orderItem.persist())
+                .collect(Collectors.toList());
+
         Order.of(
                 newOrderCommand.getOrderMessageId(),
                 newOrderCommand.getOrderingUserId(),
                 false,
                 false,
                 Instant.now(),
-                newOrderCommand.getOrderedItems().stream()
-                        .map(item -> Item.findByName(item.getItemName()))
-                        .collect(Collectors.toList())
-        ).persistAndFlush();
+                orderItemsList
+        ).persist();
     }
 }
