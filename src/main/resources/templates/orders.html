@@ -1,7 +1,20 @@
 <div class="col-6">
-    <ul class="list-group">
+    {#if orders != null && !orders.isEmpty}
+        <div class="list-group">
         {#for order in orders}
-            <li class="list-group-item p-3">{order.id}</li>
+            <div class="list-group-item p-3">
+                <h4>Order: {order.id} from {order.date}</h4>
+                <div class="list-group">
+                    {#for item in order.orderItems}
+                        <div class="list-group-item p3">
+                            {item.quantity}x <a href="https://www.wowhead.com/item={item.id}" class="q3 col">[{item.name}]</a>
+                        </div>
+                    {/for}
+                </div>
+            </div>
         {/for}
-    </ul>
+        </div>
+        {#else}
+        No orders!
+    {/if}
 </div>

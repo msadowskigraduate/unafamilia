@@ -70,7 +70,7 @@ public class HomeController {
         var sessionToken1 = SessionToken.get(sessionToken);
 
         if(idToken.getSubject() != null && !sessionToken1.isValid()) {
-            return Response.seeOther(UriBuilder.fromUri(DEFAULT_REDIRECT_PAGE).build()).build();
+            return Response.seeOther(UriBuilder.fromUri("/callback").build()).build();
         }
 
         if (idToken.getSubject() != null && sessionToken1.isValid()) {

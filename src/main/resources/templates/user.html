@@ -32,7 +32,8 @@
     <div class="container-fluid">
         <div class="row container-fluid">
             <div class="col py-5 text-center container">
-
+                {#include orders}
+                {/include}
             </div>
 
             <div class="col">
@@ -107,7 +108,7 @@
                 </script>
                 <div class="card-body">
                 <div class="card-header">{character.name}</div>
-                <h5 class="card-title">Level {character.level} {character.playableClass.name}</h5>
+                <h5 class="card-title">Level {character.level} {character.characterClassName}</h5>
                 <div class="container">
                     <div class="row" id="{character.id}-left"></div>
                     <div class="row" id="{character.id}-right"></div>

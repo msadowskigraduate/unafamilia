@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Table(name = "player")
 @Getter
@@ -24,7 +26,8 @@ public class Player extends PanacheEntityBase {
 
     @OneToMany(
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = EAGER
     )
     private List<Character> characters;
 

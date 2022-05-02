@@ -3,15 +3,14 @@ package com.unfamilia.application.user;
 import com.unfamilia.application.command.CommandBus;
 import com.unfamilia.application.user.model.User;
 import com.unfamilia.eggbot.domain.player.Player;
-import com.unfamilia.eggbot.domain.player.Role;
 import com.unfamilia.eggbot.domain.player.command.MakeMainCommand;
 import com.unfamilia.eggbot.domain.raidpackage.Order;
-import com.unfamilia.eggbot.infrastructure.wowapi.WoWProfileApiClient;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.oidc.IdToken;
-import io.quarkus.qute.Template;
+import io.quarkus.qute.CheckedTemplate;
+import io.quarkus.qute.TemplateInstance;
 import io.quarkus.security.Authenticated;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -23,6 +22,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
@@ -33,8 +34,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 public class UserController {
     private final CommandBus commandBus;
     private final GatewayDiscordClient discordClient;
-    private final WoWProfileApiClient woWProfileApiClient;
-    @Inject Template user;
+    //    @Inject Template user;
 
     @Inject @IdToken JsonWebToken idToken;
     @Inject AccessTokenCredential accessTokenCredential;
@@ -61,23 +61,34 @@ public class UserController {
         var player = Player.<Player>findById(Long.valueOf(idToken.getClaim("sub")));
 
         if(player == null) {
-            return Response.seeOther(URI.create("/callback?redirect_uri=/user")).build();
+            return Response.seeOther(URI.create("/login?redirect_uri=/user")).build();
         }
 
         try {
-            var orders = Order.findAllOrdersForDiscordUser(player.getDiscordUserId());
+            var orders = Optional.of(Order.findAllOrdersForDiscordUser(player.getDiscordUserId()))
+                    .map(orders1 -> orders1.stream()
+                            .map(com.unfamilia.application.user.model.Order::from)
+                            .collect(toList())
+                    )
+                    .orElse(null);
             return Response.ok(
-                            user
-                                    .data("jwt", idToken.getRawToken())
-                                    .data("authCode", accessTokenCredential.getToken())
-                                    .data("user", User.from(player))
-                                    .data("orders", orders)
-                                    .render()
+                    Templates.user(idToken.getRawToken(), accessTokenCredential.getToken(), User.from(player), orders)
+//                            user
+//                                    .data("jwt", idToken.getRawToken())
+//                                    .data("authCode", accessTokenCredential.getToken())
+//                                    .data("user", User.from(player))
+//                                    .data("orders", orders)
+//                                    .render()
                     )
                     .header(HttpHeaders.SET_COOKIE, "authorization_code=" + accessTokenCredential.getToken() + "; HttpOnly")
                     .build();
         } catch (WebApplicationException e) {
             return e.getResponse();
         }
+    }
+
+    @CheckedTemplate(basePath = "")
+    public static class Templates {
+        public static native TemplateInstance user(String jwt, String authCode, User user, List<com.unfamilia.application.user.model.Order> orders);
     }
 }
