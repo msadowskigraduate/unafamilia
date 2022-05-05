@@ -19,7 +19,7 @@
     {/navbar}
 
     {#alert}
-        {#if ! user.isDiscordUser}
+        {#if !user.isDiscordUser}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 Zug Zug! Connect your Discord account with Una Familia Account! In Discord type /link and follow the
                 link presented.
@@ -30,20 +30,30 @@
 
     {#content}
     <div class="container-fluid">
-        <div class="row container-fluid">
-            <div class="col py-5 text-center container">
-                {#include orders}
-                {/include}
+        <div class="row">
+            <div class="col-3 container">
+                <div class="row py-5 text-center container">
+                    {#include orders}{/include}
+                </div>
             </div>
-
+            <div class="col-3">
+                <div class="row py-5 text-center container">
+                    {#include events}{/include}
+                </div>
+            </div>
             <div class="col">
-                {#if user.isDiscordUser}
-                    <div class="py-4 text-center container">
-                    <div class="row py-lg-5">
-                    {#for role in user.roles}
-                        <h2><span class="badge bg-secondary">{role}</span></h2>
-                    {/for}
-                    </div>
+                {#if user.hasAMainCharacter}
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <img src="">
+                            <h5 class="card-title">{user.mainCharacter.name}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Level {user.mainCharacter.level} {user.mainCharacter.characterClassName}</h6>
+                            <div class="card-body">
+                                {#for role in user.roles}
+                                    <h4><span class="badge bg-secondary card-link">{role}</span></h4>
+                                {/for}
+                            </div>
+                        </div>
                     </div>
                 {/if}
             </div>

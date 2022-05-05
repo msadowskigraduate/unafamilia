@@ -1,20 +1,52 @@
-<div class="col-6">
+<div class="container">
+    <h2 class="row"> Orders </h2>
     {#if orders != null && !orders.isEmpty}
-        <div class="list-group">
+        <div class="list-group row-4">
         {#for order in orders}
             <div class="list-group-item p-3">
                 <h4>Order: {order.id} from {order.date}</h4>
                 <div class="list-group">
-                    {#for item in order.orderItems}
-                        <div class="list-group-item p3">
-                            {item.quantity}x <a href="https://www.wowhead.com/item={item.id}" class="q3 col">[{item.name}]</a>
-                        </div>
-                    {/for}
+                {#for item in order.orderItems}
+                        <h5>{item.quantity}x <a href="https://www.wowhead.com/item={item.id}" class="q3">[{item.name}]</a></h5>
+                {/for}
                 </div>
             </div>
         {/for}
         </div>
-        {#else}
-        No orders!
+    {#else}
+    <h3 class="row">No orders! You can order new packages either here or buy using /raidpackage command in Discord.</h3>
     {/if}
+    <button type="button" class="btn btn-primary row" data-bs-toggle="modal" data-bs-target="#newOrderModal">
+        Order Package
+    </button>
+    <div class="modal fade" id="newOrderModal" tabindex="-1" aria-labelledby="newOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newOrderModalLabel">New Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        {#for item in items}
+                        <div class="input-group-text container-fluid">
+                            <input class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox">
+                            <h3><a href="https://www.wowhead.com/item={item.id}" class="q3">[{item.name}]</a></h3>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Quantity">
+                        {/for}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onsubmit="submitOrder()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    function submitOrder(itemId, quantity) {
+        console.log("order");
+    }
+</script>
