@@ -1,22 +1,56 @@
-<div class="container">
-    <h2 class="row"> Orders </h2>
+<style>
+    span + span {
+        display: none;
+    }
+
+    .order-qty-text {
+        color: white;
+    }
+
+    .order-button {
+        background-color: gray;
+        color: white;
+        border: 1px solid #fff;
+    }
+
+    .date-text {
+        font-size: small;
+        color: white;
+    }
+
+    h6 {
+        font-size: x-small;
+    }
+</style>
+
+
+<div class="container p-0">
     {#if orders != null && !orders.isEmpty}
-        <div class="list-group row-4">
+        <ul class="list-group">
         {#for order in orders}
-            <div class="list-group-item p-3">
-                <h4>Order: {order.id} from {order.date}</h4>
-                <div class="list-group">
+            <li class="d-flex list-group-item p-1 justify-content-between mb-2" style="background-color: gray">
+
+                <ul class="d-flex list-group flex-row align-items-center">
                 {#for item in order.orderItems}
-                        <h5>{item.quantity}x <a href="https://www.wowhead.com/item={item.id}" class="q3">[{item.name}]</a></h5>
+
+                    <li class="list-group-item p-0" style="background-color: gray">
+                        <a data-wh-icon-size="medium" href="https://www.wowhead.com/item={item.id}"></a>
+                        <h6 class="order-qty-text">x{item.quantity}</h6>
+                    </li>
                 {/for}
-                </div>
-            </div>
+                <p class="date-text mx-1">{order.date} (#{order.id})</p>
+
+                </ul>
+            <button type="button" class="btn btn-warning order-button ml-auto my-auto" data-bs-toggle="modal" data-bs-target="">
+                Order Again
+            </button>
+            </li>
         {/for}
-        </div>
+        </ul>
     {#else}
     <h3 class="row">No orders! You can order new packages either here or buy using /raidpackage command in Discord.</h3>
     {/if}
-    <button type="button" class="btn btn-primary row" data-bs-toggle="modal" data-bs-target="#newOrderModal">
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#newOrderModal">
         Order Package
     </button>
     <div class="modal fade" id="newOrderModal" tabindex="-1" aria-labelledby="newOrderModalLabel" aria-hidden="true">

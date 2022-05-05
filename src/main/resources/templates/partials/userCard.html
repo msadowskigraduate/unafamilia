@@ -1,0 +1,12 @@
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <img src="">
+    <h5 class="card-title">{user.mainCharacter.name}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">Level {user.mainCharacter.level} {user.mainCharacter.characterClassName}</h6>
+    <div class="card-body">
+      {#for role in user.roles}
+        <h4><span class="badge bg-secondary card-link">{role}</span></h4>
+      {/for}
+    </div>
+  </div>
+</div>
