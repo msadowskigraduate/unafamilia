@@ -1,72 +1,83 @@
 <style>
 
-  .external-service-thumb {
-    height:24px;
-    width: 24px;
-  }
+    .external-service-thumb {
+        height: 24px;
+        width: 24px;
+    }
 
-  #card-header {
-    background-size: cover;
-    color: white;
-  }
+    #card-header {
+        background-size: cover;
+        color: white;
+    }
+
+    h6 {
+        margin: 0px;
+    }
 
 </style>
 
 <div class="card text-center" style="background-color: transparent;">
-  <div class="card-body">
-    <h6 class="card-header mb-2" id="card-header">Main Character</h6>
-    <div id="main-char-thumbnail"></div>
-    <h5 class="card-title">{user.mainCharacter.name}</h5>
-    <div class="row flex-row justify-content-around" id="links">
-      <div class="col p-0" id="rio-link">
-        <a>
-          <img class="external-service-thumb" src="https://cdnassets.raider.io/images/brand/Icon_2ColorWhite.png">
-        </a>
-      </div>
-      <div class="col p-0" id="warcraft-logs-link">
-        <a>
-          <img class="external-service-thumb" src="https://cdnassets.raider.io/assets/img/warcraftlogs-icon-1da8feba74b4d68aa3d428ab7f851275.png"/>
-        </a>
-      </div>
-      <div class="col p-0" id="wow-armory-link">
-        <a>
-          <img class="external-service-thumb" src="https://cdnassets.raider.io/assets/img/wow-icon-a718385c1d75ca9edbb3eed0a5546c30.png">
-        </a>
-      </div>
-    </div>
-    <div id="description-container"></div>
-    <div id="rio-container"></div>
-    <div id="raid-prog-container"></div>
     <div class="card-body">
-      {#for role in user.roles}
-        <h5><span class="badge bg-secondary card-link">{role}</span></h5>
-      {/for}
+        <h6 class="card-header mb-2" id="card-header">Main Character</h6>
+        <div id="main-char-thumbnail"></div>
+        <h5 class="card-title">{user.mainCharacter.name}</h5>
+        <div class="row flex-row p-2" id="links">
+            <div class="col p-0" id="rio-link">
+                <a href="https://raider.io/characters/eu/{user.mainCharacter.realm}/{user.mainCharacter.name}" target="_blank">
+                    <img class="external-service-thumb"
+                         src="https://cdnassets.raider.io/images/brand/Icon_2ColorWhite.png">
+                </a>
+            </div>
+            <div class="col p-0" id="warcraft-logs-link">
+                <a href="https://www.warcraftlogs.com/character/eu/{user.mainCharacter.realm}/{user.mainCharacter.name}" target="_blank">
+                    <img class="external-service-thumb"
+                         src="https://cdnassets.raider.io/assets/img/warcraftlogs-icon-1da8feba74b4d68aa3d428ab7f851275.png"/>
+                </a>
+            </div>
+            <div class="col p-0" id="wow-armory-link">
+                <a href="https://worldofwarcraft.com/en-gb/character/eu/{user.mainCharacter.realm}/{user.mainCharacter.name}" target="_blank">
+                    <img class="external-service-thumb"
+                         src="https://cdnassets.raider.io/assets/img/wow-icon-a718385c1d75ca9edbb3eed0a5546c30.png">
+                </a>
+            </div>
+        </div>
+        <div id="description-container"></div>
+        <div class="row">
+            <div id="rio-container" class="col badge bg-secondary m-1"></div>
+            <div id="raid-prog-container" class="col badge bg-secondary m-1"></div>
+        </div>
+        <div class="card-body">
+            {#for role in user.roles}
+                <h5><span class="badge bg-secondary card-link">{role}</span></h5>
+            {/for}
+        </div>
+        <button type="button" class="btn btn-secondary" id="change-button">Change</button>
+        <button type="button" class="btn btn-secondary" id="droptimizer-button">Droptimizer</button>
     </div>
-    <button type="button" class="btn btn-secondary" id="change-button">Change</button>
-    <button type="button" class="btn btn-secondary" id="droptimizer-button">Droptimizer</button>
-  </div>
 </div>
 
 
 <script>
-  function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 
-  fetch('https://raider.io/api/v1/characters/profile?region=eu&realm={user.mainCharacter.realm}&name={user.mainCharacter.name}&fields=raid_progression')
+    let rioScore;
 
-          .then(function (response) {
+    fetch('https://raider.io/api/v1/characters/profile?region=eu&realm={user.mainCharacter.realm}&name={user.mainCharacter.name}&fields=raid_progression')
+
+        .then(function (response) {
             return response.json()
-          })
-          .then(function (data) {
+        })
+        .then(function (data) {
             const raiderProfile = {
-              image: data['thumbnail_url'],
-              class: data['class'],
-              spec: data['active_spec_name'],
-              faction: capitalizeFirstLetter(data['faction']),
-              gender: data['gender'],
-              race: data['race'],
-              raidProgression: data['raid_progression']['sepulcher-of-the-first-ones']['summary'],
+                image: data['thumbnail_url'],
+                class: data['class'],
+                spec: data['active_spec_name'],
+                faction: capitalizeFirstLetter(data['faction']),
+                gender: data['gender'],
+                race: data['race'],
+                raidProgression: data['raid_progression']['sepulcher-of-the-first-ones']['summary'],
             };
 
             const thumbnailContainer = document.getElementById("main-char-thumbnail");
@@ -86,36 +97,36 @@
             let description = document.createElement("h6");
             description.class = "card-subtitle mb-2 text-muted";
             description.innerText = "Level " + {user.mainCharacter.level} +" " + raiderProfile.race + " "
-                    + raiderProfile.spec + " " + raiderProfile.class;
+                + raiderProfile.spec + " " + raiderProfile.class;
             descriptionContainer.appendChild(description);
 
             let difficultyIndicator = raiderProfile.raidProgression.slice(-1);
             let difficultyColor = "";
             switch (difficultyIndicator) {
-              case 'M':
-                difficultyColor = "#8c02cd"; //Mythic colour
-                break;
-              case 'H':
-                difficultyColor = "#2d2de1"; //Heroic colour
-                break;
-              case 'N':
-                difficultyColor = "#26c426"; //Normal colour
-                break;
-              default:
-                difficultyColor = "#cccccc"; //default/LFR
+                case 'M':
+                    difficultyColor = "#8c02cd"; //Mythic colour
+                    break;
+                case 'H':
+                    difficultyColor = "#2d2de1"; //Heroic colour
+                    break;
+                case 'N':
+                    difficultyColor = "#26c426"; //Normal colour
+                    break;
+                default:
+                    difficultyColor = "#cccccc"; //default/LFR
             }
 
             let bannerBackgroundImage;
 
-            switch(raiderProfile.faction) {
-              case 'Alliance':
-                bannerBackgroundImage = "url('https://cdnassets.raider.io/images/profile/masthead_backdrops/v2/alliancebanner1.jpg')";
-                break;
-              case 'Horde':
-                bannerBackgroundImage = "url('https://cdnassets.raider.io/images/profile/masthead_backdrops/v2/hordebanner1.jpg')";
-                break;
-              default:
-                break;
+            switch (raiderProfile.faction) {
+                case 'Alliance':
+                    bannerBackgroundImage = "url('https://cdnassets.raider.io/images/profile/masthead_backdrops/v2/alliancebanner1.jpg')";
+                    break;
+                case 'Horde':
+                    bannerBackgroundImage = "url('https://cdnassets.raider.io/images/profile/masthead_backdrops/v2/hordebanner1.jpg')";
+                    break;
+                default:
+                    break;
             }
 
             let cardBanner = document.getElementById("card-header");
@@ -129,25 +140,46 @@
             raidProgSpan.innerText = raiderProfile.raidProgression;
             raidProgContainer.appendChild(raidProg);
             raidProg.appendChild(raidProgSpan);
-          }).catch(console.error);
+        }).catch(console.error);
 
-  // Raider.io api can't seem to handle 2 field requests so 2 fetch requests necessary to get raid prog and m+ score
-  fetch('https://raider.io/api/v1/characters/profile?region=eu&realm={user.mainCharacter.realm}&name={user.mainCharacter.name}&fields=mythic_plus_scores_by_season%3Acurrent')
-          .then(function (response) {
+    // Raider.io api can't seem to handle 2 field requests so 2 fetch requests necessary to get raid prog and m+ score
+    fetch('https://raider.io/api/v1/characters/profile?region=eu&realm={user.mainCharacter.realm}&name={user.mainCharacter.name}&fields=mythic_plus_scores_by_season%3Acurrent')
+        .then(function (response) {
             return response.json()
-          })
-          .then(function (data) {
-            const rioScore = {
-              rio: data['mythic_plus_scores_by_season'][0]['scores']['all'],
+        })
+        .then(function (data) {
+            rioScore = {
+                rio: data['mythic_plus_scores_by_season'][0]['scores']['all'],
             };
 
             const rioContainer = document.getElementById('rio-container')
+            let rioColor = "#fff";
 
-            let rio = document.createElement("h6");
-            rio.innerText = "RIO: " + rioScore.rio;
-            rioContainer.appendChild(rio);
+            let rioHeader = document.createElement("h6");
+            let rioSpan = document.createElement("span")
+            rioHeader.innerText = "RIO: ";
+            rioSpan.innerText = rioScore.rio;
 
-          }).catch(console.error);
+            fetch('https://raider.io/api/v1/mythic-plus/score-tiers?season=season-sl-3')
+                .then(function (response) {
+                    return response.json()
+                })
+                .then(function (data) {
+                    const rioScoresColors = data;
+                    for (let i = 0; i < rioScoresColors.length; i++) {
+                        if (rioScore.rio >= rioScoresColors[i].score) {
+                            rioColor = rioScoresColors[i].rgbHex;
+                            rioSpan.style.color = rioColor;
+                            break;
+                        }
+                    }
+                }).catch(console.error);
+
+            rioContainer.appendChild(rioHeader);
+            rioHeader.appendChild(rioSpan)
+
+        }).catch(console.error);
+
 
 </script>
 
