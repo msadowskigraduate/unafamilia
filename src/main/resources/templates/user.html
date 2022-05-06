@@ -66,13 +66,10 @@
                 background-color: grey;
             }
 
-
-
-
         </style>
     <div class="container-fluid">
-        <div class="row">
-            <div class="d-flex col-2 shadowed mx-1 my-2 flex-column justify-content-start" id="calendar-section">
+        <div class="row justify-content-between">
+            <div class="d-flex col-2 shadowed px-1 my-2 flex-column justify-content-start" id="calendar-section">
                 <div class="col-12 mx-2 mt-4 mb-2" id="calendar">
 
                 </div>
@@ -80,8 +77,8 @@
                     <button id="new-event-btn" type="button" class="btn btn-default">New Event</button>
                 </div>
             </div>
-            <div class="col-7 my-2" id="dashboard-section">
-                <div class="d-flex col-12 shadowed mb-2 mx-2 flex-column p-2" id="events-section">
+            <div class="col-8 my-2 px-2" id="dashboard-section">
+                <div class="d-flex col-12 shadowed mb-2  flex-column p-2" id="events-section">
                     <h4 class="mx-2" id="order-section-title">Upcoming Events</h4>
                     <div class="d-flex flex-row">
                         {#for event in events}
@@ -91,38 +88,15 @@
                         {/for}
                     </div>
                 </div>
-                <div class="d-flex col-12 mx-2 flex-column shadowed p-2"  id="order-section">
+                <div class="d-flex col-12 flex-column shadowed p-2"  id="order-section">
                     <h4 id="order-section-title">Your Recent Orders</h4>
                     <div class="" style="flex-direction: column-reverse;" id="order-list">
                         {#include orders}{/include}
                     </div>
                 </div>
             </div>
-            <div class="d-flex col-2 mx-2 flex-column shadowed p-2 my-2" id="character-panel-section">
-                <div id="main-char-title">Main Character</div>
-                <div id="main-char-thumbnail"></div>
-                <div id="main-char-name"></div>
-                <div id="links">
-                    <div id="rio-link">
-                        <a>
-                            <img class="external-service-thumb">
-                        </a>
-                    </div>
-                    <div id="warcraft-logs-link">
-                        <a>
-                            <img class="external-service-thumb">
-                        </a>
-                    </div>
-                    <div id="wow-armory-link">
-                        <a>
-                            <img class="external-service-thumb">
-                        </a>
-                    </div>
-                </div>
-                <div id="level-info-container">Level 60 Warlock</div>
-                <div id="rio-container">RIO: 3260</div>
-                <button type="button" class="btn btn-secondary" id="change-button">Change</button>
-                <button type="button" class="btn btn-secondary" id="droptimizer-button">Droptimizer</button>
+            <div class="d-flex col-2 flex-column mr-2 shadowed p-2 my-2" id="character-panel-section">
+                {#include partials/userCard}{/include}
             </div>
         </div>
     </div>
