@@ -43,6 +43,22 @@
                 border-radius: 10px;
             }
 
+            .event-card {
+                min-width: 150px;
+            }
+
+            #calendar-section {
+                min-width: 170px;
+                flex-wrap: wrap;
+            }
+
+            /*#events-section {*/
+            /*    min-width: 675px;*/
+            /*}*/
+
+            #character-panel-section {
+                min-width: 160px;
+            }
 
             #calendar {
                 background-color: gray;
@@ -80,9 +96,9 @@
             <div class="col-8 my-2 px-2" id="dashboard-section">
                 <div class="d-flex col-12 shadowed mb-2  flex-column p-2" id="events-section">
                     <h4 class="mx-2" id="order-section-title">Upcoming Events</h4>
-                    <div class="d-flex flex-row">
+                    <div class="d-flex flex-row flex-wrap">
                         {#for event in events}
-                            <div class="list-group shadowed col-3 mx-2 mb-2">
+                            <div class="list-group event-card shadowed col-3 mx-2 mb-2">
                                 {#include events}{/include}
                             </div>
                         {/for}

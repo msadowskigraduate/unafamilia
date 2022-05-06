@@ -17,11 +17,11 @@
 </style>
 
 <div class="card text-center" style="background-color: transparent;">
-    <div class="card-body">
+    <div class="card-body p-1">
         <h6 class="card-header mb-2" id="card-header">Main Character</h6>
         <div id="main-char-thumbnail"></div>
         <h5 class="card-title">{user.mainCharacter.name}</h5>
-        <div class="row flex-row p-2" id="links">
+        <div class="row flex-row p-2 mx-4" id="links">
             <div class="col p-0" id="rio-link">
                 <a href="https://raider.io/characters/eu/{user.mainCharacter.realm}/{user.mainCharacter.name}" target="_blank">
                     <img class="external-service-thumb"
@@ -42,14 +42,16 @@
             </div>
         </div>
         <div id="description-container"></div>
-        <div class="row">
+        <div class="row m-auto">
             <div id="rio-container" class="col badge bg-secondary m-1"></div>
             <div id="raid-prog-container" class="col badge bg-secondary m-1"></div>
         </div>
-        <div class="card-body">
-            {#for role in user.roles}
-                <h5><span class="badge bg-secondary card-link">{role}</span></h5>
-            {/for}
+        <div class="card-body p-0">
+            <div class="row">
+                {#for role in user.roles}
+                    <h5><span class="badge bg-secondary card-link">{role}</span></h5>
+                {/for}
+            </div>
         </div>
         <button type="button" class="btn btn-secondary" id="change-button">Change</button>
         <button type="button" class="btn btn-secondary" id="droptimizer-button">Droptimizer</button>
