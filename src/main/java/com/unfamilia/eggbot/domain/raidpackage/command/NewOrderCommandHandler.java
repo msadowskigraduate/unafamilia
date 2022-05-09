@@ -37,6 +37,7 @@ public class NewOrderCommandHandler implements CommandHandler {
         Order.of(
                 newOrderCommand.getOrderMessageId(),
                 newOrderCommand.getOrderingUserId(),
+                null,
                 false,
                 false,
                 Instant.now(),

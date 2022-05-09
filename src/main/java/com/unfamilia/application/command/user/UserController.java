@@ -1,8 +1,8 @@
-package com.unfamilia.application.user;
+package com.unfamilia.application.command.user;
 
 import com.unfamilia.application.command.CommandBus;
-import com.unfamilia.application.user.model.Event;
-import com.unfamilia.application.user.model.User;
+import com.unfamilia.application.command.user.model.Event;
+import com.unfamilia.application.command.user.model.User;
 import com.unfamilia.eggbot.domain.character.Character;
 import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.domain.player.Role;
@@ -72,7 +72,7 @@ public class UserController {
         try {
             var orders = Optional.of(Order.findAllOrdersForDiscordUser(player.getDiscordUserId()))
                     .map(orders1 -> orders1.stream()
-                            .map(com.unfamilia.application.user.model.Order::from)
+                            .map(com.unfamilia.application.command.user.model.Order::from)
                             .collect(toList())
                     )
                     .orElse(null);
@@ -101,8 +101,8 @@ public class UserController {
 
 
         var orderItems = List.of(OrderItem.of(item1, 20), OrderItem.of(item2, 5));
-        var orders = List.of(Order.of(123l, 123l, false, false, Instant.now(), orderItems), Order.of(123l, 123l, false, false, Instant.now(), orderItems)).stream()
-                .map(com.unfamilia.application.user.model.Order::from)
+        var orders = List.of(Order.of(123l, 123l, null, false, false, Instant.now(), orderItems), Order.of(123l, 123l, null, false, false, Instant.now(), orderItems)).stream()
+                .map(com.unfamilia.application.command.user.model.Order::from)
                 .collect(toList());
 
 
@@ -115,6 +115,6 @@ public class UserController {
 
     @CheckedTemplate(basePath = "")
     public static class Templates {
-        public static native TemplateInstance user(String jwt, String authCode, User user, List<com.unfamilia.application.user.model.Order> orders, List<Item> items, List<Event> events);
+        public static native TemplateInstance user(String jwt, String authCode, User user, List<com.unfamilia.application.command.user.model.Order> orders, List<Item> items, List<Event> events);
     }
 }

@@ -67,6 +67,10 @@ public class Player extends PanacheEntityBase {
         return this.discordUserId != null;
     }
 
+    public boolean isAdmin() {
+        return this.role != null && this.role.stream().anyMatch(Role::isAdminRole);
+    }
+
     public static Optional<Player> findByDiscordUserId(Long discordUserId) {
         return Optional.ofNullable(Player.<Player>find("discordUserId", discordUserId).firstResult());
     }

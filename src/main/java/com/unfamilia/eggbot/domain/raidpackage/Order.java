@@ -1,6 +1,7 @@
 package com.unfamilia.eggbot.domain.raidpackage;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.panache.common.Sort;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,7 @@ public class Order extends PanacheEntity {
     private Boolean orderFulfilled;
     private Boolean orderPaid;
     private Instant orderDateTime;
+    private Long userId;
 
     @OneToMany
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -30,6 +32,7 @@ public class Order extends PanacheEntity {
     public static Order of(
             Long orderMessageId,
             Long orderUserId,
+            Long userid,
             Boolean orderFulfilled,
             Boolean orderPaid,
             Instant orderDateTime,
@@ -41,11 +44,17 @@ public class Order extends PanacheEntity {
         order.setOrderPaid(orderPaid);
         order.setOrderDateTime(orderDateTime);
         order.setOrderItems(orderItems);
+        order.setUserId(userid);
         return order;
     }
 
     public static List<Order> findAllOrdersForDiscordUser(Long orderUserId) {
         if(orderUserId == null) return null;
-        return find("orderUserId", orderUserId).list();
+        return list("orderUserId", Sort.ascending("id"), orderUserId);
+    }
+
+    public static List<Order> findAllOrderForUser(Long userId) {
+        if(userId == null) return null;
+        return list("userId", Sort.ascending("id"), userId);
     }
 }

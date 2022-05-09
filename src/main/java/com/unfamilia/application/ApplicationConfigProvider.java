@@ -26,9 +26,6 @@ public interface ApplicationConfigProvider {
         String token();
         Raidpackage raidpackage();
 
-        @WithName("origin.guild.id")
-        String guildId();
-
         interface Raidpackage {
             @WithName("channels.initializeOrder")
             String initializeOrder();

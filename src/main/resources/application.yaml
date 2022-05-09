@@ -1,8 +1,5 @@
 application:
   discord:
-    origin:
-      guild:
-        id:
     raidpackage:
       channels:
         initializeOrder: orders-package

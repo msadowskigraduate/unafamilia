@@ -21,4 +21,8 @@ public class Role extends PanacheEntityBase {
     @EqualsAndHashCode.Include
     private Long id;
     private String name;
+
+    public boolean isAdminRole() {
+        return this.name.equals("Officer");
+    }
 }
