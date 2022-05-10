@@ -8,17 +8,17 @@ public interface ApplicationConfigProvider {
     @WithName("hostname")
     String hostname();
 
-    @WithName("wow-api")
+    @WithName("wow")
     WoWApiConfig wowApi();
 
     @WithName("discord")
     DiscordConfig discord();
 
     interface WoWApiConfig {
-        @WithName("client-id")
+        @WithName("id")
         String clientId();
 
-        @WithName("client-secret")
+        @WithName("secret")
         String clientSecret();
     }
 

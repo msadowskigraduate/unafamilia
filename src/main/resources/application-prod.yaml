@@ -1,0 +1,11 @@
+application:
+  hostname: https://wwww.unafamilia.com
+quarkus:
+  datasource:
+    db-kind: postgresql
+    jdbc:
+      driver: org.postgresql.Driver
+      url: jdbc:postgresql://unafamilia.cdjmzmmcesqf.eu-west-2.rds.amazonaws.com:5432/unafamilia
+  hibernate-orm:
+    database:
+      generation: drop-and-create

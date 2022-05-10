@@ -1,0 +1,13 @@
+{
+  "containerDefinitions": [
+    {
+      "name": "unafamilia",
+      "image": "886574730024.dkr.ecr.eu-west-2.amazonaws.com/unafamilia:bdbbb261c9c33f8a6361e797c04f194f9ccaa58d",
+      "memory": 200,
+      "cpu": 10,
+      "essential": true
+    }
+  ],
+  "family": "unafamilia",
+  "taskRoleArn": "arn:aws:iam::886574730024:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
+}
