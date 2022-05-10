@@ -63,11 +63,11 @@ jobs:
           container-name: unafamilia
           image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           environment-variables: |
-            APPLICATION_DISCORD_TOKEN=${{ secret.DISCORD_ACCESS_TOKEN }}
-            APPLICATION_WOW_ID=${{ secret.WOW_API_CLIENT_ID }}
-            APPLICATION_WOW_SECRET=${{ secret.WOW_API_CLIENT_SECRET }}
-            QUARKUS_DATASOURCE_PASSWORD=${{ secret.DB_PASSWORD }}
-            QUARKUS_DATASOURCE_USERNAME=${{ secret.DB_USERNAME }}
+            APPLICATION_DISCORD_TOKEN=${{ secrets.DISCORD_ACCESS_TOKEN }}
+            APPLICATION_WOW_ID=${{ secrets.WOW_API_CLIENT_ID }}
+            APPLICATION_WOW_SECRET=${{ secrets.WOW_API_CLIENT_SECRET }}
+            QUARKUS_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
+            QUARKUS_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }}
 
       - name: Deploy to Amazon ECS service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
