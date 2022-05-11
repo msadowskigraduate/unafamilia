@@ -1,4 +1,7 @@
 {
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "containerDefinitions": [
     {
       "name": "unafamilia",
