@@ -1,7 +1,4 @@
 {
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
   "containerDefinitions": [
     {
       "name": "unafamilia",
@@ -11,6 +8,5 @@
       "essential": true
     }
   ],
-  "family": "unafamilia",
-  "taskRoleArn": "arn:aws:iam::886574730024:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
+  "family": "unafamilia"
 }

@@ -2,6 +2,7 @@ package com.unfamilia.eggbot.domain.event;
 
 import com.unfamilia.eggbot.domain.character.Character;
 import com.unfamilia.eggbot.domain.player.Player;
+import com.unfamilia.eggbot.domain.player.Role;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,18 +20,19 @@ import java.util.List;
 public class Event extends PanacheEntity {
     private String name;
     private String activity;
-    private String role;
+    @OneToMany
+    private List<Role> roles;
     private LocalDateTime date;
     @OneToOne
     private Player organizer;
     @OneToMany
     private List<Character> characters;
 
-    public static Event of(String name, String activity, String role, LocalDateTime date, Player organizer, List<Character> characters) {
+    public static Event of(String name, String activity, List<Role> roles, LocalDateTime date, Player organizer, List<Character> characters) {
         var event = new Event();
         event.activity = activity;
         event.name = name;
-        event.role = role;
+        event.roles = roles;
         event.date = date;
         event.organizer = organizer;
         event.characters = characters;
