@@ -3,11 +3,13 @@
 autonumber
 actor User as user
 participant Discord as disc
+participant PythonApp as python
 participant "Una Familia Backend" as bot
 participant Battle.net as bnet
 
 user -> disc: /link Application Command
-disc -> bot: /discord?session_token={session_token}
+disc -> python: /session_token
+python -> bot: /discord?session_token={session_token}
 bot -> bot: /login?session_token={session_token}
 bot -> user: login.html
 bot -> bnet: /oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope=openid&response_type=code&response_mode=query&prompt=login

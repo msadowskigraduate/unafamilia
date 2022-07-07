@@ -1,6 +1,5 @@
 package com.unfamilia.eggbot.infrastructure.session;
 
-import discord4j.core.object.entity.Member;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -9,29 +8,27 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.unfamilia.eggbot.infrastructure.session.SessionToken.NullSessionToken.nullToken;
-
 @Getter
 public class SessionToken {
     private static Map<String, SessionToken> cache = new HashMap<>();
     private String token;
     private Long expiresIn;
-    private Member user;
+    private Long userId;
 
-    private SessionToken(String token, Long expiresIn, Member user) {
+    private SessionToken(String token, Long expiresIn, Long user) {
         this.token = token;
         this.expiresIn = expiresIn;
-        this.user = user;
+        this.userId = user;
     }
 
     public boolean isValid() {
         return Instant.now().isBefore(Instant.ofEpochSecond(expiresIn));
     }
 
-    public static SessionToken generateForUser(Member member) {
+    public static SessionToken generateForUser(Long userId) {
         var token = UUID.randomUUID().toString();
         long expiresIn = Instant.now().plusSeconds(60 * 15).getEpochSecond();
-        var sessionToken = new SessionToken(token, expiresIn, member);
+        var sessionToken = new SessionToken(token, expiresIn, userId);
         cache.put(sessionToken.getToken(), sessionToken);
         return sessionToken;
     }

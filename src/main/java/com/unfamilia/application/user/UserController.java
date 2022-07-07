@@ -1,8 +1,8 @@
-package com.unfamilia.application.command.user;
+package com.unfamilia.application.user;
 
 import com.unfamilia.application.command.CommandBus;
-import com.unfamilia.application.command.user.model.Event;
-import com.unfamilia.application.command.user.model.User;
+import com.unfamilia.application.user.model.Event;
+import com.unfamilia.application.user.model.User;
 import com.unfamilia.eggbot.domain.character.Character;
 import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.domain.player.Role;
@@ -10,8 +10,6 @@ import com.unfamilia.eggbot.domain.player.command.MakeMainCommand;
 import com.unfamilia.eggbot.domain.raidpackage.Item;
 import com.unfamilia.eggbot.domain.raidpackage.Order;
 import com.unfamilia.eggbot.domain.raidpackage.OrderItem;
-import discord4j.common.util.Snowflake;
-import discord4j.core.GatewayDiscordClient;
 import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.oidc.IdToken;
 import io.quarkus.qute.CheckedTemplate;
@@ -39,7 +37,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 @RequiredArgsConstructor
 public class UserController {
     private final CommandBus commandBus;
-    private final GatewayDiscordClient discordClient;
 
     @Inject @IdToken JsonWebToken idToken;
     @Inject AccessTokenCredential accessTokenCredential;
@@ -48,13 +45,13 @@ public class UserController {
     @Path("/{userId}/{characterId}")
     @Consumes(APPLICATION_FORM_URLENCODED)
     public Response makeMain(@PathParam("userId") Long userId, @PathParam("characterId") Long characterId) {
-        var user = discordClient.getUserById(Snowflake.of(userId)).blockOptional();
+        var player = Player.findByDiscordUserId(userId);
 
-        if(user.isEmpty()) {
+        if(player.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        commandBus.handle(MakeMainCommand.of(user.get(), characterId));
+        commandBus.handle(MakeMainCommand.of(player.get(), characterId));
         return Response.ok().build();
     }
 
@@ -72,7 +69,7 @@ public class UserController {
         try {
             var orders = Optional.of(Order.findAllOrdersForDiscordUser(player.getDiscordUserId()))
                     .map(orders1 -> orders1.stream()
-                            .map(com.unfamilia.application.command.user.model.Order::from)
+                            .map(com.unfamilia.application.user.model.Order::from)
                             .collect(toList())
                     )
                     .orElse(null);
@@ -90,31 +87,31 @@ public class UserController {
         var item1 = new Item();
         item1.setName("Potion of Spectral Intellect");
         item1.setItemPrice(0.0);
-        item1.setId(171273l);
+        item1.setId(171273L);
         item1.setMaxAmount(20);
 
         var item2 = new Item();
         item2.setName("Potion of Spectral Agility");
         item2.setItemPrice(0.0);
-        item2.setId(171270l);
+        item2.setId(171270L);
         item2.setMaxAmount(20);
 
 
         var orderItems = List.of(OrderItem.of(item1, 20), OrderItem.of(item2, 5));
-        var orders = List.of(Order.of(123l, 123l, null, false, false, Instant.now(), orderItems), Order.of(123l, 123l, null, false, false, Instant.now(), orderItems)).stream()
-                .map(com.unfamilia.application.command.user.model.Order::from)
+        var orders = List.of(Order.of(123L, 123L, null, false, false, Instant.now(), orderItems), Order.of(123L, 123L, null, false, false, Instant.now(), orderItems)).stream()
+                .map(com.unfamilia.application.user.model.Order::from)
                 .collect(toList());
 
 
-        var char1 = Character.of(1l, "Nyly", 60l, 1l, "Death Knight", "magtheridon", com.unfamilia.eggbot.infrastructure.wowapi.model.Character.Faction.Type.ALLIANCE);
-        var char2 = Character.of(1l, "Lockedupnyly", 60l, 1l, "Warlock", "magtheridon", com.unfamilia.eggbot.infrastructure.wowapi.model.Character.Faction.Type.ALLIANCE);
-        var player = Player.of(1l, 1l, "Sadocha", List.of(char1, char2), char1, List.of(Role.of(1l, "Raider"), Role.of(2l, "Officer")));
+        var char1 = Character.of(1L, "Nyly", 60L, 1L, "Death Knight", "magtheridon", com.unfamilia.eggbot.infrastructure.wowapi.model.Character.Faction.Type.ALLIANCE);
+        var char2 = Character.of(1L, "Lockedupnyly", 60L, 1L, "Warlock", "magtheridon", com.unfamilia.eggbot.infrastructure.wowapi.model.Character.Faction.Type.ALLIANCE);
+        var player = Player.of(1L, 1L, "Sadocha", List.of(char1, char2), char1, List.of(Role.of(1L, "Raider"), Role.of(2L, "Officer")));
         List<Event> events = List.of(Event.from(com.unfamilia.eggbot.domain.event.Event.of("Sepulcher", "Raid", "Raider", LocalDateTime.now(), player, List.of(char1, char2))),Event.from(com.unfamilia.eggbot.domain.event.Event.of("Sepulcher", "Raid", "Raider", LocalDateTime.now(), player, List.of(char1, char2))));
         return Response.ok(Templates.user("some_token","access_token", User.from(player), orders, List.of(item1, item2), events)).build();
     }
 
     @CheckedTemplate(basePath = "")
     public static class Templates {
-        public static native TemplateInstance user(String jwt, String authCode, User user, List<com.unfamilia.application.command.user.model.Order> orders, List<Item> items, List<Event> events);
+        public static native TemplateInstance user(String jwt, String authCode, User user, List<com.unfamilia.application.user.model.Order> orders, List<Item> items, List<Event> events);
     }
 }

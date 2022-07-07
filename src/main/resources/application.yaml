@@ -1,9 +1,3 @@
-application:
-  discord:
-    raidpackage:
-      channels:
-        initializeOrder: orders-package
-        confirmOrder: orders
 quarkus:
   oidc:
     auth-server-url: https://eu.battle.net/oauth

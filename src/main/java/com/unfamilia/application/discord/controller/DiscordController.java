@@ -3,6 +3,7 @@ package com.unfamilia.application.discord.controller;
 import com.unfamilia.application.command.CommandBus;
 import com.unfamilia.application.model.ErrorResponse;
 import com.unfamilia.eggbot.domain.guild.command.SetGuildAsOriginCommand;
+import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import io.quarkus.qute.Template;
@@ -52,5 +53,17 @@ public class DiscordController {
                             .build()
             ).render()).build();
         }
+    }
+
+    @GET
+    public Response sessionTokenForUser(Long userId) {
+        if(Player.findByDiscordUserId(userId).isEmpty()) {
+            return Response.ok(SessionToken.generateForUser(userId)).build();
+        }
+
+        return Response
+                .status(Response.Status.BAD_REQUEST)
+                .entity(ErrorResponse.builder().errorCode(400).error("User exists"))
+                .build();
     }
 }

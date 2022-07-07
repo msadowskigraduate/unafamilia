@@ -1,4 +1,4 @@
-package com.unfamilia.application.command.user.model;
+package com.unfamilia.application.user.model;
 
 import com.unfamilia.eggbot.domain.character.Character;
 import com.unfamilia.eggbot.domain.player.Player;

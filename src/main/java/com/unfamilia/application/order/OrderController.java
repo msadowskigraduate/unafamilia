@@ -34,7 +34,7 @@ public class OrderController {
     public Response markOrderAsPaid(OrderPatch orderPatch) {
         var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
         user.flatMap(player -> Order.findAllOrderForUser(player.getId()).stream()
-                .filter(order -> order.id.equals(order.id))
+                .filter(order -> order.id.equals(orderPatch.getOrderId()))
                 .findFirst()).ifPresent(order -> {
                     if(orderPatch.isPaid != null) {
                         order.setOrderPaid(orderPatch.getIsPaid());

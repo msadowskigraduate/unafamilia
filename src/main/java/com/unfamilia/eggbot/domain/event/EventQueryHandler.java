@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 @RequiredArgsConstructor
 public class EventQueryHandler implements QueryHandler<Event, EventQuery> {
-    private final GatewayDiscordClient client;
-
     @Override
     public Class<EventQuery> supports() {
         return EventQuery.class;
@@ -30,7 +28,7 @@ public class EventQueryHandler implements QueryHandler<Event, EventQuery> {
     public Event handle(EventQuery query) {
         var role = Role.<Role>find("name", query.getRole()).firstResult();
         var players = Player.findByRole(role);
-        var organizer = Player.findByDiscordUserId(query.getOrganizer().getId().asLong()).get();
+        var organizer = Player.findByDiscordUserId(query.getOrganizingUserId()).get();
         var characters = players.stream()
                 .map(Player::getMainCharacter)
                 .collect(Collectors.toList());

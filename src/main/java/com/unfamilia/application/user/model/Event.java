@@ -1,4 +1,4 @@
-package com.unfamilia.application.command.user.model;
+package com.unfamilia.application.user.model;
 
 import lombok.AccessLevel;
 import lombok.Builder;

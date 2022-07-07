@@ -4,20 +4,17 @@ import com.unfamilia.application.command.Command;
 import com.unfamilia.application.command.CommandHandler;
 import com.unfamilia.eggbot.domain.raidpackage.Item;
 import com.unfamilia.eggbot.domain.raidpackage.ItemSubclass;
-import com.unfamilia.eggbot.infrastructure.discord.events.discordcommands.DiscordCommandRegistrar;
 import com.unfamilia.eggbot.infrastructure.wowapi.WoWGameDataClient;
 import com.unfamilia.eggbot.infrastructure.wowapi.model.WowItem;
 import lombok.RequiredArgsConstructor;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import javax.ws.rs.NotFoundException;
 
 @ApplicationScoped
 @RequiredArgsConstructor
 public class NewItemCommandHandler implements CommandHandler {
     private final WoWGameDataClient client;
-    private final DiscordCommandRegistrar commandRegistrar;
 
     @Override
     public boolean supports(Command command) {
@@ -35,8 +32,6 @@ public class NewItemCommandHandler implements CommandHandler {
 
         handle(newItemCommand,
                 client.getWowItem(newItemCommand.getId()));
-
-        commandRegistrar.registerCommandsForAllGuilds();
     }
 
     private void handle(NewItemCommand newItemCommand, WowItem wowItem) {

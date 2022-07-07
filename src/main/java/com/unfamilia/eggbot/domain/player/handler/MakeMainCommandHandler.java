@@ -23,9 +23,9 @@ public class MakeMainCommandHandler implements CommandHandler {
     @Transactional
     public void handle(Command command) {
         MakeMainCommand makeMain = (MakeMainCommand) command;
-        Optional<Player> optionalPlayer = Player.findByDiscordUserId(makeMain.getUser().getId().asLong());
+        Optional<Player> optionalPlayer = Player.findByDiscordUserId(makeMain.getUserId().getDiscordUserId());
         if(optionalPlayer.isEmpty()) {
-            throw new NotFoundException("No user with Id: " + makeMain.getUser().getId().asLong() + " was found!");
+            throw new NotFoundException("No user with Id: " + makeMain.getUserId() + " was found!");
         }
 
         optionalPlayer.get().getCharacters()

@@ -30,21 +30,14 @@ public class RegisterNewPlayerFromDiscordCommandHandler extends CommonRegisterNe
         var registerNewPlayerCommand = (RegisterNewPlayerFromDiscordCommand) command;
         var player = Player.<Player>findByIdOptional(registerNewPlayerCommand.getWowProfileId());
 
-        if(player.isPresent()) {
-            Long discordUserId = registerNewPlayerCommand.getSessionToken().getUser().getId().asLong();
-            List<Role> roles = getDiscordUserRoles(registerNewPlayerCommand.getSessionToken().getUser());
-            updatePlayerInformation(player.get(), discordUserId, roles);
-            return;
-        }
-
         var wowProfile = woWProfileApiClient.queryWowProfile(registerNewPlayerCommand.getAccessToken());
         var wowProfileId = registerNewPlayerCommand.getWowProfileId();
-        var roles = getDiscordUserRoles(registerNewPlayerCommand.getSessionToken().getUser());
+        List<Role> roles = List.of();
         var characters = listCharactersFromWoWProfile(wowProfile);
 
         persistNewUser(
                 wowProfileId,
-                registerNewPlayerCommand.getSessionToken().getUser().getId().asLong(),
+                registerNewPlayerCommand.getSessionToken().getUserId(),
                 registerNewPlayerCommand.getBattleTag(),
                 characters,
                 roles);
