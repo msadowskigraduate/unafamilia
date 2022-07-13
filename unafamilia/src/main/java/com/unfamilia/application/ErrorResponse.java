@@ -1,4 +1,4 @@
-package com.unfamilia.application.model;
+package com.unfamilia.application;
 
 import lombok.Builder;
 import lombok.Getter;

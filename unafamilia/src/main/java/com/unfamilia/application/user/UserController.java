@@ -1,8 +1,7 @@
 package com.unfamilia.application.user;
 
 import com.unfamilia.application.command.CommandBus;
-import com.unfamilia.application.user.model.Event;
-import com.unfamilia.application.user.model.User;
+import com.unfamilia.application.event.Event;
 import com.unfamilia.eggbot.domain.character.Character;
 import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.domain.player.Role;
@@ -69,7 +68,7 @@ public class UserController {
         try {
             var orders = Optional.of(Order.findAllOrdersForDiscordUser(player.getDiscordUserId()))
                     .map(orders1 -> orders1.stream()
-                            .map(com.unfamilia.application.user.model.Order::from)
+                            .map(com.unfamilia.application.user.Order::from)
                             .collect(toList())
                     )
                     .orElse(null);
@@ -99,19 +98,19 @@ public class UserController {
 
         var orderItems = List.of(OrderItem.of(item1, 20), OrderItem.of(item2, 5));
         var orders = List.of(Order.of(123L, 123L, null, false, false, Instant.now(), orderItems), Order.of(123L, 123L, null, false, false, Instant.now(), orderItems)).stream()
-                .map(com.unfamilia.application.user.model.Order::from)
+                .map(com.unfamilia.application.user.Order::from)
                 .collect(toList());
 
-
+        var roles = List.of(Role.of(1L, "Raider"));
         var char1 = Character.of(1L, "Nyly", 60L, 1L, "Death Knight", "magtheridon", com.unfamilia.eggbot.infrastructure.wowapi.model.Character.Faction.Type.ALLIANCE);
         var char2 = Character.of(1L, "Lockedupnyly", 60L, 1L, "Warlock", "magtheridon", com.unfamilia.eggbot.infrastructure.wowapi.model.Character.Faction.Type.ALLIANCE);
         var player = Player.of(1L, 1L, "Sadocha", List.of(char1, char2), char1, List.of(Role.of(1L, "Raider"), Role.of(2L, "Officer")));
-        List<Event> events = List.of(Event.from(com.unfamilia.eggbot.domain.event.Event.of("Sepulcher", "Raid", "Raider", LocalDateTime.now(), player, List.of(char1, char2))),Event.from(com.unfamilia.eggbot.domain.event.Event.of("Sepulcher", "Raid", "Raider", LocalDateTime.now(), player, List.of(char1, char2))));
+        List<Event> events = List.of(Event.from(com.unfamilia.eggbot.domain.event.Event.of("Sepulcher", "Raid", roles, LocalDateTime.now(), player, List.of(char1, char2))),Event.from(com.unfamilia.eggbot.domain.event.Event.of("Sepulcher", "Raid", roles, LocalDateTime.now(), player, List.of(char1, char2))));
         return Response.ok(Templates.user("some_token","access_token", User.from(player), orders, List.of(item1, item2), events)).build();
     }
 
     @CheckedTemplate(basePath = "")
     public static class Templates {
-        public static native TemplateInstance user(String jwt, String authCode, User user, List<com.unfamilia.application.user.model.Order> orders, List<Item> items, List<Event> events);
+        public static native TemplateInstance user(String jwt, String authCode, User user, List<com.unfamilia.application.user.Order> orders, List<Item> items, List<Event> events);
     }
 }

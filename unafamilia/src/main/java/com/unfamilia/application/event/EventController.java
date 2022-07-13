@@ -1,18 +1,16 @@
 package com.unfamilia.application.event;
 
 import com.unfamilia.application.command.CommandBus;
-import com.unfamilia.eggbot.domain.event.Event;
 import com.unfamilia.eggbot.domain.player.Player;
-import com.unfamilia.eggbot.domain.player.Role;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Path("/{userId}/event")
 @RequiredArgsConstructor
@@ -23,6 +21,7 @@ public class EventController {
     JsonWebToken jsonWebToken;
 
     @POST
+    @Consumes(APPLICATION_JSON)
     public Response commandCreateNewEvent(@PathParam("userId") Long userId, ScheduledEvent event) {
         var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
         if(user.isPresent()) {
@@ -33,7 +32,7 @@ public class EventController {
     }
 
     @GET
-    public Response queryAllEventsForPlayer() {
+    public Response queryAllEventsForPlayer(@PathParam("userId") Long userId) {
         var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
         if(user.isPresent()) {
             return Response.ok("Not yet implemented but good job.").build();
@@ -42,7 +41,7 @@ public class EventController {
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
-    private static record ScheduledEvent() {
+    record ScheduledEvent() {
 
     }
 }

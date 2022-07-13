@@ -1,8 +1,7 @@
-package com.unfamilia.application.discord.controller;
+package com.unfamilia.application.discord;
 
 import com.unfamilia.application.command.CommandBus;
-import com.unfamilia.application.model.ErrorResponse;
-import com.unfamilia.eggbot.domain.guild.command.SetGuildAsOriginCommand;
+import com.unfamilia.application.ErrorResponse;
 import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
@@ -22,14 +21,6 @@ public class DiscordController {
     private final CommandBus commandBus;
     @Inject Template login;
     @Inject Template error;
-
-    @PUT
-    @Path("/guild/{guildId}")
-    public Response setGuildAsOrigin(@PathParam("guildId") Long guildId) {
-        var command = SetGuildAsOriginCommand.of(guildId);
-        commandBus.handle(command);
-        return Response.accepted().build();
-    }
 
     @GET
     public Response linkAccount(@QueryParam("session_token") String token) {
@@ -55,7 +46,7 @@ public class DiscordController {
         }
     }
 
-    @GET
+    @POST
     public Response sessionTokenForUser(Long userId) {
         if(Player.findByDiscordUserId(userId).isEmpty()) {
             return Response.ok(SessionToken.generateForUser(userId)).build();
