@@ -35,6 +35,7 @@ public class NewOrderCommandHandler implements CommandHandler {
                 .collect(Collectors.toList());
 
         Order.of(
+                newOrderCommand.getOrderId(),
                 newOrderCommand.getOrderMessageId(),
                 newOrderCommand.getOrderingUserId(),
                 null,

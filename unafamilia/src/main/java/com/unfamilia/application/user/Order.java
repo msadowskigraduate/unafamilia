@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
 public class Order {
-    private Long id;
+    private String id;
     private Boolean isPaid;
     private Boolean isFulfilled;
     private String date;
@@ -25,7 +25,7 @@ public class Order {
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
                 .withZone(ZoneId.systemDefault());
         return Order.builder()
-                .id(order.id)
+                .id(order.getOrderId().toString())
                 .isPaid(order.getOrderPaid())
                 .isFulfilled(order.getOrderFulfilled())
                 .date(formatter.format(order.getOrderDateTime()))

@@ -28,6 +28,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
@@ -97,7 +98,7 @@ public class UserController {
 
 
         var orderItems = List.of(OrderItem.of(item1, 20), OrderItem.of(item2, 5));
-        var orders = List.of(Order.of(123L, 123L, null, false, false, Instant.now(), orderItems), Order.of(123L, 123L, null, false, false, Instant.now(), orderItems)).stream()
+        var orders = List.of(Order.of(UUID.randomUUID(), 123L, 123L, null, false, false, Instant.now(), orderItems), Order.of(UUID.randomUUID(),123L, 123L, null, false, false, Instant.now(), orderItems)).stream()
                 .map(com.unfamilia.application.user.Order::from)
                 .collect(toList());
 

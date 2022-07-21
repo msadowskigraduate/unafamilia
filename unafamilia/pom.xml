@@ -64,7 +64,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.22</version>
+      <version>1.18.24</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -83,12 +83,13 @@
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
+      <version>5.1.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy</artifactId>
-      <version>3.0.8</version>
+      <version>3.0.11</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -126,14 +127,6 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <source>16</source>
-                <target>16</target>
-            </configuration>
-        </plugin>
     </plugins>
   </build>
   <profiles>

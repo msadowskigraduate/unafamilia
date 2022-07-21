@@ -11,17 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PATCH;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Authenticated
-@Path("/order")
+@Path("/{userId}/order")
 @RequiredArgsConstructor
 public class OrderController {
     private final CommandBus commandBus;
@@ -31,10 +30,10 @@ public class OrderController {
 
     @PATCH
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response markOrderAsPaid(OrderPatch orderPatch) {
-        var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
+    public Response markOrderAsPaid(OrderPatch orderPatch, @PathParam("userId") Long userId) {
+        var user = Player.<Player>findByIdOptional(userId);
         user.flatMap(player -> Order.findAllOrderForUser(player.getId()).stream()
-                .filter(order -> order.id.equals(orderPatch.getOrderId()))
+                .filter(order -> order.getOrderId().equals(orderPatch.getOrderId()))
                 .findFirst()).ifPresent(order -> {
                     if(orderPatch.isPaid != null) {
                         order.setOrderPaid(orderPatch.getIsPaid());
@@ -46,14 +45,23 @@ public class OrderController {
         return Response.ok().build();
     }
 
+    @GET
+    @Path("/{orderId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryOrder( @PathParam("userId") Long userId, @PathParam("orderId") Long orderId) {
+        return Response.ok().build();
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response newOrder(OrderPayload orderPayload) {
-        var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
+    public Response newOrder(OrderPayload orderPayload, @PathParam("userId") Long userId) {
+        var user = Player.<Player>findByIdOptional(userId);
+        var orderId = UUID.randomUUID();
         user.ifPresent(player -> commandBus.handle(
                 new NewOrderCommand(
                         null,
                         player.getDiscordUserId(),
+                        orderId,
                         orderPayload.getItems().stream()
                                 .map(item -> new NewOrderCommand.OrderedItem(item.getItemName(), item.getQuantity()))
                                 .collect(Collectors.toList())
@@ -61,13 +69,13 @@ public class OrderController {
             )
         );
 
-        return Response.ok().build();
+        return Response.created(URI.create(userId  + "/order/" + orderId.toString())).build();
     }
 
     @Data
     @NoArgsConstructor
     public static class OrderPatch {
-        private Long orderId;
+        private UUID orderId;
         private Boolean isPaid;
         private Boolean isFulfilled;
     }

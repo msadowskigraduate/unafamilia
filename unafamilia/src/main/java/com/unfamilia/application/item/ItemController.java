@@ -6,6 +6,8 @@ import com.unfamilia.application.command.CommandBus;
 import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.domain.raidpackage.Item;
 import com.unfamilia.eggbot.domain.raidpackage.command.NewItemCommand;
+import io.quarkus.oidc.AccessTokenCredential;
+import io.quarkus.oidc.IdToken;
 import io.quarkus.security.Authenticated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,48 +25,40 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 @Path("/item")
-@Authenticated
 @RequiredArgsConstructor
 public class ItemController {
     private final CommandBus commandBus;
+//
+//    @Inject
+//    JsonWebToken jsonWebToken;
 
     @Inject
-    JsonWebToken jsonWebToken;
+    @IdToken
+    JsonWebToken idToken;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addNewItem(NewItemRequest newItemRequest) {
-        var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
-        if(user.isPresent() && user.get().isAdmin()) {
-            commandBus.handle(new NewItemCommand(newItemRequest.getItemId(), newItemRequest.getMaxQuantity(), newItemRequest.getSlug()));
-            return Response.ok().build();
-        }
-        return Response.status(Response.Status.FORBIDDEN).build();
+        commandBus.handle(new NewItemCommand(newItemRequest.getItemId(), newItemRequest.getMaxQuantity(), newItemRequest.getSlug()));
+        return Response.ok().build();
+
     }
 
     @GET
+    @Authenticated
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryItems() {
-        var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
-        if(user.isPresent()) {
-            return Response.ok(Item.findAll().list()).build();
-        }
-
-        return Response.status(UNAUTHORIZED).build();
+//        return Response.ok(Item.findAll().list()).build();
+        return Response.ok(idToken.getRawToken()).build();
     }
 
     @GET
     @Path("/{item_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryItem(@PathParam("item_id") String itemId) {
-        var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
-        if(user.isPresent()) {
-            Optional<Item> optionalItem = Item.<Item>findByIdOptional(itemId);
-            if(optionalItem.isPresent()) return Response.ok(optionalItem.get()).build();
-            return Response.status(NOT_FOUND).build();
-        }
-
-        return Response.status(UNAUTHORIZED).build();
+        Optional<Item> optionalItem = Item.<Item>findByIdOptional(itemId);
+        if (optionalItem.isPresent()) return Response.ok(optionalItem.get()).build();
+        return Response.status(NOT_FOUND).build();
     }
 
     @NoArgsConstructor

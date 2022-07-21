@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.Value;
 
 import java.util.List;
+import java.util.UUID;
 
 @ToString
 @Getter
@@ -15,6 +16,7 @@ import java.util.List;
 public class NewOrderCommand implements Command {
     private final Long orderMessageId;
     private final Long orderingUserId;
+    private final UUID orderId;
     private final List<OrderedItem> orderedItems;
 
     @Value
