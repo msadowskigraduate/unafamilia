@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 @Path("/user")
 @RequiredArgsConstructor
@@ -41,10 +42,15 @@ public class UserController {
     @Inject @IdToken JsonWebToken idToken;
     @Inject AccessTokenCredential accessTokenCredential;
 
+    @Authenticated
     @POST
     @Path("/{userId}/{characterId}")
     @Consumes(APPLICATION_FORM_URLENCODED)
     public Response makeMain(@PathParam("userId") Long userId, @PathParam("characterId") Long characterId) {
+        if(!Long.valueOf(idToken.getSubject()).equals(userId)) {
+            return Response.status(UNAUTHORIZED).build();
+        }
+
         var player = Player.findByDiscordUserId(userId);
 
         if(player.isEmpty()) {
@@ -64,6 +70,11 @@ public class UserController {
 
         if(player == null) {
             return Response.seeOther(URI.create("/login?redirect_uri=/user")).build();
+        }
+
+        //missing logic
+        if(player.getDiscordUserId() == null) {
+            return Response.seeOther(URI.create("/user/test")).build();
         }
 
         try {

@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 @RequiredArgsConstructor

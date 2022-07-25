@@ -5,7 +5,7 @@ const env = require('dotenv').config()
 const app = express()
 const port = 9005
 
-var options = {
+const options = {
     hostname: "eu.battle.net",
     path: '/oauth/token',
     method: 'POST',
@@ -13,18 +13,16 @@ var options = {
     headers: {
         "Content-Type": "application/x-www-form-urlencoded"
     }
-}
-
-var grant_type = Buffer.from("grant_type").toString("base64") + "=" + Buffer.from("client_credentials").toString("base64")
+};
 
 app.get('/', (req, res) => {
-    var access_token_req = https.request(options, function(response) {
+    let access_token_req = https.request(options, function (response) {
         console.log('STATUS: ' + response.statusCode);
         console.log('HEADERS: ' + JSON.stringify(response.headers));
         response.setEncoding('utf8');
 
         let body = ''
-        response.on('data', function(chunk) {
+        response.on('data', function (chunk) {
             body += chunk
         })
 
@@ -36,6 +34,11 @@ app.get('/', (req, res) => {
 
     access_token_req.write("grant_type=client_credentials")
     access_token_req.end()
+})
+
+app.get('/health', (req, res) => {
+    res.json({"status": "UP"})
+    res.end()
 })
 
 app.listen(port, () => {

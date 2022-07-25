@@ -8,7 +8,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 @ApplicationScoped
 public class QueryBus {
-    private Map<Class<? extends Query>, QueryHandler> registry;
+    private final Map<Class<? extends Query>, QueryHandler> registry;
 
     public QueryBus(Instance<QueryHandler<?, ? extends Query<?>>> queries) {
         registry = new HashMap<>();

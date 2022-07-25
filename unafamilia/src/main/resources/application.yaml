@@ -9,3 +9,10 @@ quarkus:
       scopes:
         - 'wow.profile'
     application-type: web-app
+    discord-realm:
+      auth-server-url: https://eu.battle.net/oauth
+      client-id: ${application.wow.id}
+      credentials:
+        secret: ${application.wow.secret}
+  http:
+    port: 9000

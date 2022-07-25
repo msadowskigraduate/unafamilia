@@ -10,9 +10,9 @@ public class NewItemCommand implements Command {
     // implement fields from itemDto
     // create new class to map itemDto into new ItemCommand
     // Or handle this mapping in a controller called DiscordController method addItem
-    private Long id;
-    private Integer maxAmount;
-    private String slug;
+    private final Long id;
+    private final Integer maxAmount;
+    private final String slug;
 
     public NewItemCommand(Long id, Integer maxAmount, String slug) {
         this.id = id;

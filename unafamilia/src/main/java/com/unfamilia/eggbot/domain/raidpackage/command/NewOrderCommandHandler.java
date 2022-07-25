@@ -26,18 +26,18 @@ public class NewOrderCommandHandler implements CommandHandler {
     public void handle(Command command) {
         var newOrderCommand = (NewOrderCommand) command;
 
-        var orderItemsList = newOrderCommand.getOrderedItems().stream()
+        var orderItemsList = newOrderCommand.orderedItems().stream()
                         .map(orderedItem -> OrderItem.of(
-                                Item.findByName(orderedItem.getItemName()),
-                                orderedItem.getQuantity()
+                                Item.findByName(orderedItem.itemName()),
+                                orderedItem.quantity()
                         ))
                 .peek(orderItem -> orderItem.persist())
                 .collect(Collectors.toList());
 
         Order.of(
-                newOrderCommand.getOrderId(),
-                newOrderCommand.getOrderMessageId(),
-                newOrderCommand.getOrderingUserId(),
+                newOrderCommand.orderId(),
+                newOrderCommand.orderMessageId(),
+                newOrderCommand.orderingUserId(),
                 null,
                 false,
                 false,

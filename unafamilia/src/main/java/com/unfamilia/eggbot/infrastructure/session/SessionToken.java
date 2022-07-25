@@ -10,10 +10,10 @@ import java.util.UUID;
 
 @Getter
 public class SessionToken {
-    private static Map<String, SessionToken> cache = new HashMap<>();
-    private String token;
-    private Long expiresIn;
-    private Long userId;
+    private static final Map<String, SessionToken> cache = new HashMap<>();
+    private final String token;
+    private final Long expiresIn;
+    private final Long userId;
 
     private SessionToken(String token, Long expiresIn, Long user) {
         this.token = token;

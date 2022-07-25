@@ -1,7 +1,6 @@
 package com.unfamilia.application;
 
 import com.unfamilia.application.command.CommandBus;
-import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.domain.player.command.RegisterNewPlayerCommand;
 import com.unfamilia.eggbot.domain.player.command.RegisterNewPlayerFromDiscordCommand;
 import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
@@ -16,7 +15,10 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -70,7 +72,9 @@ public class HomeController {
         var sessionToken1 = SessionToken.get(sessionToken);
 
         if(idToken.getSubject() != null && !sessionToken1.isValid()) {
-            return Response.seeOther(UriBuilder.fromUri("/callback").build()).build();
+            UriBuilder redirectUriBuilder = UriBuilder.fromUri("http://localhost:9000/callback")
+                    .queryParam("redirect_uri", redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri);
+            return Response.seeOther(redirectUriBuilder.build()).build();
         }
 
         if (idToken.getSubject() != null && sessionToken1.isValid()) {

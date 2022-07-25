@@ -8,9 +8,7 @@ import io.quarkus.security.Authenticated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -20,13 +18,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Authenticated
-@Path("/{userId}/order")
+@Path("/{tenant_id}/{userId}/order")
 @RequiredArgsConstructor
 public class OrderController {
     private final CommandBus commandBus;
-
-    @Inject
-    JsonWebToken jsonWebToken;
 
     @PATCH
     @Consumes(MediaType.APPLICATION_JSON)
@@ -63,7 +58,7 @@ public class OrderController {
                         player.getDiscordUserId(),
                         orderId,
                         orderPayload.getItems().stream()
-                                .map(item -> new NewOrderCommand.OrderedItem(item.getItemName(), item.getQuantity()))
+                                .map(item -> new NewOrderCommand.OrderedItem(item.itemName(), item.quantity()))
                                 .collect(Collectors.toList())
                 )
             )

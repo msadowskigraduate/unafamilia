@@ -2,28 +2,24 @@ package com.unfamilia.application.event;
 
 import com.unfamilia.application.command.CommandBus;
 import com.unfamilia.eggbot.domain.player.Player;
+import io.quarkus.security.Authenticated;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Path("/{userId}/event")
+@Authenticated
+@Path("/{tenant_id}/event")
 @RequiredArgsConstructor
 public class EventController {
     public final CommandBus commandBus;
 
-    @Inject
-    JsonWebToken jsonWebToken;
-
     @POST
     @Consumes(APPLICATION_JSON)
-    public Response commandCreateNewEvent(@PathParam("userId") Long userId, ScheduledEvent event) {
-        var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
+    public Response commandCreateNewEvent(ScheduledEvent event) {
+        var user = Player.<Player>findByIdOptional(event.organizerId);
         if(user.isPresent()) {
             return Response.ok("Not yet implemented but good job.").build();
         }
@@ -32,8 +28,8 @@ public class EventController {
     }
 
     @GET
-    public Response queryAllEventsForPlayer(@PathParam("userId") Long userId) {
-        var user = Player.<Player>findByIdOptional(jsonWebToken.getSubject());
+    public Response queryAllEventsForPlayer(@QueryParam("userId") Long userId) {
+        var user = Player.<Player>findByIdOptional(userId);
         if(user.isPresent()) {
             return Response.ok("Not yet implemented but good job.").build();
         }
@@ -41,7 +37,7 @@ public class EventController {
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
-    record ScheduledEvent() {
+    record ScheduledEvent(Long organizerId) {
 
     }
 }
