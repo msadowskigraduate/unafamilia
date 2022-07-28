@@ -1,5 +1,6 @@
 from urllib.parse import urljoin
 import json
+import discord
 
 # Third-party imports...
 import requests
@@ -39,3 +40,8 @@ def get_orderable_items():
     else:
         return None
     
+# return bool - is interacting user = user who used original command    
+async def check_interaction_correct_user(interaction, orig_ctx):
+    if interaction.user.id == orig_ctx.author.id:
+        return True
+    return False
