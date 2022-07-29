@@ -3,7 +3,7 @@ const https = require("https")
 const env = require('dotenv').config()
 
 const app = express()
-const port = 9005
+const port = process.env.PORT
 
 const options = {
     hostname: "eu.battle.net",
