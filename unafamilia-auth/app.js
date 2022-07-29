@@ -13,7 +13,7 @@ const options = {
     headers: {
         "Content-Type": "application/x-www-form-urlencoded"
     }
-}; 
+};
 
 app.get('/', (req, res) => {
     let access_token_req = https.request(options, function (response) {
