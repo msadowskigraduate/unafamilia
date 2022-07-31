@@ -28,9 +28,6 @@ import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 @RequiredArgsConstructor
 public class ItemController {
     private final CommandBus commandBus;
-//
-//    @Inject
-//    JsonWebToken jsonWebToken;
 
     @Inject
     @IdToken
@@ -48,8 +45,8 @@ public class ItemController {
     @Authenticated
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryItems() {
-//        return Response.ok(Item.findAll().list()).build();
-        return Response.ok(idToken.getRawToken()).build();
+	    var items = Item.<Item>findAll().list();
+        return Response.ok(items).build();
     }
 
     @GET
