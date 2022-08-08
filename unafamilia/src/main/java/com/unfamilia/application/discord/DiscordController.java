@@ -6,6 +6,7 @@ import com.unfamilia.eggbot.domain.player.Player;
 import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import io.quarkus.qute.Template;
+import io.quarkus.security.Authenticated;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -47,6 +48,7 @@ public class DiscordController {
     }
 
     @POST
+    @Authenticated
     public Response sessionTokenForUser(Long userId) {
         if(Player.findByDiscordUserId(userId).isEmpty()) {
             return Response.ok(SessionToken.generateForUser(userId)).build();
