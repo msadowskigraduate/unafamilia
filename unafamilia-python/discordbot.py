@@ -124,7 +124,6 @@ class CancelOrderButton(discord.ui.Button):
                 ephemeral=True,
                 delete_after=5.0
             )
-            print("Told Nyly to fuck off")
 
 
 class ConfirmOrderButton(discord.ui.Button):
@@ -158,7 +157,6 @@ class ItemSelect(discord.ui.Select):
         current_selected_item = self.values[0]
         orderItem = OrderItem()
         orderItem.set_order_item(self.values[0])
-        # print(orderItem.get_ordered_item)
         modal = AddItemToOrderModal(
             title="Enter Quantity", orderItem=orderItem, orig_ctx=self._orig_ctx, order=self.order)
         await interaction.response.send_modal(modal)
@@ -180,7 +178,6 @@ class AddItemToOrderModal(discord.ui.Modal):
         for order in orders:
             if order.get_user_id() == interaction.user.id and order.get_is_order_saved() == False:
                 order.save_ordered_item(self.orderItem.get_ordered_item())
-                print(interaction.message.embeds)
                 if len(embeds) > 0:
                     current_item_list = embeds[0].fields[0].value
                     current_qty_list = embeds[0].fields[1].value
@@ -209,7 +206,6 @@ class AddItemToOrderModal(discord.ui.Modal):
 
 @bot.event
 async def on_ready():
-    print(bot.guilds)
     print(f"{bot.user} is ready and online!")
     await bot.register_commands()
 
