@@ -83,7 +83,7 @@ public class OrderController {
         @Data
         @NoArgsConstructor
         public static class OrderedItem {
-            private String name;
+            private Long itemId;
             private Integer quantity;
         }
     }
