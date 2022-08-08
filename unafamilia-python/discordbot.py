@@ -47,7 +47,7 @@ class Order():
         self.__saved = False
 
     def save_ordered_item(self, ordered_item):
-        if ordered_item["item"] is not None and ordered_item["quantity"] is not None:
+        if ordered_item["item"] is not None and ordered_item["item"]["quantity"] is not None:
             self.__ordered_items.append(ordered_item)
             # self.__saved = True
 
@@ -72,7 +72,7 @@ class OrderItem():
         self.__qty = None
 
     def get_ordered_item(self):
-        return {"item": self.__item, "quantity": self.__qty}
+        return {"item": self.__item}
 
     def set_order_item(self, item_id):
         for item in orderable_items:
@@ -80,7 +80,8 @@ class OrderItem():
                 self.__item = item
 
     def set_order_item_qty(self, qty):
-        self.__qty = qty
+        # self.__qty = qty
+        self.__item["quantity"] = qty
 
 
 class ItemSelectionView(discord.ui.View):
@@ -91,7 +92,6 @@ class ItemSelectionView(discord.ui.View):
 
         self.add_item(ItemSelect(order=self.order,
                       options=item_choices, orig_ctx=self.orig_ctx))
-        # self.add_item(AddMoreItemsButton(self.orig_ctx))
         self.add_item(CancelOrderButton(self.orig_ctx))
         self.add_item(ConfirmOrderButton(
             order=self.order, orig_ctx=self.orig_ctx))
@@ -111,7 +111,6 @@ class CancelOrderButton(discord.ui.Button):
                     del order
             global current_selected_item
             current_selected_item = None
-            # await interaction.message.edit(view=None, embed=None, content="Order cancelled")
             await interaction.message.delete()
             await interaction.response.send_message(
                 "Order cancelled",
@@ -185,7 +184,7 @@ class AddItemToOrderModal(discord.ui.Modal):
                         embeds[0].set_field_at(0, name="Item: ", value=current_item_list + "\n" + capitalise_slug(
                             order_item["item"]["slug"]))
                         embeds[0].set_field_at(
-                            1, name="Quantity: ", value=current_qty_list + "\n" + order_item["quantity"])
+                            1, name="Quantity: ", value=current_qty_list + "\n" + order_item["item"]["quantity"])
                 else:
                     embed = discord.Embed()
                     embed.title = "Current order for: " + interaction.user.mention
@@ -193,7 +192,7 @@ class AddItemToOrderModal(discord.ui.Modal):
                         embed.add_field(name="Item: ", value=capitalise_slug(
                             order_item["item"]["slug"]))
                         embed.add_field(name="Quantity: ",
-                                        value=order_item["quantity"])
+                                        value=order_item["item"]["quantity"])
                         embed.colour = discord.Color.orange()
                     embeds.append(embed)
         await interaction.message.edit(embeds=embeds, view=ItemSelectionView(orig_ctx=self._orig_ctx, order=self.order))
