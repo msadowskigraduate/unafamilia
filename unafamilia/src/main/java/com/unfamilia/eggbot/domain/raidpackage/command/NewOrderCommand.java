@@ -7,6 +7,6 @@ import java.util.UUID;
 
 public record NewOrderCommand(Long orderMessageId, Long orderingUserId, UUID orderId,
                               List<OrderedItem> orderedItems) implements Command {
-    public record OrderedItem(String itemName, Integer quantity) {
+    public record OrderedItem(Long itemId, Integer quantity) {
     }
 }

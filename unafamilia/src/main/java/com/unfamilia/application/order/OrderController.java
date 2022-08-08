@@ -58,7 +58,7 @@ public class OrderController {
                         player.getDiscordUserId(),
                         orderId,
                         orderPayload.getItems().stream()
-                                .map(item -> new NewOrderCommand.OrderedItem(item.itemName(), item.quantity()))
+                                .map(item -> new NewOrderCommand.OrderedItem(item.item_id(), item.quantity()))
                                 .collect(Collectors.toList())
                 )
             )

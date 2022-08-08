@@ -15,6 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Table(name = "item", indexes = {
+        @Index(name = "item_id", columnList = "item_id"),
         @Index(name = "slug", columnList = "slug")
 })
 public class Item extends PanacheEntityBase {
@@ -49,5 +50,9 @@ public class Item extends PanacheEntityBase {
 
     public static Item findByName(String slug) {
         return find("slug", slug).firstResult();
+    }
+
+    public static Item findById(Long id) {
+        return find("item_id", id);
     }
 }
