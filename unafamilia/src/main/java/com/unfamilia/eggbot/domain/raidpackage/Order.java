@@ -54,7 +54,7 @@ public class Order extends PanacheEntityBase {
     }
 
     public static List<Order> findAllOrdersForDiscordUser(Long orderUserId) {
-        if(orderUserId == null) return null;
+        if(orderUserId == null) return List.of();
         return list("orderUserId", Sort.ascending("id"), orderUserId);
     }
 

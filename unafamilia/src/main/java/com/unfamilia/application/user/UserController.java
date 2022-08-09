@@ -73,6 +73,7 @@ public class UserController {
         }
 
         //missing logic
+        //generate player view
         if(player.getDiscordUserId() == null) {
             return Response.seeOther(URI.create("/user/test")).build();
         }
