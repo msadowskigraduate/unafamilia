@@ -1,0 +1,3 @@
+quarkus:
+  application:
+    name: "Una Familia Orders"
