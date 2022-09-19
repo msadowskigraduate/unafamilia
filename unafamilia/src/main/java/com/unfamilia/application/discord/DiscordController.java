@@ -1,8 +1,7 @@
 package com.unfamilia.application.discord;
 
-import com.unfamilia.application.command.CommandBus;
 import com.unfamilia.application.ErrorResponse;
-import com.unfamilia.eggbot.domain.player.Player;
+import com.unfamilia.application.user.User;
 import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import io.quarkus.qute.Template;
@@ -10,6 +9,7 @@ import io.quarkus.security.Authenticated;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 @Path("/discord")
 @RequiredArgsConstructor
 public class DiscordController {
-    private final CommandBus commandBus;
     @Inject Template login;
     @Inject Template error;
 
@@ -49,9 +48,9 @@ public class DiscordController {
 
     @POST
     @Authenticated
-    public Response sessionTokenForUser(Long userId) {
-        if(Player.findByDiscordUserId(userId).isEmpty()) {
-            return Response.ok(SessionToken.generateForUser(userId)).build();
+    public Response sessionTokenForUser(@NotNull Long discordUserId) {
+        if(User.findByOptionalDiscordId(discordUserId).isEmpty()) {
+            return Response.ok(SessionToken.generateForUser(discordUserId)).build();
         }
 
         return Response

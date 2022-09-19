@@ -1,0 +1,13 @@
+name: Unafamilia-Core CI
+
+on:
+  push:
+    paths:
+      - 'unafamilia/**'
+
+jobs:
+  build_docker_image:
+    uses: ./build-image.yml
+    with:
+      image_name: ${GITHUB_REPOSITORY}/unafamilia-core
+      image_tag: ${GITHUB_REF_NAME}

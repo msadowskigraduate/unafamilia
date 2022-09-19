@@ -1,0 +1,13 @@
+name: Unafamilia-Orders CI
+
+on:
+  push:
+    paths:
+      - 'orders/**'
+
+jobs:
+  build_docker_image:
+    uses: ./build-image.yml
+    with:
+      image_name: ${GITHUB_REPOSITORY}/unafamilia-orders
+      image_tag: ${GITHUB_REF_NAME}

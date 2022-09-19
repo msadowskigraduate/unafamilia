@@ -1,13 +1,11 @@
 package com.unfamilia.application;
 
 import com.unfamilia.application.command.CommandBus;
-import com.unfamilia.eggbot.domain.player.command.RegisterNewPlayerCommand;
-import com.unfamilia.eggbot.domain.player.command.RegisterNewPlayerFromDiscordCommand;
+import com.unfamilia.application.user.command.NewUserCommand;
 import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.oidc.IdToken;
-import io.quarkus.oidc.RefreshToken;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.security.Authenticated;
@@ -48,8 +46,6 @@ public class HomeController {
     JsonWebToken idToken;
     @Inject
     AccessTokenCredential accessToken;
-    @Inject
-    RefreshToken refreshToken;
 
     @Inject
     CommandBus commandBus;
@@ -77,18 +73,18 @@ public class HomeController {
             return Response.seeOther(redirectUriBuilder.build()).build();
         }
 
-        if (idToken.getSubject() != null && sessionToken1.isValid()) {
-            this.commandBus.handle(RegisterNewPlayerFromDiscordCommand.of(
-                    accessToken.getToken(),
-                    sessionToken1,
-                    this.idToken.<String>getClaim("battle_tag"),
-                    Long.valueOf(idToken.getSubject())
-                )
-            );
-            return Response
-                    .seeOther(URI.create(redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri))
-                    .build();
-        }
+        // if (idToken.getSubject() != null && sessionToken1.isValid()) {
+        //     this.commandBus.handle(RegisterNewPlayerFromDiscordCommand.of(
+        //             accessToken.getToken(),
+        //             sessionToken1,
+        //             this.idToken.<String>getClaim("battle_tag"),
+        //             Long.valueOf(idToken.getSubject())
+        //         )
+        //     );
+        //     return Response
+        //             .seeOther(URI.create(redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri))
+        //             .build();
+        // }
 
         UriBuilder redirectUriBuilder = UriBuilder.fromUri("http://localhost:9000/callback")
                 .queryParam("redirect_uri", redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri);
@@ -118,11 +114,7 @@ public class HomeController {
             var sessionToken1 = SessionToken.get(sessionToken);
             var wowProfileId = Long.valueOf(this.idToken.getClaim("sub"));
             var battleTag = this.idToken.<String>getClaim("battle_tag");
-            this.commandBus.handle(
-                    sessionToken1.isValid() ?
-                            RegisterNewPlayerFromDiscordCommand.of(accessToken.getToken(), sessionToken1, battleTag, wowProfileId) :
-                            RegisterNewPlayerCommand.of(accessToken.getToken(), battleTag, wowProfileId)
-            );
+            this.commandBus.handle(new NewUserCommand(sessionToken1, wowProfileId, battleTag));
 
 
             return Response

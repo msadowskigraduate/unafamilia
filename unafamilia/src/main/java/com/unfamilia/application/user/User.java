@@ -1,38 +1,36 @@
 package com.unfamilia.application.user;
 
-import com.unfamilia.eggbot.domain.character.Character;
-import com.unfamilia.eggbot.domain.player.Player;
-import com.unfamilia.eggbot.domain.player.Role;
-import lombok.AccessLevel;
-import lombok.Builder;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import lombok.Getter;
+import lombok.Setter;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import static java.util.stream.Collectors.toList;
+import java.util.Optional;
 
 @Getter
-@Builder(access = AccessLevel.PRIVATE)
-public class User {
+@Setter
+@Entity
+@Table(name = "unafamilia_users")
+public class User extends PanacheEntityBase {
     private String name;
-    private List<Character> characters;
-    private Long userId;
-    private boolean isDiscordUser;
-    private boolean isARaider;
-    private boolean hasAMainCharacter;
-    private Character mainCharacter;
-    private List<String> roles;
 
-    public static User from(Player player) {
-        return User.builder()
-                .name(player.getBattleTag())
-                .userId(player.getId())
-                .isDiscordUser(player.hasLinkedWithDiscord())
-                .isARaider(player.getRole().stream().anyMatch(x -> x.getName().equals("Raider")))
-                .hasAMainCharacter(player.getMainCharacter() != null)
-                .mainCharacter(player.getMainCharacter())
-                .characters(player.getCharacters())
-                .roles( player.getRole().stream().map(Role::getName).collect(toList()))
-                .build();
+    @Column(name = "discord_user_id")
+    private Long discordUserId;
+
+    @Id
+    @Column(name = "battlenet_user_id")
+    private Long battleNetUserId;
+    private Integer rank;
+
+    public static Optional<User> findByOptionalDiscordId(Long discordUserId) {
+        return User.find("discord_user_id", discordUserId).singleResultOptional();
+    }
+
+    public static Optional<User> findByOptionalBattleNetId(Long battleNetUserId) {
+        return User.find("battlenet_user_id", battleNetUserId).singleResultOptional();
     }
 }

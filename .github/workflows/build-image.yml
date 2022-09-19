@@ -1,13 +1,17 @@
 name: Unafamilia Java Backend build docker image with JIB
 
 on:
-  push:
-    paths:
-      - 'unafamilia/**'
+  workflow_call:    
+    inputs:
+        image_name:
+          required: true
+          type: string
+        image_tag:
+          required: true
+          type: string
 
 env:
   AWS_REGION: eu-west-2
-  ECR_REPOSITORY: unafamilia
 
 jobs:
   build:
@@ -36,7 +40,8 @@ jobs:
       - name: Build Image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.ref_name }}
+          ECR_REPOSITORY: ${{ inputs.image_name }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
         run: |
           mvn package -Dquarkus.container-image.build=true -Dquarkus.container-image.builder=jib "-Dquarkus.container-image.image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

@@ -1,5 +1,13 @@
+application:
+  hostname: "http://localhost:9000"
+  wow:
+    id: 2cc094ac5f9047cb8eeaf3ea4991fc93
+    secret: RwMSy4EQbXHwyeq5d5BDoXQ9NTfte6Zh
 quarkus:
   http:
     port: 9000
   oidc:
-    enabled: false
+    # keycloak.url is set by OidcWiremockTestResource
+    auth-server-url: "${keycloak.url}/realms/quarkus/"
+    client-id: quarkus-service-app
+    application-type: web_app

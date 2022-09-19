@@ -1,7 +1,10 @@
-<div class="list-group-item card">
-    <img src="{event.backgroundUrl}" class="card-img-top" alt="{event.title}">
-    <h5 class="card-title">{event.title}</h5>
-    <h6 class="card-subtitle mb-2">{event.date}</h6>
-    <p class="card-text">{event.activity}</p>
-</div>
-
+{#for event in events}
+    <div class="list-group event-card shadowed col-3 mx-2 mb-2">
+        <div class="list-group-item card">
+        <img src="{event.backgroundUrl}" class="card-img-top" alt="{event.title}">
+        <h5 class="card-title">{event.title}</h5>
+        <h6 class="card-subtitle mb-2">{event.date}</h6>
+        <p class="card-text">{event.activity}</p>
+        </div>
+    </div>
+{/for}
