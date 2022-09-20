@@ -1,4 +1,4 @@
-name: Unafamilia-Auth CI
+name: Unafamilia wow-api
 
 on:
   push:
@@ -29,6 +29,8 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1  
 
       - name: Build Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           docker build unafamilia-auth -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" 
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
