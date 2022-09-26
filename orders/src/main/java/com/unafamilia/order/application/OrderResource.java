@@ -97,7 +97,7 @@ public class OrderResource {
     @POST
     @Path("/{orderId}/due/{amount}")
     @Transactional
-    public Response addAmountDue(@PathParam("orderId") UUID orderId, Long amount) {
+    public Response addAmountDue(@PathParam("orderId") UUID orderId, @PathParam("amount") Long amount) {
         var order = Order.<Order>findByIdOptional(orderId);
 
         if (order.isEmpty()) {
