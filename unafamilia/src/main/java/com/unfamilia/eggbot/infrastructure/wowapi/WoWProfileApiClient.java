@@ -71,6 +71,7 @@ public class WoWProfileApiClient extends WoWApiClient implements WoWProfileClien
             HttpResponse<String> json = get(uri);
 
             if(json.statusCode() > 300) {
+                System.out.println(json.statusCode());
                 throw new WebApplicationException(Response.status(json.statusCode()).entity(json.body()).build());
             }
             return Json.decodeValue(json.body(), WowProfile.class);

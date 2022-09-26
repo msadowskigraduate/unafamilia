@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 	"unafamilia/wow-api/characters"
 	"unafamilia/wow-api/core"
 	"unafamilia/wow-api/guild"
 	"unafamilia/wow-api/items"
 
+	"github.com/DeanThompson/ginpprof"
 	"github.com/FuzzyStatic/blizzard/v3"
 	"github.com/bamzi/jobrunner"
 	"github.com/gin-gonic/gin"
@@ -70,7 +72,7 @@ func main() {
 
 	router.LoadHTMLGlob("./views/Status.html")
 	router.GET("/jobs", JobHtml)
-
+	ginpprof.Wrap(router)
 	router.Run(":8080")
 }
 
@@ -87,10 +89,21 @@ func init() {
 	rh.SetGoRedisClient(rdb)
 	fmt.Println("[APPLICATION] Initializing Battle.Net Client...")
 
+	clientId := os.Getenv("BATTLENET_CLIENT_ID")
+	clientSecret := os.Getenv("BATTLENET_CLIENT_SECRET")
+
+	if clientId == "" || clientSecret == "" {
+		panic("Export BATTLENET_CLIENT_ID and BATTLENET_CLIENT_SECRET!")
+	}
+
 	client, err = blizzard.NewClient(blizzard.Config{
-		HTTPClient: http.DefaultClient,
-		Region:     blizzard.EU,
-		Locale:     blizzard.EnGB,
+		// ClientID:     "2cc094ac5f9047cb8eeaf3ea4991fc93",
+		// ClientSecret: "RwMSy4EQbXHwyeq5d5BDoXQ9NTfte6Zh",
+		ClientID:     os.Getenv("BATTLENET_CLIENT_ID"),
+		ClientSecret: os.Getenv("BATTLENET_CLIENT_SECRET"),
+		HTTPClient:   http.DefaultClient,
+		Region:       blizzard.EU,
+		Locale:       blizzard.EnGB,
 	})
 
 	if err != nil {
@@ -101,6 +114,5 @@ func init() {
 }
 
 func JobHtml(c *gin.Context) {
-	// Returns the template data pre-parsed
 	c.HTML(200, "Status.html", jobrunner.StatusPage())
 }

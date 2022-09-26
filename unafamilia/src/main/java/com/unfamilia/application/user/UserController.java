@@ -20,6 +20,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/user")
@@ -38,7 +40,8 @@ public class UserController {
         Log.info("User: " + idToken.getSubject());
 
         if(user.isEmpty()) {
-            return Response.seeOther(URI.create("/login?redirect_uri=/user")).build();
+            var redirectUrl = URLEncoder.encode("/user",  StandardCharsets.UTF_8);
+            return Response.seeOther(URI.create("/login?redirect_uri=" + redirectUrl)).build();
         }
 
         try {

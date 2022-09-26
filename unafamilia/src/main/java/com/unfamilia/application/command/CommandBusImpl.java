@@ -8,12 +8,14 @@ import javax.inject.Singleton;
 @Singleton
 @RequiredArgsConstructor
 public class CommandBusImpl implements CommandBus {
-    private final Instance<CommandHandler> handlers;
+    private final Instance<CommandHandler<? extends Command>> handlers;
 
     @Override
-    public void handle(Command command) {
-        handlers.stream()
-                .filter(handlers -> handlers.supports(command))
-                .forEach(handler -> handler.handle(command));
+    public void handle(Command command) throws GenericCommandBusException {
+        for (CommandHandler handler : handlers) {
+            if (handler.supports(command)) {
+                handler.handle(command);
+            }
+        }
     }
 }

@@ -45,6 +45,36 @@ public class EventResource {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    @POST
+    @Path("/{event_id}")
+    @Transactional
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    public Response updateEvent(@PathParam("event_id") UUID eventId, EventDto eventDto) {
+        var event = Event.<Event>findByIdOptional(eventId);
+
+        if (event.isPresent()) {
+            var invitees = eventDto.draftedPlayers().stream()
+            .map(inviteeDto -> {
+                var invitee = new Invitee();
+                invitee.characterId = inviteeDto.characterId();
+                invitee.status = inviteeDto.status();
+                return invitee;
+            })
+            .peek(invitee -> invitee.persist())
+            .collect(Collectors.toList());
+
+            event.get().draftedPlayers = invitees;
+            event.get().date = eventDto.date();
+            event.get().activityName = eventDto.activityName();
+            event.get().eventName = eventDto.eventName();
+            event.get().organizerId = eventDto.organizerId();
+            event.get().persist();
+        }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+ 
     @GET
     @Transactional
     public Response queryAllEvents() {

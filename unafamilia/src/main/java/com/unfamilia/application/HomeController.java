@@ -1,11 +1,14 @@
 package com.unfamilia.application;
 
 import com.unfamilia.application.command.CommandBus;
+import com.unfamilia.application.command.GenericCommandBusException;
+import com.unfamilia.application.user.User;
 import com.unfamilia.application.user.command.NewUserCommand;
 import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.oidc.IdToken;
+import io.quarkus.oidc.OidcSession;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.security.Authenticated;
@@ -42,6 +45,9 @@ public class HomeController {
     ApplicationConfigProvider configProvider;
 
     @Inject
+    OidcSession oidcSession;
+
+    @Inject
     @IdToken
     JsonWebToken idToken;
     @Inject
@@ -52,6 +58,12 @@ public class HomeController {
 
     @GET
     public Response getHome() {
+        if(idToken.getSubject() != null) {
+            var user = User.findByOptionalBattleNetId(Long.valueOf(idToken.getSubject()));
+            if(user.isPresent()) {
+                return Response.seeOther(URI.create("/user")).build();
+            }
+        }
         return Response.seeOther(URI.create("/login")).build();
     }
 
@@ -65,27 +77,6 @@ public class HomeController {
     @Path("login")
     public Response login(@QueryParam("session_token") String sessionToken,
                           @QueryParam("redirect_uri") String redirectUri) {
-        var sessionToken1 = SessionToken.get(sessionToken);
-
-        if(idToken.getSubject() != null && !sessionToken1.isValid()) {
-            UriBuilder redirectUriBuilder = UriBuilder.fromUri("http://localhost:9000/callback")
-                    .queryParam("redirect_uri", redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri);
-            return Response.seeOther(redirectUriBuilder.build()).build();
-        }
-
-        // if (idToken.getSubject() != null && sessionToken1.isValid()) {
-        //     this.commandBus.handle(RegisterNewPlayerFromDiscordCommand.of(
-        //             accessToken.getToken(),
-        //             sessionToken1,
-        //             this.idToken.<String>getClaim("battle_tag"),
-        //             Long.valueOf(idToken.getSubject())
-        //         )
-        //     );
-        //     return Response
-        //             .seeOther(URI.create(redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri))
-        //             .build();
-        // }
-
         UriBuilder redirectUriBuilder = UriBuilder.fromUri("http://localhost:9000/callback")
                 .queryParam("redirect_uri", redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri);
 
@@ -103,6 +94,15 @@ public class HomeController {
     }
 
     @GET
+    @Authenticated
+    @Path("logout")
+    public Response logout(@QueryParam("session_token") String sessionToken,
+                          @QueryParam("redirect_uri") String redirectUri) {
+        oidcSession.logout().await().indefinitely();
+        return Response.seeOther(URI.create("/login")).build();
+    }
+
+    @GET
     @Path("callback")
     @Produces(APPLICATION_JSON)
     @Authenticated
@@ -112,17 +112,17 @@ public class HomeController {
             @NotNull @QueryParam("redirect_uri") String redirectUri) {
         try {
             var sessionToken1 = SessionToken.get(sessionToken);
-            var wowProfileId = Long.valueOf(this.idToken.getClaim("sub"));
+            var wowProfileId = Long.valueOf(idToken.getSubject());
             var battleTag = this.idToken.<String>getClaim("battle_tag");
-            this.commandBus.handle(new NewUserCommand(sessionToken1, wowProfileId, battleTag));
 
+            commandBus.handle(new NewUserCommand(accessToken.getToken(), sessionToken1.getUserId(), wowProfileId, battleTag));
 
             return Response
                     .seeOther(URI.create(URLDecoder.decode(redirectUri, StandardCharsets.UTF_8)))
                     .header(HttpHeaders.SET_COOKIE, "authorization_code=" + authorizationCode + "; HttpOnly")
                     .build();
 
-        } catch (InvalidTokenException e) {
+        } catch (InvalidTokenException | GenericCommandBusException e) {
             TemplateInstance template = error.data("login.errorCode", "401", "login.errorMessage", "Invalid token!");
             return Response.status(Response.Status.UNAUTHORIZED).entity(template.render()).build();
         }

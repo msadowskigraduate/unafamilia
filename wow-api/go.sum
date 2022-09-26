@@ -33,6 +33,8 @@ cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+github.com/DeanThompson/ginpprof v0.0.0-20201112072838-007b1e56b2e1 h1:IIOiH2YkFyyHCImuX7YWlHpc7wHZTQVxZwADs5jfggQ=
+github.com/DeanThompson/ginpprof v0.0.0-20201112072838-007b1e56b2e1/go.mod h1:kMi/fSDAgvjo9TYfYwYeQ2vkyj+VTR/tB6u/Tjh39t0=
 github.com/FuzzyStatic/blizzard v1.3.2 h1:FaLgELk0nwWZdS5AS04vlRkBRZ6QirzWcZhsp8FZkH8=
 github.com/FuzzyStatic/blizzard v1.3.2/go.mod h1:5eTIPB/cX8GNRRUO9Ys5NamnYGRS1IedqiMgkTJvnSc=
 github.com/bamzi/jobrunner v1.0.0 h1:80hmOkXhj0dCeJZx+dLwGvOFLr3PVEcLYpw3+YbG1YM=

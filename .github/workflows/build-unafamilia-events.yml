@@ -7,7 +7,7 @@ on:
 
 jobs:
   build_docker_image:
-    uses: ./build-image.yml@main
+    uses: .github/workflows/build-image.yml@main
     with:
       image_name: ${GITHUB_REPOSITORY}/unafamilia-events
       image_tag: ${GITHUB_REF_NAME}

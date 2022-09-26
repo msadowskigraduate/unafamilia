@@ -1,20 +1,33 @@
 package com.unfamilia.application.user.command;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.transaction.Transactional;
-
-import com.unfamilia.application.command.Command;
 import com.unfamilia.application.command.CommandHandler;
 import com.unfamilia.application.user.User;
-
+import com.unfamilia.application.user.UserNotFromGuildException;
+import com.unfamilia.eggbot.infrastructure.WoWProfileClient;
+import com.unfamilia.eggbot.infrastructure.wowguild.WoWApiGuildAdapter;
+import com.unfamilia.eggbot.infrastructure.wowguild.model.WoWGuildRosterResponse;
 import io.quarkus.logging.Log;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.Comparator;
+import java.util.Optional;
 
 @ApplicationScoped
-public class NewUserCommandHandler implements CommandHandler {
+public class NewUserCommandHandler implements CommandHandler<NewUserCommand> {
+    @Inject
+    WoWProfileClient client;
+
+
+    @Inject
+    @RestClient
+    WoWApiGuildAdapter guild;
 
     @Override
-    public boolean supports(Command command) {
-        return command instanceof NewUserCommand;
+    public boolean supports(NewUserCommand command) {
+        return command != null;
     }
 
     /* (non-Javadoc)
@@ -23,14 +36,26 @@ public class NewUserCommandHandler implements CommandHandler {
      */
     @Override
     @Transactional
-    public void handle(Command command) {
-        var newUserCommand = (NewUserCommand) command;
+    public void handle(NewUserCommand command) throws UserNotFromGuildException {
+        var wowProfile = client.queryWowProfile(command.accessToken());
+        var response = guild.queryGuildRoster("magtheridon", "una-familia");
+        Optional<WoWGuildRosterResponse.Member> min = response.members().stream()
+                .filter(member -> wowProfile.getWowAccounts().stream().flatMap(wowAccount -> wowAccount.getCharacters().stream())
+                        .anyMatch(character -> character.getId().equals(member.id())))
+//                .peek(member -> Log.info(member.name()))
+                .min(Comparator.comparing(WoWGuildRosterResponse.Member::rank));
 
-        Log.info("Creating user: " + newUserCommand.battleTag());
-        var user = new User();
-        user.setBattleNetUserId(newUserCommand.wowProfileId());
-        user.setName(newUserCommand.battleTag());
-        user.setDiscordUserId(newUserCommand.sessionToken().getUserId());
-        user.persist();
+        if(min.isPresent()) {
+            Log.info("Creating user: " + command.battleTag());
+            var user = new User();
+            user.setBattleNetUserId(command.wowProfileId());
+            user.setName(command.battleTag());
+            user.setDiscordUserId(command.discordUserId());
+            user.setRank(min.get().rank());
+            user.persist();
+        } else {
+            Log.info("User not from the guild!");
+            throw new UserNotFromGuildException("Not Authorized");
+        }
     }
 }
