@@ -97,8 +97,6 @@ func init() {
 	}
 
 	client, err = blizzard.NewClient(blizzard.Config{
-		// ClientID:     "2cc094ac5f9047cb8eeaf3ea4991fc93",
-		// ClientSecret: "RwMSy4EQbXHwyeq5d5BDoXQ9NTfte6Zh",
 		ClientID:     os.Getenv("BATTLENET_CLIENT_ID"),
 		ClientSecret: os.Getenv("BATTLENET_CLIENT_SECRET"),
 		HTTPClient:   http.DefaultClient,
