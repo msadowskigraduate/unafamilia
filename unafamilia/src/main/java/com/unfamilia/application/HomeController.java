@@ -77,6 +77,13 @@ public class HomeController {
     @Path("login")
     public Response login(@QueryParam("session_token") String sessionToken,
                           @QueryParam("redirect_uri") String redirectUri) {
+        if(idToken.getSubject() != null) {
+            var user = User.findByOptionalBattleNetId(Long.valueOf(idToken.getSubject()));
+            if(user.isPresent()) {
+                return Response.seeOther(URI.create("/user")).build();
+            }
+        }
+        
         UriBuilder redirectUriBuilder = UriBuilder.fromUri("http://localhost:9000/callback")
                 .queryParam("redirect_uri", redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri);
 

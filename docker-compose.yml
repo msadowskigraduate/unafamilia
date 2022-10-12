@@ -28,8 +28,10 @@ services:
       - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://db/postgres
       - QUARKUS_PROFILE=dev
       - QUARKUS_REST_CLIENT_WOW_API_URL=http://wow-api:8080
-      - APPLICATION_WOW_ID=
-      - APPLICATION_WOW_SECRET=
+      - QUARKUS_REST_CLIENT_EVENTS_V1_URL=http://events:8080
+      - QUARKUS_REST_CLIENT_ORDERS_V1_URL=http://orders:8080
+    env_file:
+      - .env
     depends_on:
       - db
       - wow-api
@@ -69,9 +71,9 @@ services:
     ports:
       - "8083:8080"
     environment:
-      - BATTLENET_CLIENT_ID=
-      - BATTLENET_CLIENT_SECRET=
       - REDIS_URL=redis:6379
+    env_file:
+      - .env
     depends_on:
       - redis
     networks:

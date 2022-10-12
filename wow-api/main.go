@@ -89,16 +89,16 @@ func init() {
 	rh.SetGoRedisClient(rdb)
 	fmt.Println("[APPLICATION] Initializing Battle.Net Client...")
 
-	clientId := os.Getenv("BATTLENET_CLIENT_ID")
-	clientSecret := os.Getenv("BATTLENET_CLIENT_SECRET")
+	clientId := os.Getenv("APPLICATION_WOW_ID")
+	clientSecret := os.Getenv("APPLICATION_WOW_SECRET")
 
 	if clientId == "" || clientSecret == "" {
-		panic("Export BATTLENET_CLIENT_ID and BATTLENET_CLIENT_SECRET!")
+		panic("Export APPLICATION_WOW_ID and APPLICATION_WOW_SECRET!")
 	}
 
 	client, err = blizzard.NewClient(blizzard.Config{
-		ClientID:     os.Getenv("BATTLENET_CLIENT_ID"),
-		ClientSecret: os.Getenv("BATTLENET_CLIENT_SECRET"),
+		ClientID:     clientId,
+		ClientSecret: clientSecret,
 		HTTPClient:   http.DefaultClient,
 		Region:       blizzard.EU,
 		Locale:       blizzard.EnGB,
