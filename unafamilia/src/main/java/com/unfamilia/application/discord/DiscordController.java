@@ -47,7 +47,6 @@ public class DiscordController {
     }
 
     @POST
-    @Authenticated
     public Response sessionTokenForUser(@NotNull Long discordUserId) {
         if(User.findByOptionalDiscordId(discordUserId).isEmpty()) {
             return Response.ok(SessionToken.generateForUser(discordUserId)).build();

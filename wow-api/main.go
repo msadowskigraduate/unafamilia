@@ -28,7 +28,11 @@ var (
 func main() {
 	router := gin.Default()
 	jobrunner.Start()
-	jobrunner.Every(time.Minute, guild.GuildUpdate{GuildName: "una-familia", GuildRealm: "magtheridon", Client: client, ReJsonHandler: rh})
+
+	guildUpdateJob := guild.GuildUpdate{GuildName: "una-familia", GuildRealm: "magtheridon", Client: client, ReJsonHandler: rh}
+
+	jobrunner.Now(&guildUpdateJob)
+	jobrunner.Every(time.Minute, &guildUpdateJob)
 	jobrunner.Every(time.Minute, characters.CharacterTracking{Client: client, ReJsonHandler: rh, Redis: rdb})
 
 	//Get Consumables
