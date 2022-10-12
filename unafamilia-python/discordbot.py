@@ -4,7 +4,7 @@ import requests
 import json
 
 
-from discord.commands import Option
+# from discord.commands import Option
 
 
 import os  # default module
