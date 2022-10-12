@@ -7,11 +7,15 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    networks:
+      - db
 
   redis:
     image: redislabs/rejson:latest
     ports:
       - 6379:6379
+    networks:
+      - redis_network
 
   core:
     image: unafamilia/core:latest
@@ -23,9 +27,16 @@ services:
       - QUARKUS_DATASOURCE_JDBC_DRIVER=org.postgresql.Driver
       - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://db/postgres
       - QUARKUS_PROFILE=dev
+      - QUARKUS_REST_CLIENT_WOW_API_URL=http://wow-api:8080
       - APPLICATION_WOW_ID=
       - APPLICATION_WOW_SECRET=
     depends_on:
+      - db
+      - wow-api
+      - events
+      - orders
+    networks:
+      - internal
       - db
   events:
     image: unafamilia/events:latest
@@ -38,6 +49,8 @@ services:
       - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://db/postgres
     depends_on:
       - db
+    networks:
+      - db
   orders:
     image: unafamilia/events:latest
     ports:
@@ -49,12 +62,25 @@ services:
       - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://db/postgres
     depends_on:
       - db
+    networks:
+      - db
   wow-api:
-    image: unafamilia/wow-api:0.0.1
+    image: unafamilia/wow-api:latest
     ports:
       - "8083:8080"
     environment:
       - BATTLENET_CLIENT_ID=
       - BATTLENET_CLIENT_SECRET=
+      - REDIS_URL=redis:6379
     depends_on:
       - redis
+    networks:
+      - internal
+      - redis_network
+networks:
+  internal:
+    name: "internal-network"
+  redis_network:
+    name: "redis"
+  db:
+    name: "internal-db"

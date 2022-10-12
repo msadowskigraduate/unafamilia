@@ -81,7 +81,7 @@ func init() {
 	rh = rejson.NewReJSONHandler()
 	fmt.Println("[APPLICATION] Initializing Redis Client...")
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     os.Getenv("REDIS_URL"),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})

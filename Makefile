@@ -13,7 +13,7 @@ build_wow_api:
 build_core:
 	mvn clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.builder=jib "-Dquarkus.container-image.image=unafamilia/core:latest" -Dmaven.test.skip --file unafamilia/pom.xml
 
-build: build_core build_event build_orders build_orders
+build: build_core build_event build_orders build_wow_api
 
 test:
 	mvn test --file unafamilia/pom.xml
