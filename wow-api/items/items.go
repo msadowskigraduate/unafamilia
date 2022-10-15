@@ -15,6 +15,7 @@ type Item struct {
 	ItemSubClass string `json:"subclass"`
 	ItemClass    string `json:"class"`
 	Media        int    `json:"media"`
+	ReqLevel     int    `json:"req_level"`
 }
 
 type ItemList struct {
@@ -34,6 +35,7 @@ func QueryConsumables(client *blizzard.Client) *ItemList {
 		wowsearch.Field().
 			AND("item_class.id", "0").
 			AND("item_subclass.id", "5||7||8||2||3||0||1||9").
+			MIN("required_level", 50).
 			NOT("sell_price", "0").
 			NOT("inventory_type.type", "ON_EQUIP||ON_ACQUIRE||QUEST||ON_USE||TO_ACCOUNT||TO_BNETACCOUNT"))
 
@@ -61,7 +63,7 @@ func convertItemSearchToItem(consumables *wowgd.ItemSearch) (list *ItemList) {
 	var items []Item
 
 	for _, item := range consumables.Results {
-		items = append(items, Item{item.Data.ID, item.Data.Name.EnGB, item.Data.ItemSubclass.Name.EnGB, item.Data.ItemClass.Name.EnGB, item.Data.Media.ID})
+		items = append(items, Item{item.Data.ID, item.Data.Name.EnGB, item.Data.ItemSubclass.Name.EnGB, item.Data.ItemClass.Name.EnGB, item.Data.Media.ID, item.Data.RequiredLevel})
 	}
 
 	response.Results = items
