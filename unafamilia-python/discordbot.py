@@ -185,7 +185,6 @@ class SubclassSelect(discord.ui.Select):
         self.order = order
 
     async def callback(self, interaction: discord.Interaction):
-        print(self.values)
         current_selected_subclass = self.values[0]
         await interaction.response.edit_message(view=ItemSelectionView(orig_ctx=self._orig_ctx, order=self.order, current_selected_subclass=current_selected_subclass))
 
@@ -206,21 +205,14 @@ class ItemSelect(discord.ui.Select):
         current_selected_item = self.values[0]
         if current_selected_item == "back":
             await interaction.response.edit_message(view=ItemSelectionView(orig_ctx=self._orig_ctx, order=self.order))
-            print(self.options)
             for option in reversed(self.options):
                 if option.value == "back":
-                    print("Removing back")
-                    print("\n")
                     self.options.pop()
-                    print(self.options)
                     continue
         else:
             for option in reversed(self.options):
                 if option.value == "back":
-                    print("Removing back")
-                    print("\n")
                     self.options.pop()
-                    print(self.options)
                     continue
             orderItem = OrderItem()
             orderItem.set_order_item(self.values[0])
