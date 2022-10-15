@@ -4,7 +4,7 @@ import requests
 import json
 
 
-# from discord.commands import Option
+from discord import Option
 
 
 import os  # default module
@@ -21,19 +21,13 @@ orderable_items = get_orderable_items()
 item_choices = []
 current_selected_item = None
 
-# takes string slug, outputs capitalised string with spaces
-
-
-def capitalise_slug(slug):
-    capitalised_slug = " ".join(word[0].upper()+word[1:]
-                                for word in slug.split("-"))
-    return capitalised_slug
-
-
-# converts item slugs into capitalised strings, appends to item_choices
+# appends to item_choices - limit to 25 for current testing
+i = 0
 for item in orderable_items:
-    item_choices.append(discord.SelectOption(
-        label=capitalise_slug(item["slug"]), value=str(item["item_id"])))
+    if i < 25:
+        item_choices.append(discord.SelectOption(
+            label=item["name"], value=str(item["id"])))
+    i += 1
 
 orders = []  # list of Order instances
 
@@ -76,7 +70,7 @@ class OrderItem():
 
     def set_order_item(self, item_id):
         for item in orderable_items:
-            if int(item["item_id"]) == int(item_id):
+            if int(item["id"]) == int(item_id):
                 self.__item = item
 
     def set_order_item_qty(self, qty):
@@ -181,16 +175,16 @@ class AddItemToOrderModal(discord.ui.Modal):
                     current_item_list = embeds[0].fields[0].value
                     current_qty_list = embeds[0].fields[1].value
                     for order_item in order.get_ordered_items():
-                        embeds[0].set_field_at(0, name="Item: ", value=current_item_list + "\n" + capitalise_slug(
-                            order_item["item"]["slug"]))
+                        embeds[0].set_field_at(
+                            0, name="Item: ", value=current_item_list + "\n" + order_item["item"]["name"])
                         embeds[0].set_field_at(
                             1, name="Quantity: ", value=current_qty_list + "\n" + order_item["item"]["quantity"])
                 else:
                     embed = discord.Embed()
                     embed.title = "Current order for: " + interaction.user.mention
                     for order_item in order.get_ordered_items():
-                        embed.add_field(name="Item: ", value=capitalise_slug(
-                            order_item["item"]["slug"]))
+                        embed.add_field(
+                            name="Item: ", value=order_item["item"]["name"])
                         embed.add_field(name="Quantity: ",
                                         value=order_item["item"]["quantity"])
                         embed.colour = discord.Color.orange()
@@ -215,8 +209,9 @@ async def create_order(
 ):
     order = Order(ctx.user.id)
     orders.append(order)
-
+    # await ctx.send_response("uwu")
     await ctx.send_response("Pick an item to add to your order:", view=ItemSelectionView(order=order, orig_ctx=ctx))
+    # print(item_choices)
 
 
 @bot.slash_command(name="getorders", description="Get a list of outstanding orders")
@@ -227,24 +222,21 @@ async def get_orders(ctx: discord.ApplicationContext):
         for order_item in order_items:
             embed = discord.Embed(
                 title=f"Order for user {order.get_user_id()}")
-            embed.add_field(name="Item: ", value=capitalise_slug(
-                order_item["item"]["slug"]))
+            embed.add_field(name="Item: ", value=order_item["item"]["name"])
             embed.add_field(name="Quantity: ", value=order_item["quantity"])
             embeds.append(embed)
 
             await ctx.send_response(embeds=embeds)
 
 
-@bot.slash_command(name="createitem", description="Send request to JavaBoi")
-async def create_item(ctx):
-    r = requests.post('http://localhost:9000/item',
-                      json={"item_id": 172042,
-                            "max_quantity": 20,
-                            "slug": "surprisingly-palatable-feast"})
-    print(f"Status Code: {r.status_code}")
-    await ctx.respond(f"Response: {r.status_code}")
+# @bot.slash_command(name="createitem", description="Send request to JavaBoi")
+# async def create_item(ctx):
+#     r = requests.post('http://localhost:9000/item',
+#                       json={"item_id": 172042,
+#                             "max_quantity": 20,
+#                             "slug": "surprisingly-palatable-feast"})
+#     print(f"Status Code: {r.status_code}")
+#     await ctx.respond(f"Response: {r.status_code}")
 
 
 bot.run(os.getenv("TOKEN"))  # run bot using token
-
-# bearer token authentication
