@@ -12,22 +12,25 @@ from dotenv import load_dotenv
 
 from services import get_orderable_items
 from services import check_interaction_correct_user
+from services import sort_valid_items
 
 load_dotenv()  # load all variables from env file
 
 bot = discord.Bot(debug_guilds=[os.getenv("GUILD")])
 
-orderable_items = get_orderable_items()
-item_choices = []
-current_selected_item = None
 
-# appends to item_choices - limit to 25 for current testing
-i = 0
-for item in orderable_items:
-    if i < 25:
-        item_choices.append(discord.SelectOption(
-            label=item["name"], value=str(item["id"])))
-    i += 1
+orderable_items = get_orderable_items()
+# potions, flasks, food, vantus_runes, bandages, devices, others
+item_choices = sort_valid_items(orderable_items, 115, 25)
+item_subclasses = [
+    discord.SelectOption(label="Potions", value="potions"),
+    discord.SelectOption(label="Flasks", value="flasks"),
+    discord.SelectOption(label="Food & Drinks", value="food"),
+    discord.SelectOption(label="Vantus Runes", value="vantus_runes"),
+    discord.SelectOption(label="Bandages", value="bandages"),
+    discord.SelectOption(label="Explosives and Devices", value="devices"),
+    discord.SelectOption(label="Others", value="others")
+]
 
 orders = []  # list of Order instances
 
@@ -79,13 +82,45 @@ class OrderItem():
 
 
 class ItemSelectionView(discord.ui.View):
-    def __init__(self, order: Order, orig_ctx):
+    def __init__(self, order: Order, orig_ctx, current_selected_subclass=None, order_placed=False):
         super().__init__()
         self.orig_ctx = orig_ctx
         self.order = order
+        self.current_selected_subclass = current_selected_subclass
+        self.order_placed = order_placed
 
-        self.add_item(ItemSelect(order=self.order,
-                      options=item_choices, orig_ctx=self.orig_ctx))
+        if order_placed == True:  # if the order placed button is clicked, don't load other elements
+            return
+
+        if self.current_selected_subclass is None:
+            self.add_item(SubclassSelect(order=self.order,
+                                         options=item_subclasses, orig_ctx=self.orig_ctx))
+        else:
+            print(self.current_selected_subclass)
+            #  potions, flasks, food, vantus_runes, bandages, devices, others
+            if self.current_selected_subclass == "potions":
+                self.add_item(ItemSelect(order=self.order,
+                                         options=item_choices[0], orig_ctx=self.orig_ctx))
+            elif self.current_selected_subclass == "flasks":
+                self.add_item(ItemSelect(order=self.order,
+                                         options=item_choices[1], orig_ctx=self.orig_ctx))
+            elif self.current_selected_subclass == "food":
+                self.add_item(ItemSelect(order=self.order,
+                                         options=item_choices[2], orig_ctx=self.orig_ctx))
+            elif self.current_selected_subclass == "vantus_runes":
+                self.add_item(ItemSelect(order=self.order,
+                                         options=item_choices[3], orig_ctx=self.orig_ctx))
+            elif self.current_selected_subclass == "bandages":
+                self.add_item(ItemSelect(order=self.order,
+                                         options=item_choices[4], orig_ctx=self.orig_ctx))
+            elif self.current_selected_subclass == "devices":
+                self.add_item(ItemSelect(order=self.order,
+                                         options=item_choices[5], orig_ctx=self.orig_ctx))
+            elif self.current_selected_subclass == "others":
+                self.add_item(ItemSelect(order=self.order,
+                                         options=item_choices[6], orig_ctx=self.orig_ctx))
+            else:
+                print("Item category not recognised")
         self.add_item(CancelOrderButton(self.orig_ctx))
         self.add_item(ConfirmOrderButton(
             order=self.order, orig_ctx=self.orig_ctx))
@@ -113,7 +148,7 @@ class CancelOrderButton(discord.ui.Button):
             )
         else:
             await interaction.response.send_message(
-                "This isn't your order! Please start your own order with  the /createneworder command!",
+                "This isn't your order! Please start your own order with the /createneworder command!",
                 ephemeral=True,
                 delete_after=5.0
             )
@@ -129,11 +164,30 @@ class ConfirmOrderButton(discord.ui.Button):
         print(self.order.get_ordered_items())
         json_dump = json.dumps(self.order.get_ordered_items())
         embeds = interaction.message.embeds
-        embed = embeds[0]
-        embed.color = discord.Color.green()
-        embed.title = "Order saved for " + interaction.user.mention
-        await interaction.message.edit(embeds=embeds, view=ItemSelectionView(orig_ctx=self.orig_ctx, order=self.order))
-        await interaction.response.send_message("Order placed, sending to Java:\n" + json_dump)
+        if len(embeds) > 0:
+            embed = embeds[0]
+            embed.color = discord.Color.green()
+            embed.title = "Order saved for " + interaction.user.mention
+            await interaction.message.edit(embeds=embeds, view=ItemSelectionView(orig_ctx=self.orig_ctx, order=self.order, order_placed=True))
+            await interaction.response.send_message("Order placed, sending to Java:\n" + json_dump)
+        else:
+            print("Nyly tried to trigger the same bug again, silly donkey")
+            pass
+
+
+class SubclassSelect(discord.ui.Select):
+    def __init__(self, options: list[discord.SelectOption], order: Order, orig_ctx):
+        super().__init__(
+            placeholder="Select an item category..",
+            options=options
+        )
+        self._orig_ctx = orig_ctx
+        self.order = order
+
+    async def callback(self, interaction: discord.Interaction):
+        print(self.values)
+        current_selected_subclass = self.values[0]
+        await interaction.response.edit_message(view=ItemSelectionView(orig_ctx=self._orig_ctx, order=self.order, current_selected_subclass=current_selected_subclass))
 
 
 class ItemSelect(discord.ui.Select):
@@ -144,15 +198,35 @@ class ItemSelect(discord.ui.Select):
         )
         self._orig_ctx = orig_ctx
         self.order = order
+        self.options.append(discord.SelectOption(
+            label="Back", value="back"))
 
     async def callback(self, interaction: discord.Interaction):
         global current_selected_item
         current_selected_item = self.values[0]
-        orderItem = OrderItem()
-        orderItem.set_order_item(self.values[0])
-        modal = AddItemToOrderModal(
-            title="Enter Quantity", orderItem=orderItem, orig_ctx=self._orig_ctx, order=self.order)
-        await interaction.response.send_modal(modal)
+        if current_selected_item == "back":
+            await interaction.response.edit_message(view=ItemSelectionView(orig_ctx=self._orig_ctx, order=self.order))
+            print(self.options)
+            for option in reversed(self.options):
+                if option.value == "back":
+                    print("Removing back")
+                    print("\n")
+                    self.options.pop()
+                    print(self.options)
+                    continue
+        else:
+            for option in reversed(self.options):
+                if option.value == "back":
+                    print("Removing back")
+                    print("\n")
+                    self.options.pop()
+                    print(self.options)
+                    continue
+            orderItem = OrderItem()
+            orderItem.set_order_item(self.values[0])
+            modal = AddItemToOrderModal(
+                title="Enter Quantity", orderItem=orderItem, orig_ctx=self._orig_ctx, order=self.order)
+            await interaction.response.send_modal(modal)
 
 
 # discord modal, allows user to enter qty of item to order
@@ -171,30 +245,31 @@ class AddItemToOrderModal(discord.ui.Modal):
         for order in orders:
             if order.get_user_id() == interaction.user.id and order.get_is_order_saved() == False:
                 order.save_ordered_item(self.orderItem.get_ordered_item())
+                i = 1
                 if len(embeds) > 0:
-                    current_item_list = embeds[0].fields[0].value
-                    current_qty_list = embeds[0].fields[1].value
-                    for order_item in order.get_ordered_items():
+                    current_index_list = embeds[0].fields[0].value
+                    current_item_list = embeds[0].fields[1].value
+                    current_qty_list = embeds[0].fields[2].value
+
+                    for iteration, order_item in enumerate(order.get_ordered_items()):
                         embeds[0].set_field_at(
-                            0, name="Item: ", value=current_item_list + "\n" + order_item["item"]["name"])
+                            0, name="Index", value=current_index_list + "\n" + str(iteration+1))
                         embeds[0].set_field_at(
-                            1, name="Quantity: ", value=current_qty_list + "\n" + order_item["item"]["quantity"])
+                            1, name="Item: ", value=current_item_list + "\n" + order_item["item"]["name"])
+                        embeds[0].set_field_at(
+                            2, name="Quantity: ", value=current_qty_list + "\n" + order_item["item"]["quantity"])
                 else:
                     embed = discord.Embed()
                     embed.title = "Current order for: " + interaction.user.mention
-                    for order_item in order.get_ordered_items():
+                    for iteration, order_item in enumerate(order.get_ordered_items()):
+                        embed.add_field(name="Index", value=str(iteration+1))
                         embed.add_field(
                             name="Item: ", value=order_item["item"]["name"])
                         embed.add_field(name="Quantity: ",
                                         value=order_item["item"]["quantity"])
                         embed.colour = discord.Color.orange()
                     embeds.append(embed)
-        await interaction.message.edit(embeds=embeds, view=ItemSelectionView(orig_ctx=self._orig_ctx, order=self.order))
-        await interaction.response.send_message(
-            "Order updated, please add more items, cancel or confirm your order",
-            ephemeral=True,
-            delete_after=5.0
-        )
+        await interaction.response.edit_message(embeds=embeds, view=ItemSelectionView(orig_ctx=self._orig_ctx, order=self.order))
 
 
 @bot.event
@@ -209,9 +284,7 @@ async def create_order(
 ):
     order = Order(ctx.user.id)
     orders.append(order)
-    # await ctx.send_response("uwu")
     await ctx.send_response("Pick an item to add to your order:", view=ItemSelectionView(order=order, orig_ctx=ctx))
-    # print(item_choices)
 
 
 @bot.slash_command(name="getorders", description="Get a list of outstanding orders")
