@@ -8,15 +8,16 @@ import requests
 # Local imports...
 from constants import BASE_API_URL
 
-ORDERABLE_ITEMS_URL = urljoin(BASE_API_URL, 'consumables')
+ORDERABLE_ITEMS_URL = urljoin(BASE_API_URL, '/consumables')
 
 
 def get_orderable_items():
     
     response = requests.get(ORDERABLE_ITEMS_URL)
     if response.ok:
-        print(response)
-        return response
+        items_dict = json.loads(json.dumps(response.json()))
+        items_dict = items_dict["results"]
+        return items_dict
     else:
         return None
     
