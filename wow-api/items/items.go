@@ -16,6 +16,7 @@ type Item struct {
 	ItemClass    string `json:"class"`
 	Media        int    `json:"media"`
 	ReqLevel     int    `json:"req_level"`
+	Level        int    `json:"level"`
 }
 
 type ItemList struct {
@@ -63,7 +64,7 @@ func convertItemSearchToItem(consumables *wowgd.ItemSearch) (list *ItemList) {
 	var items []Item
 
 	for _, item := range consumables.Results {
-		items = append(items, Item{item.Data.ID, item.Data.Name.EnGB, item.Data.ItemSubclass.Name.EnGB, item.Data.ItemClass.Name.EnGB, item.Data.Media.ID, item.Data.RequiredLevel})
+		items = append(items, Item{item.Data.ID, item.Data.Name.EnGB, item.Data.ItemSubclass.Name.EnGB, item.Data.ItemClass.Name.EnGB, item.Data.Media.ID, item.Data.RequiredLevel, item.Data.Level})
 	}
 
 	response.Results = items
