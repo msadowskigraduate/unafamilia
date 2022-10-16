@@ -2,7 +2,7 @@ from code import interact
 import discord
 import requests
 import json
-
+import logging
 
 from discord import Option
 
@@ -13,6 +13,10 @@ from dotenv import load_dotenv
 from services import get_orderable_items
 from services import check_interaction_correct_user
 from services import sort_valid_items
+from services import check_order_management_authorization
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
 
 load_dotenv()  # load all variables from env file
 
@@ -21,7 +25,10 @@ bot = discord.Bot(debug_guilds=[os.getenv("GUILD")])
 
 orderable_items = get_orderable_items()
 # potions, flasks, food, vantus_runes, bandages, devices, others
-item_choices = sort_valid_items(orderable_items, 115, 25)
+if orderable_items is not None:
+    item_choices = sort_valid_items(orderable_items, 115, 25)
+else:
+    logging.error(f'No orderable_items available to process, check wow-api')
 item_subclasses = [
     discord.SelectOption(label="Potions", value="potions"),
     discord.SelectOption(label="Flasks", value="flasks"),
@@ -42,6 +49,7 @@ class Order():
         self.__user_id = user_id
         self.__ordered_items = []
         self.__saved = False
+        self.__fulfilled = False
 
     def save_ordered_item(self, ordered_item):
         if ordered_item["item"] is not None and ordered_item["item"]["quantity"] is not None:
@@ -59,6 +67,12 @@ class Order():
 
     def set_order_saved(self):
         self.__saved = True
+
+    def get_is_order_fulfilled(self):
+        return self.__fulfilled
+
+    def set_order_fulfilled(self):
+        self.__fulfilled = False
 
 # describes an item object and qty to be ordered
 
@@ -90,6 +104,7 @@ class ItemSelectionView(discord.ui.View):
         self.order_placed = order_placed
 
         if order_placed == True:  # if the order placed button is clicked, don't load other elements
+            self.stop()
             return
 
         if self.current_selected_subclass is None:
@@ -171,8 +186,8 @@ class ConfirmOrderButton(discord.ui.Button):
             await interaction.message.edit(embeds=embeds, view=ItemSelectionView(orig_ctx=self.orig_ctx, order=self.order, order_placed=True))
             await interaction.response.send_message("Order placed, sending to Java:\n" + json_dump)
         else:
-            print("Nyly tried to trigger the same bug again, silly donkey")
-            pass
+            logging.error("No items have been added to the order")
+            await interaction.response.send_message("Your order is currently empty, please add some items", ephemeral=True)
 
 
 class SubclassSelect(discord.ui.Select):
@@ -234,10 +249,9 @@ class AddItemToOrderModal(discord.ui.Modal):
     async def callback(self, interaction: discord.Interaction):
         self.orderItem.set_order_item_qty(self.children[0].value)
         embeds = interaction.message.embeds
-    
+
         if self.order.get_user_id() == interaction.user.id and self.order.get_is_order_saved() == False:
             self.order.save_ordered_item(self.orderItem.get_ordered_item())
-            i = 1
             if len(embeds) > 0:
                 current_index_list = embeds[0].fields[0].value
                 current_item_list = embeds[0].fields[1].value
@@ -266,8 +280,8 @@ class AddItemToOrderModal(discord.ui.Modal):
 
 @bot.event
 async def on_ready():
-    print(f"{bot.user} is ready and online!")
     await bot.register_commands()
+    logging.info(f"{bot.user} is ready and online")
 
 
 @bot.slash_command(name="createneworder", description="Create a new order")
@@ -280,28 +294,27 @@ async def create_order(
 
 
 @bot.slash_command(name="getorders", description="Get a list of outstanding orders")
-async def get_orders(ctx: discord.ApplicationContext):
+async def get_outstanding_orders(ctx: discord.ApplicationContext):
+    if not await check_order_management_authorization(ctx):
+        await ctx.send_response("You don't have permission to use this command", ephemeral=True)
+        return
+    if len(orders) < 1:
+        logging.info('No orders registered yet')
+        await ctx.send_response("There are currently no orders to view", ephemeral=True)
+        return
     embeds = []
     for order in orders:
-        order_items = order.get_ordered_items()
-        for order_item in order_items:
-            embed = discord.Embed(
-                title=f"Order for user {order.get_user_id()}")
-            embed.add_field(name="Item: ", value=order_item["item"]["name"])
-            embed.add_field(name="Quantity: ", value=order_item["quantity"])
-            embeds.append(embed)
+        if not order.get_is_order_fulfilled():
+            order_items = order.get_ordered_items()
+            for order_item in order_items:
+                embed = discord.Embed(
+                    title=f"Order for user {order.get_user_id()}")
+                embed.add_field(
+                    name="Item: ", value=order_item["item"]["name"])
+                embed.add_field(name="Quantity: ",
+                                value=order_item["item"]["quantity"])
+                embeds.append(embed)
 
-            await ctx.send_response(embeds=embeds)
-
-
-# @bot.slash_command(name="createitem", description="Send request to JavaBoi")
-# async def create_item(ctx):
-#     r = requests.post('http://localhost:9000/item',
-#                       json={"item_id": 172042,
-#                             "max_quantity": 20,
-#                             "slug": "surprisingly-palatable-feast"})
-#     print(f"Status Code: {r.status_code}")
-#     await ctx.respond(f"Response: {r.status_code}")
-
+    await ctx.send_response(embeds=embeds)
 
 bot.run(os.getenv("TOKEN"))  # run bot using token
