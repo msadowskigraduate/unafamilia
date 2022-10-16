@@ -234,33 +234,33 @@ class AddItemToOrderModal(discord.ui.Modal):
     async def callback(self, interaction: discord.Interaction):
         self.orderItem.set_order_item_qty(self.children[0].value)
         embeds = interaction.message.embeds
-        for order in orders:
-            if order.get_user_id() == interaction.user.id and order.get_is_order_saved() == False:
-                order.save_ordered_item(self.orderItem.get_ordered_item())
-                i = 1
-                if len(embeds) > 0:
-                    current_index_list = embeds[0].fields[0].value
-                    current_item_list = embeds[0].fields[1].value
-                    current_qty_list = embeds[0].fields[2].value
+    
+        if self.order.get_user_id() == interaction.user.id and self.order.get_is_order_saved() == False:
+            self.order.save_ordered_item(self.orderItem.get_ordered_item())
+            i = 1
+            if len(embeds) > 0:
+                current_index_list = embeds[0].fields[0].value
+                current_item_list = embeds[0].fields[1].value
+                current_qty_list = embeds[0].fields[2].value
 
-                    for iteration, order_item in enumerate(order.get_ordered_items()):
-                        embeds[0].set_field_at(
-                            0, name="Index", value=current_index_list + "\n" + str(iteration+1))
-                        embeds[0].set_field_at(
-                            1, name="Item: ", value=current_item_list + "\n" + order_item["item"]["name"])
-                        embeds[0].set_field_at(
-                            2, name="Quantity: ", value=current_qty_list + "\n" + order_item["item"]["quantity"])
-                else:
-                    embed = discord.Embed()
-                    embed.title = "Current order for: " + interaction.user.mention
-                    for iteration, order_item in enumerate(order.get_ordered_items()):
-                        embed.add_field(name="Index", value=str(iteration+1))
-                        embed.add_field(
-                            name="Item: ", value=order_item["item"]["name"])
-                        embed.add_field(name="Quantity: ",
-                                        value=order_item["item"]["quantity"])
-                        embed.colour = discord.Color.orange()
-                    embeds.append(embed)
+                for iteration, order_item in enumerate(self.order.get_ordered_items()):
+                    embeds[0].set_field_at(
+                        0, name="Index", value=current_index_list + "\n" + str(iteration+1))
+                    embeds[0].set_field_at(
+                        1, name="Item: ", value=current_item_list + "\n" + order_item["item"]["name"])
+                    embeds[0].set_field_at(
+                        2, name="Quantity: ", value=current_qty_list + "\n" + order_item["item"]["quantity"])
+            else:
+                embed = discord.Embed()
+                embed.title = "Current order for: " + interaction.user.mention
+                for iteration, order_item in enumerate(self.order.get_ordered_items()):
+                    embed.add_field(name="Index", value=str(iteration+1))
+                    embed.add_field(
+                        name="Item: ", value=order_item["item"]["name"])
+                    embed.add_field(name="Quantity: ",
+                                    value=order_item["item"]["quantity"])
+                    embed.colour = discord.Color.orange()
+                embeds.append(embed)
         await interaction.response.edit_message(embeds=embeds, view=ItemSelectionView(orig_ctx=self._orig_ctx, order=self.order))
 
 
