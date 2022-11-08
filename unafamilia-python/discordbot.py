@@ -111,7 +111,6 @@ class ItemSelectionView(discord.ui.View):
             self.add_item(SubclassSelect(order=self.order,
                                          options=item_subclasses, orig_ctx=self.orig_ctx))
         else:
-            print(self.current_selected_subclass)
             #  potions, flasks, food, vantus_runes, bandages, devices, others
             if self.current_selected_subclass == "potions":
                 self.add_item(ItemSelect(order=self.order,
@@ -135,7 +134,7 @@ class ItemSelectionView(discord.ui.View):
                 self.add_item(ItemSelect(order=self.order,
                                          options=item_choices[6], orig_ctx=self.orig_ctx))
             else:
-                print("Item category not recognised")
+                logging.warning("Item category not recognised")
         self.add_item(CancelOrderButton(self.orig_ctx))
         self.add_item(ConfirmOrderButton(
             order=self.order, orig_ctx=self.orig_ctx))
@@ -151,7 +150,7 @@ class CancelOrderButton(discord.ui.Button):
         if await check_interaction_correct_user(interaction, self.orig_ctx):
             for order in orders:
                 if order.get_user_id() == interaction.user.id and order.get_is_order_saved() == False:
-                    print(order)
+                    logging.info(f'Cancelling order {order}')
                     del order
             global current_selected_item
             current_selected_item = None
