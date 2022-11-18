@@ -26,7 +26,7 @@ bot = discord.Bot(debug_guilds=[os.getenv("GUILD")])
 orderable_items = get_orderable_items()
 # potions, flasks, food, vantus_runes, bandages, devices, others
 if orderable_items is not None:
-    item_choices = sort_valid_items(orderable_items, 115, 25)
+    item_choices = sort_valid_items(orderable_items, 115, 24)
 else:
     logging.error(f'No orderable_items available to process, check wow-api')
 item_subclasses = [
@@ -291,7 +291,8 @@ async def create_order(
     orders.append(order)
     await ctx.send_response("Pick an item to add to your order:", view=ItemSelectionView(order=order, orig_ctx=ctx))
 
-
+# getorders command temporary for demo purposes. Final version will display data returned from
+# Java api of orders saved to db
 @bot.slash_command(name="getorders", description="Get a list of outstanding orders")
 async def get_outstanding_orders(ctx: discord.ApplicationContext):
     if not await check_order_management_authorization(ctx):
@@ -302,18 +303,18 @@ async def get_outstanding_orders(ctx: discord.ApplicationContext):
         await ctx.send_response("There are currently no orders to view", ephemeral=True)
         return
     embeds = []
+    logging.info(f"{len(order)} unfulfilled orders found")
     for order in orders:
         if not order.get_is_order_fulfilled():
+            embed = discord.Embed(
+                    title=f"Order for user {order.get_user_id()}")
             order_items = order.get_ordered_items()
             for order_item in order_items:
-                embed = discord.Embed(
-                    title=f"Order for user {order.get_user_id()}")
                 embed.add_field(
                     name="Item: ", value=order_item["item"]["name"])
                 embed.add_field(name="Quantity: ",
                                 value=order_item["item"]["quantity"])
-                embeds.append(embed)
-
+            embeds.append(embed)
     await ctx.send_response(embeds=embeds)
 
 bot.run(os.getenv("TOKEN"))  # run bot using token
