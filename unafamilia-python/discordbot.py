@@ -45,8 +45,9 @@ orders = []  # list of Order instances
 
 
 class Order():
-    def __init__(self, user_id):
+    def __init__(self, user_id, user_display_name):
         self.__user_id = user_id
+        self.__user_display_name = user_display_name
         self.__ordered_items = []
         self.__saved = False
         self.__fulfilled = False
@@ -62,6 +63,9 @@ class Order():
     def get_user_id(self):
         return self.__user_id
 
+    def get_user_display_name(self):
+        return self.__user_display_name
+
     def get_is_order_saved(self):
         return self.__saved
 
@@ -72,7 +76,7 @@ class Order():
         return self.__fulfilled
 
     def set_order_fulfilled(self):
-        self.__fulfilled = False
+        self.__fulfilled = True
 
 # describes an item object and qty to be ordered
 
@@ -140,6 +144,48 @@ class ItemSelectionView(discord.ui.View):
             order=self.order, orig_ctx=self.orig_ctx))
 
 
+class OrderManagementView(discord.ui.View):
+    def __init__(self, order: Order):
+        super().__init__()
+        self.order = order
+
+        # @discord.ui.button(label="Fulfil Order", style=discord.ButtonStyle.success)
+        # async def button_callback(self, button, interaction):
+        #     embeds = interaction.message.embeds
+        #     if len(embeds) > 0:
+        #         embed = embeds[0]
+        #         embed.color = discord.Color.green()
+        #         embed.title = "Order Fulfilled"
+        #         self.order.set_order_fulfilled()
+        #         button.disabled = True
+        #         button.style = discord.ButtonStyle.secondary
+        #         button.emoji = "✅"
+        #         button.label = "Order Fulfilled"
+        #         await interaction.response.edit_message(view=self)
+        #     else:
+        #         logging.error("Fulfilled order does not exist")
+
+        if not self.order.get_is_order_fulfilled():
+            self.add_item(FulfilOrderButton(order))
+
+
+class FulfilOrderButton(discord.ui.Button):
+    def __init__(self, order: Order):
+        super().__init__(style=discord.ButtonStyle.success, label="Fulfil order", row=2)
+        self.order = order
+
+    async def callback(self, interaction):
+        embeds = interaction.message.embeds
+        if len(embeds) > 0:
+            embed = embeds[0]
+            embed.color = discord.Color.green()
+            embed.title = f"✅ Order Fulfilled for {self.order.get_user_display_name()}"
+            self.order.set_order_fulfilled()
+            await interaction.response.edit_message(embeds=embeds, view=OrderManagementView(self.order))
+        else:
+            logging.error("Fulfilled order does not exist")
+
+
 class CancelOrderButton(discord.ui.Button):
     def __init__(self, orig_ctx):
         super().__init__(style=discord.ButtonStyle.danger, label="Cancel Order", row=2)
@@ -181,7 +227,7 @@ class ConfirmOrderButton(discord.ui.Button):
         if len(embeds) > 0:
             embed = embeds[0]
             embed.color = discord.Color.green()
-            embed.title = "Order saved for " + interaction.user.mention
+            embed.title = "Order saved for " + interaction.user.display_name
             await interaction.message.edit(embeds=embeds, view=ItemSelectionView(orig_ctx=self.orig_ctx, order=self.order, order_placed=True))
             await interaction.response.send_message("Order placed, sending to Java:\n" + json_dump)
         else:
@@ -265,7 +311,7 @@ class AddItemToOrderModal(discord.ui.Modal):
                         2, name="Quantity: ", value=current_qty_list + "\n" + order_item["item"]["quantity"])
             else:
                 embed = discord.Embed()
-                embed.title = "Current order for: " + interaction.user.mention
+                embed.title = "Current order for: " + interaction.user.display_name
                 for iteration, order_item in enumerate(self.order.get_ordered_items()):
                     embed.add_field(name="Index", value=str(iteration+1))
                     embed.add_field(
@@ -287,13 +333,14 @@ async def on_ready():
 async def create_order(
     ctx: discord.ApplicationContext,
 ):
-    order = Order(ctx.user.id)
+    order = Order(ctx.user.id, ctx.user.display_name)
     orders.append(order)
     await ctx.send_response("Pick an item to add to your order:", view=ItemSelectionView(order=order, orig_ctx=ctx))
 
-# getorders command temporary for demo purposes. Final version will display data returned from
-# Java api of orders saved to db
-@bot.slash_command(name="getorders", description="Get a list of outstanding orders")
+
+""" getorders command temporary for demo purposes. Final version will display data returned from
+    Java api of orders saved to db """
+@bot.slash_command(name="getoutstandingorders", description="Get a list of outstanding orders")
 async def get_outstanding_orders(ctx: discord.ApplicationContext):
     if not await check_order_management_authorization(ctx):
         await ctx.send_response("You don't have permission to use this command", ephemeral=True)
@@ -303,11 +350,11 @@ async def get_outstanding_orders(ctx: discord.ApplicationContext):
         await ctx.send_response("There are currently no orders to view", ephemeral=True)
         return
     embeds = []
-    logging.info(f"{len(order)} unfulfilled orders found")
     for order in orders:
         if not order.get_is_order_fulfilled():
             embed = discord.Embed(
-                    title=f"Order for user {order.get_user_id()}")
+                title=f"Order for user {order.get_user_display_name()}")
+            embed.color = discord.Color.orange()
             order_items = order.get_ordered_items()
             for order_item in order_items:
                 embed.add_field(
@@ -315,6 +362,33 @@ async def get_outstanding_orders(ctx: discord.ApplicationContext):
                 embed.add_field(name="Quantity: ",
                                 value=order_item["item"]["quantity"])
             embeds.append(embed)
-    await ctx.send_response(embeds=embeds)
+            await ctx.respond(embed=embed, view=OrderManagementView(order))
+
+""" getcompletedorders will need filtering options based on date/number of most recent results/search by name
+    filtering will probably need to happen on java side"""
+@bot.slash_command(name="getcompletedorders", description="Get a list of fulfilled orders")
+async def get_fulfilled_orders(ctx: discord.ApplicationContext):
+    if not await check_order_management_authorization(ctx):
+        await ctx.send_response("You don't have permission to use this command", ephemeral=True)
+        return
+    if len(orders) < 1:
+        logging.info('No orders registered yet')
+        await ctx.send_response("There are currently no orders to view", ephemeral=True)
+        return
+    embeds = []
+    for order in orders:
+        if order.get_is_order_fulfilled():
+            embed = discord.Embed(
+                title=f"Order for user {order.get_user_display_name()}")
+            embed.color = discord.Color.green()
+            order_items = order.get_ordered_items()
+            for order_item in order_items:
+                embed.add_field(
+                    name="Item: ", value=order_item["item"]["name"])
+                embed.add_field(name="Quantity: ",
+                                value=order_item["item"]["quantity"])
+            embeds.append(embed)
+            await ctx.respond(embed=embed, view=OrderManagementView(order))
+
 
 bot.run(os.getenv("TOKEN"))  # run bot using token
