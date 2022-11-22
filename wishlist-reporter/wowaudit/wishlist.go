@@ -59,30 +59,6 @@ type Encounters struct {
 	} `json:"items"`
 }
 
-type Report struct {
-	Date                      string   `json:"date"`
-	PeopleWithNoItemsInReport []string `json:"timestamp"`
-	Instance                  []struct {
-		ID         int    `json:"id"`
-		Name       string `json:"name"`
-		Difficulty []struct {
-			Encounter []struct {
-				Name  string `json:"name"`
-				Items []struct {
-					Item       int    `json:"item"`
-					Name       string `json:"name"`
-					Characters []struct {
-						Name           string  `json:"name"`
-						Outdated       bool    `json:"outdated"`
-						Score          float64 `json:"score"`
-						Specialization string  `json:"specialization"`
-					} `json:"characters"`
-				} `json:"items"`
-			} `json:"encounters"`
-		} `json:"difficulties"`
-	} `json:"instances"`
-}
-
 func QueryWishlist(wowauditApiKey string) {
 	resp, err := http.Get("https://wowaudit.com/v1/wishlists?api_key=" + wowauditApiKey)
 	fmt.Println("Requesting wishlist...")
