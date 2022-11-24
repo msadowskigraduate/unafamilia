@@ -1,14 +1,17 @@
 package com.unfamilia.application.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unfamilia.application.command.CommandBus;
 
 import io.quarkus.logging.Log;
 import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.oidc.IdToken;
+import io.quarkus.panache.common.Parameters;
 import io.quarkus.security.Authenticated;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.resteasy.annotations.cache.NoCache;
+import org.jboss.resteasy.annotations.jaxrs.QueryParam;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -23,8 +26,8 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-@Produces(MediaType.APPLICATION_JSON)
 @Path("/user")
+@Produces(MediaType.APPLICATION_JSON)
 @RequiredArgsConstructor
 public class UserController {
     @Inject @IdToken JsonWebToken idToken;
@@ -52,4 +55,21 @@ public class UserController {
             return e.getResponse();
         }
     }
+
+    @GET
+    @Transactional
+    @Path("/character")
+    @NoCache
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCharacterOwner(@QueryParam("character_name") String characterName, @QueryParam("character_realm") String realm) {
+        var realmSlug = realm.toLowerCase().replaceAll(" ", "-");
+        System.out.println("Requesting user info for character: " + characterName + "-" + realmSlug);
+        var result = User.<User>find(
+            "select u from Users u inner join u.characters c where c.name = :name and c.realm = :realm",
+             Parameters.with("name", characterName).and("realm", realmSlug)).singleResult();
+
+        return Response.ok(new UserDto(result.getName(), result.getDiscordUserId(), result.getBattleNetUserId(), result.getRank())).build();
+    }
 }
+
+record UserDto(@JsonProperty("name") String name, @JsonProperty("discord_user_id") Long discordUserId, @JsonProperty("battle_net_user_id") Long battleNetUserId, @JsonProperty("rank") Integer rank) {}

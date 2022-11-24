@@ -59,7 +59,15 @@ type Encounters struct {
 	} `json:"items"`
 }
 
-func QueryWishlist(wowauditApiKey string) {
+type Character struct {
+	Name         string
+	Realm        string
+	InstanceName string
+	WishlistName string
+	Difficulty   string
+}
+
+func QueryWishlist(wowauditApiKey string) *[]Character {
 	resp, err := http.Get("https://wowaudit.com/v1/wishlists?api_key=" + wowauditApiKey)
 	fmt.Println("Requesting wishlist...")
 	if err != nil {
@@ -78,23 +86,28 @@ func QueryWishlist(wowauditApiKey string) {
 		log.Fatalf(err.Error())
 	}
 
-	generateReport(&wishlist)
+	return generateReport(&wishlist)
 }
 
-func generateReport(wishlist *Wishlist) {
+func generateReport(wishlist *Wishlist) *[]Character {
+	charactersToBeNotified := []Character{}
 	for _, character := range wishlist.Characters {
 		for _, wishlist := range character.Wishlists {
 			// There are two wishlists (reports) Single Target and Overall - that is why the records might seem duplicated
 			for _, instances := range wishlist.Instances {
 				for _, difficulty := range instances.Difficulties {
-					parseEncounters(&difficulty.Wishlist.Wishlist.Encounters, character.Name+"-"+character.Realm)
+					if parseEncounters(&difficulty.Wishlist.Wishlist.Encounters, character.Name+"-"+character.Realm) {
+						charactersToBeNotified = append(charactersToBeNotified, Character{Name: character.Name, Realm: character.Realm, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty})
+					}
 				}
 			}
 		}
 	}
+
+	return &charactersToBeNotified
 }
 
-func parseEncounters(encounters *[]Encounters, characterName string) {
+func parseEncounters(encounters *[]Encounters, characterName string) bool {
 	hasAtLeastOneItemAsUpgrade := false
 	for _, encounter := range *encounters {
 		for _, item := range encounter.Items {
@@ -121,4 +134,6 @@ func parseEncounters(encounters *[]Encounters, characterName string) {
 	if !hasAtLeastOneItemAsUpgrade {
 		fmt.Println(characterName + " either has no upgrades or sim has not been run!")
 	}
+
+	return hasAtLeastOneItemAsUpgrade
 }

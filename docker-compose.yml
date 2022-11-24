@@ -27,7 +27,7 @@ services:
       - QUARKUS_DATASOURCE_JDBC_DRIVER=org.postgresql.Driver
       - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://db/postgres
       - QUARKUS_PROFILE=dev
-      - QUARKUS_REST_CLIENT_WOW_API_URL=http://wow-api:8083
+      - QUARKUS_REST_CLIENT_WOW_API_URL=http://wow-api:8080
       - QUARKUS_REST_CLIENT_EVENTS_V1_URL=http://events:8080
       - QUARKUS_REST_CLIENT_ORDERS_V1_URL=http://orders:8080
     env_file:
@@ -81,6 +81,18 @@ services:
     networks:
       - internal
       - redis_network
+  wishlist-reporter:
+    image: unafamilia/wishlist-reporter:latest
+    ports:
+      - "8084:8080"    
+    environment:
+      - CORE_URL=http://core:9000
+    env_file:
+      - .env
+    depends_on:
+      - core
+    networks:
+      - internal
 networks:
   internal:
     name: "internal-network"

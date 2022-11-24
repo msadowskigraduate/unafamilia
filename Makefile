@@ -10,10 +10,12 @@ build_orders:
 	mvn clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.builder=jib "-Dquarkus.container-image.image=unafamilia/orders:latest" -Dmaven.test.skip --file orders/pom.xml
 build_wow_api:
 	docker build wow-api -t "unafamilia/wow-api:latest" 
+build_wishlist_reporter:
+	docker build wishlist-reporter -t "unafamilia/wishlist-reporter:latest" 
 build_core:
 	mvn clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.builder=jib "-Dquarkus.container-image.image=unafamilia/core:latest" -Dmaven.test.skip --file unafamilia/pom.xml
 
-build: build_core build_event build_orders build_wow_api
+build: build_core build_event build_orders build_wow_api build_wishlist_reporter
 
 test:
 	mvn test --file unafamilia/pom.xml
