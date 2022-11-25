@@ -1,8 +1,6 @@
 package com.unfamilia.application.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.unfamilia.application.command.CommandBus;
-
 import io.quarkus.logging.Log;
 import io.quarkus.oidc.AccessTokenCredential;
 import io.quarkus.oidc.IdToken;

@@ -5,13 +5,11 @@ import com.unfamilia.application.user.User;
 import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 import io.quarkus.qute.Template;
-import io.quarkus.security.Authenticated;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URLEncoder;
