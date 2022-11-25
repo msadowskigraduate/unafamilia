@@ -29,7 +29,7 @@ public class Order extends PanacheEntityBase {
     private OrderStatus orderStatus;
     private Instant orderDateTime;
 
-    @OneToMany
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public static List<Order> findAllOrdersForDiscordUser(Long wowUserId) {

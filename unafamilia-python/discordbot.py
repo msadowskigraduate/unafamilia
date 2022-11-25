@@ -16,7 +16,7 @@ from services import check_interaction_correct_user
 from services import sort_valid_items
 from services import is_user_authorised_to_manage_orders
 from services import get_registration_url
-# from services import post_order
+from services import post_order
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
@@ -93,15 +93,21 @@ class Order():
         json += "\"character_name\": \"" + str(self.__character_name) + "\","
         json += "\"items\":["
         
+        index = 0
         for item in self.__ordered_items:
-            json += "{\"item_id\":" + str(item['item']['id']) + ","
-            json += "\"quantity\":" + str(item['item']['quantity']) + "},"
+            if index == len(self.__ordered_items)-1:
+                json += "{\"item_id\":" + str(item['item']['id']) + ","
+                json += "\"quantity\":" + str(item['item']['quantity']) + "}"
+            else:
+                json += "{\"item_id\":" + str(item['item']['id']) + ","
+                json += "\"quantity\":" + str(item['item']['quantity']) + "},"
+            index += 1
         
         json += "]}"
         
-        # post_order(json)
+        post_order(json)
         
-        logging.info(json)
+        # logging.info(json)
 
 # describes an item object and qty to be ordered
 

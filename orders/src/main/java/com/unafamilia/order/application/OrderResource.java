@@ -109,4 +109,12 @@ public class OrderResource {
 
         return Response.ok().build();
     }
+
+    @GET
+    @Transactional
+    public Response queryOrders() {
+        var orders = Order.findAll().list();
+
+        return Response.ok(orders).build();
+    }
 }

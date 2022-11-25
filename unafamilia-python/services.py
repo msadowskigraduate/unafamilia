@@ -34,9 +34,14 @@ def get_registration_url(user_id):
     except Exception as e:
         logging.error(e)
         
-def post_order():
+def post_order(order_json):
     try:
-        response = requests.post(ORDER_API_URL)
+        response = requests.post(POST_NEW_ORDER_URL, data=order_json, headers={'Content-Type': 'application/json'})
+        logging.info(response.status_code)
+        if response.status_code == 201:
+            logging.info(response.headers["Location"])
+            
+            # logging.info(f"Order ID: {str(orderId)}")
     except Exception as e:
         logging.error(e)
 

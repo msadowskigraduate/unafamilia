@@ -8,6 +8,8 @@ import com.unafamilia.order.application.OrderItemDto;
 import com.unafamilia.order.application.QueryDto;
 
 import javax.enterprise.context.ApplicationScoped;
+
+import java.time.Instant;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,7 @@ public class OrderMapper {
                         })
                         .collect(Collectors.toList())
         );
+        order.setOrderDateTime(Instant.now());
 
         return order;
     }
@@ -46,7 +49,8 @@ public class OrderMapper {
                 order.getAmountDue(),
                 order.getOrderItems().stream().map(
                         item -> new OrderItemDto(item.getItemId(), item.getQuantity())
-                ).collect(Collectors.toList())
+                ).collect(Collectors.toList()),
+                order.getOrderDateTime().toString()
         );
     }
 }
