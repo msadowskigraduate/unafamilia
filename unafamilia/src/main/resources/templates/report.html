@@ -1,0 +1,41 @@
+{#include base} 
+{#title}Una Familia - Roster Report{/title}
+{#content}
+<main class="container-fluid p-0">
+  <div class="container p-0">
+    {#if reports != null && !reports.isEmpty}
+    <ul class="list-group">
+      {#for report in reports}
+      <h4>{report.name}</h4>
+      <h4>{report.characterName}</h4>
+      <h4>{report.discordUserId}</h4>
+      <h4>{report.battleNetUserId}</h4>
+      <h4>{report.rank}</h4>
+      <h4>{report.error}</h4>
+      <li
+        class="d-flex list-group-item p-1 justify-content-between mb-2"
+        style="background-color: gray"
+      >
+        <ul class="d-flex list-group flex-row align-items-center">
+          {#for issue in report.issues}
+
+          <li class="list-group-item p-0" style="background-color: gray">
+            <h4>{issue.reason}</h4>
+            <h4>{issue.timestamp}</h4>
+            <h4>{issue.item}</h4>
+            <h4>{issue.instanceName}</h4>
+            <h4>{issue.wishlistName}</h4>
+            <h4>{issue.difficulty}</h4>
+          </li>
+          {/for}
+        </ul>
+      </li>
+      {/for}
+    </ul>
+    {#else}
+    <h3 class="row">All good!</h3>
+    {/if}
+  </div>
+</main>
+{/content} 
+{/include}

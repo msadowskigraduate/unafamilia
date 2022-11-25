@@ -5,25 +5,8 @@ import (
 	"time"
 )
 
-func generateReport(wishlist *Wishlist) []Character {
-	charactersToBeNotified := []Character{}
-	for _, character := range wishlist.Characters {
-		for _, wishlist := range character.Wishlists {
-			// There are two wishlists (reports) Single Target and Overall - that is why the records might seem duplicated
-			for _, instances := range wishlist.Instances {
-				for _, difficulty := range instances.Difficulties {
-					if parseEncounters(&difficulty.Wishlist.Wishlist.Encounters, character.Name+"-"+character.Realm) {
-						charactersToBeNotified = append(charactersToBeNotified, Character{Name: character.Name, Realm: character.Realm, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty})
-					}
-				}
-			}
-		}
-	}
-
-	return charactersToBeNotified
-}
-
 func ParseWishlist(character *CharacterWishlist) (characterData *Character) {
+	issues := []Issue{}
 	for _, wishlist := range character.Wishlists {
 		// There are two wishlists (reports) Single Target and Overall - that is why the records might seem duplicated
 		for _, instances := range wishlist.Instances {
@@ -35,7 +18,9 @@ func ParseWishlist(character *CharacterWishlist) (characterData *Character) {
 						for _, wish := range item.Wishes {
 							//Item is Outdated
 							if wish.Outdated.New.ID > 0 {
-								fmt.Println(item.Name + " is outdated for: " + character.Name)
+								reason := item.Name + " is outdated for: " + character.Name
+								issues = append(issues, Issue{Reason: reason, Timestamp: wish.Timestamp, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty, Item: item.Name})
+								continue
 							}
 
 							//Item is not Outdated but check the simulation timestamp
@@ -45,8 +30,9 @@ func ParseWishlist(character *CharacterWishlist) (characterData *Character) {
 								fmt.Println(err.Error())
 							} else {
 								if parsedTimestamp.Add(time.Hour * 36).Before(time.Now()) {
-									fmt.Println(character.Name + " should be notified that his wishlist: " + wishlist.Name + " is potentially outdated for item: " + item.Name)
-									return &Character{Name: character.Name, Realm: character.Realm, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty}
+									reason := character.Name + " should be notified that his wishlist: " + wishlist.Name + " is potentially outdated for item: " + item.Name
+									issues = append(issues, Issue{Reason: reason, Timestamp: wish.Timestamp, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty, Item: item.Name})
+									continue
 								}
 							}
 						}
@@ -55,11 +41,15 @@ func ParseWishlist(character *CharacterWishlist) (characterData *Character) {
 
 				//If there are no reports on any items - sim not run or no updates
 				if !hasAtLeastOneItemAsUpgrade {
-					fmt.Println(character.Name + " either has no upgrades or sim has not been run for " + instances.Name + " on " + difficulty.Difficulty + " difficulty.")
-					return &Character{Name: character.Name, Realm: character.Realm, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty}
+					reason := character.Name + " either has no upgrades or sim has not been run for " + instances.Name + " on " + difficulty.Difficulty + " difficulty."
+					issues = append(issues, Issue{Reason: reason, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty})
 				}
 			}
 		}
+	}
+
+	if len(issues) > 0 {
+		return &Character{Name: character.Name, Realm: character.Realm, Issues: issues}
 	}
 
 	return &Character{}

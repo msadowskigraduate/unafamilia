@@ -19,19 +19,6 @@ func main() {
 	}
 
 	wac := wowaudit.NewWowAuditClient(wowauditApiKey)
-	router.GET("/v1/report", func(ctx *gin.Context) {
-		characters := wac.QueryWishlist()
-
-		coreUsers := []core.User{}
-		for _, characterData := range characters {
-			coreUser := *core.QueryUserForCharacter(characterData.Name, characterData.Realm)
-			coreUser.InstanceName = characterData.InstanceName
-			coreUser.Difficulty = characterData.Difficulty
-			coreUser.Wishlist = characterData.WishlistName
-			coreUsers = append(coreUsers, coreUser)
-		}
-		ctx.IndentedJSON(http.StatusOK, coreUsers)
-	})
 
 	router.GET("/v1/team", func(ctx *gin.Context) {
 		result := wac.QueryRoster()
@@ -39,28 +26,39 @@ func main() {
 		ctx.IndentedJSON(http.StatusOK, result)
 	})
 
-	router.GET("/v2/report", func(ctx *gin.Context) {
+	router.GET("/v1/report", func(ctx *gin.Context) {
 		roster := wac.QueryRoster()
-		// report := make(map[string][]wowaudit.Character)
-		coreUsers := []core.User{}
+		coreUsers := []Report{}
 
 		for _, character := range *roster {
-			characterWishlist := wac.QueryWishlistForCharacter(character.ID)
-			characterData := wowaudit.ParseWishlist(characterWishlist)
-			coreUser := *core.QueryUserForCharacter(characterData.Name, characterData.Realm)
-			coreUsers = append(coreUsers, coreUser)
+			cwish := wac.QueryWishlistForCharacter(character.ID)
+			cdata := wowaudit.ParseWishlist(cwish)
+			if len(cdata.Issues) == 0 {
+				continue
+			}
+
+			cuser, err := core.QueryUserForCharacter(cdata.Name, cdata.Realm)
+
+			if err != nil {
+				coreUsers = append(coreUsers, Report{Name: cuser.Name, CharacterName: cwish.Name, DiscordUserId: cuser.DiscordUserId, BattleNetUserId: cuser.BattleNetUserId, Rank: cuser.Rank, Error: err.Error(), Issues: cdata.Issues})
+				continue
+			} else {
+				coreUsers = append(coreUsers, Report{Name: cuser.Name, CharacterName: cwish.Name, DiscordUserId: cuser.DiscordUserId, BattleNetUserId: cuser.BattleNetUserId, Rank: cuser.Rank, Issues: cdata.Issues})
+			}
 		}
 
-		// coreUsers := []core.User{}
-		// for _, characterData := range characters {
-		// 	coreUser := *core.QueryUserForCharacter(characterData.Name, characterData.Realm)
-		// 	coreUser.InstanceName = characterData.InstanceName
-		// 	coreUser.Difficulty = characterData.Difficulty
-		// 	coreUser.Wishlist = characterData.WishlistName
-		// 	coreUsers = append(coreUsers, coreUser)
-		// }
 		ctx.IndentedJSON(http.StatusOK, coreUsers)
 	})
 
 	router.Run(":8080")
+}
+
+type Report struct {
+	Name            string           `json:"user_name,omitempty"`
+	CharacterName   string           `json:"name"`
+	DiscordUserId   int              `json:"discord_user_id"`
+	BattleNetUserId int              `json:"battle_net_user_id,omitempty"`
+	Rank            int              `json:"rank,omitempty"`
+	Issues          []wowaudit.Issue `json:"issues"`
+	Error           string           `json:"error,omitempty"`
 }

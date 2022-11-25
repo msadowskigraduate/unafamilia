@@ -5,6 +5,9 @@ quarkus:
     wow-api:
       url: "http://localhost:8080"
       scope: "javax.inject.Singleton"
+    wishlist-reporter:
+      url: "http://localhost:8084"
+      scope: "javax.inject.Singleton"
     events-v1:
       url: "http://localhost:8081"
       scope: "javax.inject.Singleton"

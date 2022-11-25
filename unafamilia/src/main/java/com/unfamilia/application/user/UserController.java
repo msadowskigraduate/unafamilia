@@ -12,6 +12,7 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.annotations.jaxrs.QueryParam;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -62,11 +63,16 @@ public class UserController {
     public Response getCharacterOwner(@QueryParam("character_name") String characterName, @QueryParam("character_realm") String realm) {
         var realmSlug = realm.toLowerCase().replaceAll(" ", "-");
         System.out.println("Requesting user info for character: " + characterName + "-" + realmSlug);
+
+        try {
         var result = User.<User>find(
             "select u from Users u inner join u.characters c where c.name = :name and c.realm = :realm",
              Parameters.with("name", characterName).and("realm", realmSlug)).singleResult();
 
         return Response.ok(new UserDto(result.getName(), result.getDiscordUserId(), result.getBattleNetUserId(), result.getRank())).build();
+        } catch (NoResultException exception) {
+            return Response.noContent().build();
+        }
     }
 }
 

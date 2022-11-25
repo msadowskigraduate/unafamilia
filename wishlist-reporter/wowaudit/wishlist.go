@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -134,11 +133,18 @@ type Roster []struct {
 }
 
 type Character struct {
-	Name         string
-	Realm        string
-	InstanceName string
-	WishlistName string
-	Difficulty   string
+	Name   string
+	Realm  string
+	Issues []Issue
+}
+
+type Issue struct {
+	Reason       string `json:"reason"`
+	Timestamp    string `json:"timestamp,omitempty"`
+	Item         string `json:"item,omitempty"`
+	InstanceName string `json:"instance_name"`
+	WishlistName string `json:"wishlist_name"`
+	Difficulty   string `json:"difficulty"`
 }
 
 type WowAuditClient struct {
@@ -208,26 +214,4 @@ func (wac *WowAuditClient) QueryRoster() *Roster {
 	}
 
 	return dat.(*Roster)
-}
-
-func (wac *WowAuditClient) QueryWishlist() (characters []Character) {
-	resp, err := http.Get("https://wowaudit.com/v1/wishlists?api_key=" + wac.ApiKey)
-	fmt.Println("Requesting wishlist...")
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	var wishlist Wishlist
-	err = json.Unmarshal(body, &wishlist)
-
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	return generateReport(&wishlist)
 }

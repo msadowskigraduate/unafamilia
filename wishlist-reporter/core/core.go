@@ -2,7 +2,7 @@ package core
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"log"
 	"net/http"
@@ -19,7 +19,7 @@ type User struct {
 	Wishlist        string `json:"wishlist"`
 }
 
-func QueryUserForCharacter(characterName string, characterRealm string) *User {
+func QueryUserForCharacter(characterName string, characterRealm string) (*User, error) {
 	coreUrl := os.Getenv("CORE_URL")
 
 	if coreUrl == "" {
@@ -27,22 +27,28 @@ func QueryUserForCharacter(characterName string, characterRealm string) *User {
 	}
 
 	resp, err := http.Get(coreUrl + "/user/character?character_name=" + characterName + "&character_realm=" + characterRealm)
-	fmt.Println("Requesting user list...")
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf(err.Error())
+	if resp.StatusCode == 200 {
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatalf(err.Error())
+		}
+		var user User
+		err = json.Unmarshal(body, &user)
+		log.Println(user.Name)
+		if err != nil {
+			log.Fatalf(err.Error())
+		}
+
+		return &user, nil
 	}
 
-	var user User
-	err = json.Unmarshal(body, &user)
-
-	if err != nil {
-		log.Fatalf(err.Error())
+	if resp.StatusCode == 204 {
+		return &User{}, errors.New("User not registered within core")
 	}
 
-	return &user
+	return &User{}, err
 }
