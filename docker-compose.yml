@@ -64,6 +64,7 @@ services:
       - QUARKUS_DATASOURCE_JDBC_DRIVER=org.postgresql.Driver
       - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://db/postgres
       - QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=drop-and-create
+      - QUARKUS_PROFILE=dev
     depends_on:
       - db
     networks:

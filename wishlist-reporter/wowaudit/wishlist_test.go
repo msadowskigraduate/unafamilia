@@ -1,6 +1,9 @@
 package wowaudit
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 // func TestGenerateReport(t *testing.T) {
 // 	jsonFile, err := os.Open("../resources/results.json")
@@ -28,13 +31,9 @@ func TestQueryRoster(t *testing.T) {
 
 	client := NewWowAuditClient(wowauditApiKey)
 
-	result, err := client.QueryRoster()
+	result := client.QueryRoster()
 
-	if err != nil {
-		t.Errorf(err.Error())
-	}
-
-	if len(result) == 0 {
+	if len(&result) == 0 {
 		t.Errorf("Failed!")
 	}
 }
