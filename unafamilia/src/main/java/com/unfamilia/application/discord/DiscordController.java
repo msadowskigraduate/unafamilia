@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -47,9 +48,11 @@ public class DiscordController {
     }
 
     @POST
-    public Response sessionTokenForUser(@NotNull Long discordUserId) {
-        if(User.findByOptionalDiscordId(discordUserId).isEmpty()) {
-            return Response.ok(SessionToken.generateForUser(discordUserId)).build();
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response sessionTokenForUser(@NotNull String discordUserId) {
+        Long discordId = Long.parseLong(discordUserId);
+        if(User.findByOptionalDiscordId(discordId).isEmpty()) {
+            return Response.ok(SessionToken.generateForUser(discordId)).build();
         }
 
         return Response

@@ -5,6 +5,7 @@ import json
 import logging
 
 from discord import Option
+from discord import option
 
 
 import os  # default module
@@ -13,7 +14,9 @@ from dotenv import load_dotenv
 from services import get_orderable_items
 from services import check_interaction_correct_user
 from services import sort_valid_items
-from services import check_order_management_authorization
+from services import is_user_authorised_to_manage_orders
+from services import get_registration_url
+# from services import post_order
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
@@ -27,6 +30,7 @@ orderable_items = get_orderable_items()
 # potions, flasks, food, vantus_runes, bandages, devices, others
 if orderable_items is not None:
     item_choices = sort_valid_items(orderable_items, 115, 24)
+    logging.info("item_choices")
 else:
     logging.error(f'No orderable_items available to process, check wow-api')
 item_subclasses = [
@@ -45,9 +49,10 @@ orders = []  # list of Order instances
 
 
 class Order():
-    def __init__(self, user_id, user_display_name):
+    def __init__(self, user_id, user_display_name, character_name):
         self.__user_id = user_id
         self.__user_display_name = user_display_name
+        self.__character_name = character_name
         self.__ordered_items = []
         self.__saved = False
         self.__fulfilled = False
@@ -56,6 +61,9 @@ class Order():
         if ordered_item["item"] is not None and ordered_item["item"]["quantity"] is not None:
             self.__ordered_items.append(ordered_item)
             # self.__saved = True
+            
+    def character_name(self):
+        return self.__character_name 
 
     def get_ordered_items(self):
         return self.__ordered_items
@@ -72,11 +80,28 @@ class Order():
     def set_order_saved(self):
         self.__saved = True
 
-    def get_is_order_fulfilled(self):
+    def is_fulfilled(self):
         return self.__fulfilled
 
     def set_order_fulfilled(self):
         self.__fulfilled = True
+        
+    def prepare_and_post_order(self):
+        json = "{"
+        json += "\"discord_message_id\": 12345,\"discord_user_id\":"
+        json += str(self.__user_id) + "," + "\"wow_user_id\":125037846,"
+        json += "\"character_name\": \"" + str(self.__character_name) + "\","
+        json += "\"items\":["
+        
+        for item in self.__ordered_items:
+            json += "{\"item_id\":" + str(item['item']['id']) + ","
+            json += "\"quantity\":" + str(item['item']['quantity']) + "},"
+        
+        json += "]}"
+        
+        # post_order(json)
+        
+        logging.info(json)
 
 # describes an item object and qty to be ordered
 
@@ -165,7 +190,7 @@ class OrderManagementView(discord.ui.View):
         #     else:
         #         logging.error("Fulfilled order does not exist")
 
-        if not self.order.get_is_order_fulfilled():
+        if not self.order.is_fulfilled():
             self.add_item(FulfilOrderButton(order))
 
 
@@ -230,6 +255,7 @@ class ConfirmOrderButton(discord.ui.Button):
             embed.title = "Order saved for " + interaction.user.display_name
             await interaction.message.edit(embeds=embeds, view=ItemSelectionView(orig_ctx=self.orig_ctx, order=self.order, order_placed=True))
             await interaction.response.send_message("Order placed, sending to Java:\n" + json_dump)
+            self.order.prepare_and_post_order()
         else:
             logging.error("No items have been added to the order")
             await interaction.response.send_message("Your order is currently empty, please add some items", ephemeral=True)
@@ -332,17 +358,22 @@ async def on_ready():
 @bot.slash_command(name="createneworder", description="Create a new order")
 async def create_order(
     ctx: discord.ApplicationContext,
+    character: Option(str, "Character name"),
+    realm: Option(str, "Realm")
 ):
-    order = Order(ctx.user.id, ctx.user.display_name)
+    character_name = character + "-" + realm
+    order = Order(ctx.user.id, ctx.user.display_name, character_name)
     orders.append(order)
     await ctx.send_response("Pick an item to add to your order:", view=ItemSelectionView(order=order, orig_ctx=ctx))
 
 
 """ getorders command temporary for demo purposes. Final version will display data returned from
     Java api of orders saved to db """
+
+
 @bot.slash_command(name="getoutstandingorders", description="Get a list of outstanding orders")
 async def get_outstanding_orders(ctx: discord.ApplicationContext):
-    if not await check_order_management_authorization(ctx):
+    if not await is_user_authorised_to_manage_orders(ctx):
         await ctx.send_response("You don't have permission to use this command", ephemeral=True)
         return
     if len(orders) < 1:
@@ -351,7 +382,7 @@ async def get_outstanding_orders(ctx: discord.ApplicationContext):
         return
     embeds = []
     for order in orders:
-        if not order.get_is_order_fulfilled():
+        if not order.is_fulfilled():
             embed = discord.Embed(
                 title=f"Order for user {order.get_user_display_name()}")
             embed.color = discord.Color.orange()
@@ -366,9 +397,11 @@ async def get_outstanding_orders(ctx: discord.ApplicationContext):
 
 """ getcompletedorders will need filtering options based on date/number of most recent results/search by name
     filtering will probably need to happen on java side"""
+
+
 @bot.slash_command(name="getcompletedorders", description="Get a list of fulfilled orders")
 async def get_fulfilled_orders(ctx: discord.ApplicationContext):
-    if not await check_order_management_authorization(ctx):
+    if not await is_user_authorised_to_manage_orders(ctx):
         await ctx.send_response("You don't have permission to use this command", ephemeral=True)
         return
     if len(orders) < 1:
@@ -377,7 +410,7 @@ async def get_fulfilled_orders(ctx: discord.ApplicationContext):
         return
     embeds = []
     for order in orders:
-        if order.get_is_order_fulfilled():
+        if order.is_fulfilled():
             embed = discord.Embed(
                 title=f"Order for user {order.get_user_display_name()}")
             embed.color = discord.Color.green()
@@ -391,4 +424,14 @@ async def get_fulfilled_orders(ctx: discord.ApplicationContext):
             await ctx.respond(embed=embed, view=OrderManagementView(order))
 
 
+@bot.slash_command(name="link", description="Link your discord account to your WoW account")
+async def link_account(ctx: discord.ApplicationContext):
+    registration_url = get_registration_url(ctx.author.id)
+    await ctx.respond("Click the link below to connect your account:\n" + registration_url, ephemeral=True)
+
+@bot.slash_command(name="test", description="test")
+async def test(ctx: discord.ApplicationContext, candidates: Option(str, "Language", choices=['Devs', 'Artists', 'Moderators'])):
+    pass
+
+    
 bot.run(os.getenv("TOKEN"))  # run bot using token

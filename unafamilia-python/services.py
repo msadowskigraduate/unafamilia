@@ -11,8 +11,34 @@ import requests
 
 # Local imports...
 from constants import BASE_API_URL
+from constants import CORE_API_URL
+from constants import ORDER_API_URL
 
 ORDERABLE_ITEMS_URL = urljoin(BASE_API_URL, '/consumables')
+# endpoint returns session token for user to link account
+GET_SESSION_TOKEN_URL = urljoin(CORE_API_URL, '/discord')
+POST_NEW_ORDER_URL = urljoin(ORDER_API_URL, '/v1/order')
+
+
+def get_registration_url(user_id):
+    try:
+        logging.info(f"Requesting token for {user_id}")
+        response = requests.post('GET_SESSION_TOKEN_URL',
+                                 data=str(user_id), headers={'Content-Type': 'text/plain'})
+        logging.info(f"Response from core API: {response.status_code}")
+        if response.status_code == 200:
+            result = json.loads(json.dumps(response.json()))
+            token = result["token"]
+            registration_url = GET_SESSION_TOKEN_URL + '?session_token=' + token
+            return registration_url
+    except Exception as e:
+        logging.error(e)
+        
+def post_order():
+    try:
+        response = requests.post(ORDER_API_URL)
+    except Exception as e:
+        logging.error(e)
 
 
 def get_orderable_items():
@@ -97,7 +123,7 @@ async def check_interaction_correct_user(interaction, orig_ctx):
 # check user has authorization to manage orders
 
 
-async def check_order_management_authorization(ctx):
+async def is_user_authorised_to_manage_orders(ctx):
     user = ctx.user
     authorized_role = int(os.getenv('AUTHORIZED_ROLE'))
     for role in user.roles:
