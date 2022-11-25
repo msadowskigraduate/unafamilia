@@ -1,8 +1,5 @@
 application:
   hostname: "http://localhost:9000"
-  wow:
-    id: 2cc094ac5f9047cb8eeaf3ea4991fc93
-    secret: RwMSy4EQbXHwyeq5d5BDoXQ9NTfte6Zh
 quarkus:
   rest-client:
     wow-api:
