@@ -1,41 +1,85 @@
-{#include base} 
+{#include base}
 {#title}Una Familia - Roster Report{/title}
-{#content}
-<main class="container-fluid p-0">
-  <div class="container p-0">
-    {#if reports != null && !reports.isEmpty}
-    <ul class="list-group">
-      {#for report in reports}
-      <h4>{report.name}</h4>
-      <h4>{report.characterName}</h4>
-      <h4>{report.discordUserId}</h4>
-      <h4>{report.battleNetUserId}</h4>
-      <h4>{report.rank}</h4>
-      <h4>{report.error}</h4>
-      <li
-        class="d-flex list-group-item p-1 justify-content-between mb-2"
-        style="background-color: gray"
-      >
-        <ul class="d-flex list-group flex-row align-items-center">
-          {#for issue in report.issues}
-
-          <li class="list-group-item p-0" style="background-color: gray">
-            <h4>{issue.reason}</h4>
-            <h4>{issue.timestamp}</h4>
-            <h4>{issue.item}</h4>
-            <h4>{issue.instanceName}</h4>
-            <h4>{issue.wishlistName}</h4>
-            <h4>{issue.difficulty}</h4>
-          </li>
+{#content} 
+{#if reports != null && !reports.isEmpty}
+<div class="container w-100">
+  <div class="row w-100">
+    <div class="col-2">
+      <nav id="navbar-example3" class="navbar navbar-light bg-light flex-column align-items-stretch">
+        <a class="navbar-brand" href="#">Character List <span class="badge rounded-pill bg-danger">{reports.size()}</span></a>
+        <nav class="nav nav-pills flex-column">
+          {#for report in reports}
+          <a class="nav-link" href="#{report.characterName}">{report.characterName}</a>
           {/for}
-        </ul>
-      </li>
+        </nav>
+      </nav>
+    </div>
+    <div
+      class="col-8"
+      data-bs-spy="scroll"
+      data-bs-target="#navbar-example3"
+      data-bs-offset="0"
+      tabindex="0"
+    >
+      {#for report in reports}
+      <div id="{report.characterName}" class="card">
+        <div class="row">
+          <div class="col">
+            <div class="card-body">
+              <h5 class="card-title">{report.characterName}</h5>
+              {#if report.error != null}
+              <div class="alert alert-danger" role="alert">
+                {report.error}
+              </div>
+              {/if}
+
+              {#if report.discordUserId != 0}
+                <p class="card-text"><small class="text-muted">Discord ID: {report.discordUserId}</small></p>
+              {/if}
+              {#if report.battleNetUserId != null}
+                <p class="card-text"><small class="text-muted">BattleNet: {report.battleNetUserId}</small></p>
+              {/if}
+              {#if report.rank != null}
+                <p class="card-text"><small class="text-muted">Rank: {report.rank}</small></p>
+              {/if}
+            
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample-{report.characterName}" aria-expanded="false" aria-controls="collapseExample">
+              Show Issues <span class="badge rounded-pill bg-danger">{report.issues.size()}</span>
+            </button>
+                <div class="collapse" id="collapseExample-{report.characterName}">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">timestamp</th>
+                          <th scope="col">item</th>
+                          <th scope="col">instanceName</th>
+                          <th scope="col">wishlistName</th>
+                          <th scope="col">reason</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {#for issue in report.issues}
+                        <tr>
+                          <th>{issue.timestamp}</th>
+                          <td>{issue.item}</td>
+                          <td>{issue.instanceName}</td>
+                          <td>{issue.wishlistName}</td>
+                          <td>{issue.reason}</td>
+                        </tr>
+                        {/for}
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {/for}
-    </ul>
-    {#else}
-    <h3 class="row">All good!</h3>
-    {/if}
+    </div>
   </div>
-</main>
-{/content} 
+</div>
+{#else}
+<h3 class="row">All good!</h3>
+{/if}
+{/content}
 {/include}
