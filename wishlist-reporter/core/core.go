@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type User struct {
@@ -51,4 +52,14 @@ func QueryUserForCharacter(characterName string, characterRealm string) (*User, 
 	}
 
 	return &User{}, err
+}
+
+func RealmToSlug(realmName string) string {
+	if realmName == "" {
+		panic("Realm Name cannot be empty")
+	}
+
+	lowerRealm := strings.ToLower(realmName)
+
+	return strings.ReplaceAll(lowerRealm, " ", "-")
 }

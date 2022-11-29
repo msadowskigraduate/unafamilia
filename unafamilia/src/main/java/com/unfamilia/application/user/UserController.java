@@ -60,8 +60,7 @@ public class UserController {
     @Path("/character")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCharacterOwner(@QueryParam("character_name") String characterName, @QueryParam("character_realm") String realm) {
-        var realmSlug = realm.toLowerCase().replaceAll(" ", "-");
+    public Response getCharacterOwner(@QueryParam("character_name") String characterName, @QueryParam("character_realm") String realmSlug) {
         System.out.println("Requesting user info for character: " + characterName + "-" + realmSlug);
 
         try {

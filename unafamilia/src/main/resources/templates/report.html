@@ -1,85 +1,56 @@
 {#include base}
 {#title}Una Familia - Roster Report{/title}
-{#content} 
-{#if reports != null && !reports.isEmpty}
-<div class="container w-100">
-  <div class="row w-100">
-    <div class="col-2">
-      <nav id="navbar-example3" class="navbar navbar-light bg-light flex-column align-items-stretch">
-        <a class="navbar-brand" href="#">Character List <span class="badge rounded-pill bg-danger">{reports.size()}</span></a>
-        <nav class="nav nav-pills flex-column">
-          {#for report in reports}
-          <a class="nav-link" href="#{report.characterName}">{report.characterName}</a>
-          {/for}
-        </nav>
-      </nav>
-    </div>
-    <div
-      class="col-8"
-      data-bs-spy="scroll"
-      data-bs-target="#navbar-example3"
-      data-bs-offset="0"
-      tabindex="0"
-    >
-      {#for report in reports}
-      <div id="{report.characterName}" class="card">
-        <div class="row">
-          <div class="col">
-            <div class="card-body">
-              <h5 class="card-title">{report.characterName}</h5>
-              {#if report.error != null}
-              <div class="alert alert-danger" role="alert">
-                {report.error}
-              </div>
-              {/if}
-
-              {#if report.discordUserId != 0}
-                <p class="card-text"><small class="text-muted">Discord ID: {report.discordUserId}</small></p>
-              {/if}
-              {#if report.battleNetUserId != null}
-                <p class="card-text"><small class="text-muted">BattleNet: {report.battleNetUserId}</small></p>
-              {/if}
-              {#if report.rank != null}
-                <p class="card-text"><small class="text-muted">Rank: {report.rank}</small></p>
-              {/if}
-            
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample-{report.characterName}" aria-expanded="false" aria-controls="collapseExample">
-              Show Issues <span class="badge rounded-pill bg-danger">{report.issues.size()}</span>
-            </button>
-                <div class="collapse" id="collapseExample-{report.characterName}">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th scope="col">timestamp</th>
-                          <th scope="col">item</th>
-                          <th scope="col">instanceName</th>
-                          <th scope="col">wishlistName</th>
-                          <th scope="col">reason</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {#for issue in report.issues}
-                        <tr>
-                          <th>{issue.timestamp}</th>
-                          <td>{issue.item}</td>
-                          <td>{issue.instanceName}</td>
-                          <td>{issue.wishlistName}</td>
-                          <td>{issue.reason}</td>
-                        </tr>
-                        {/for}
-                      </tbody>
-                    </table>
-                </div>
-            </div>
-          </div>
-        </div>
+{#content}
+<div class="container-fluid">
+  <div class="row border border-1 rounded p-3">
+    <form id="target">
+      <h5>Exclude Difficulty from evaluation:</h5>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="mythic" id="mythic">
+        <label class="form-check-label" for="mythic">
+          Mythic
+        </label>
       </div>
-      {/for}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="heroic" id="heroic">
+        <label class="form-check-label" for="heroic">
+          Heroic
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="normal" id="normal">
+        <label class="form-check-label" for="normal">
+          Normal
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary">Generate Wishlist Report</button>
+    </form>
+  </div>
+  <div class="row py-3">
+    <div class="spinner-grow visually-hidden" role="status" id="loader">
+      <span class="visually-hidden">Loading...</span>
     </div>
+    <div id="report-partial"></div>
   </div>
 </div>
-{#else}
-<h3 class="row">All good!</h3>
-{/if}
+
+<script>
+  $( "#target" ).submit(function( event ) {
+    event.preventDefault();
+    $.ajax({
+      url: "/v2/report/partial",
+      data: $('form#target').serialize(),
+      beforeSend: function() {
+        $('#loader').removeClass("visually-hidden");
+      },
+      complete: function(){
+        $('#loader').hide();
+      },
+      success: function(html){
+        $("#report-partial").html(html).focus();
+      }
+    })
+  });
+</script>
 {/content}
 {/include}

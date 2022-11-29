@@ -2,15 +2,27 @@ package wowaudit
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
-func ParseWishlist(character *CharacterWishlist) (characterData *Character) {
+func ParseWishlist(character *CharacterWishlist, exclude map[string]bool) (characterData *Character) {
 	issues := []Issue{}
 	for _, wishlist := range character.Wishlists {
+		if wishlist.Name == "Overall" {
+			continue
+		}
 		// There are two wishlists (reports) Single Target and Overall - that is why the records might seem duplicated
 		for _, instances := range wishlist.Instances {
 			for _, difficulty := range instances.Difficulties {
+				//if the difficulty is excluded
+				_, ok := exclude[strings.ToLower(difficulty.Difficulty)]
+
+				if ok {
+					fmt.Println("Excluding " + difficulty.Difficulty + " difficulty from parse.")
+					continue
+				}
+
 				hasAtLeastOneItemAsUpgrade := false
 				for _, encounter := range difficulty.Wishlist.Wishlist.Encounters {
 					for _, item := range encounter.Items {
@@ -18,7 +30,7 @@ func ParseWishlist(character *CharacterWishlist) (characterData *Character) {
 						for _, wish := range item.Wishes {
 							//Item is Outdated
 							if wish.Outdated.New.ID > 0 {
-								reason := item.Name + " is outdated for: " + character.Name
+								reason := "A different item is equipped compared to simc profile."
 								issues = append(issues, Issue{Reason: reason, Timestamp: wish.Timestamp, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty, Item: item.Name})
 								continue
 							}
@@ -30,7 +42,7 @@ func ParseWishlist(character *CharacterWishlist) (characterData *Character) {
 								fmt.Println(err.Error())
 							} else {
 								if parsedTimestamp.Add(time.Hour * 36).Before(time.Now()) {
-									reason := character.Name + " should be notified that his wishlist: " + wishlist.Name + " is potentially outdated for item: " + item.Name
+									reason := "Outdated simulation for given item."
 									issues = append(issues, Issue{Reason: reason, Timestamp: wish.Timestamp, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty, Item: item.Name})
 									continue
 								}
@@ -41,7 +53,7 @@ func ParseWishlist(character *CharacterWishlist) (characterData *Character) {
 
 				//If there are no reports on any items - sim not run or no updates
 				if !hasAtLeastOneItemAsUpgrade {
-					reason := character.Name + " either has no upgrades or sim has not been run for " + instances.Name + " on " + difficulty.Difficulty + " difficulty."
+					reason := "No upgrades or simulation not run."
 					issues = append(issues, Issue{Reason: reason, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty})
 				}
 			}
@@ -55,33 +67,33 @@ func ParseWishlist(character *CharacterWishlist) (characterData *Character) {
 	return &Character{}
 }
 
-func parseEncounters(encounters *[]Encounters, characterName string) bool {
-	hasAtLeastOneItemAsUpgrade := false
-	for _, encounter := range *encounters {
-		for _, item := range encounter.Items {
-			hasAtLeastOneItemAsUpgrade = true
-			for _, wish := range item.Wishes {
-				if wish.Outdated {
-					fmt.Println(item.Name + " is outdated for: " + characterName)
-				}
+// func parseEncounters(encounters *[]Encounters, characterName string) bool {
+// 	hasAtLeastOneItemAsUpgrade := false
+// 	for _, encounter := range *encounters {
+// 		for _, item := range encounter.Items {
+// 			hasAtLeastOneItemAsUpgrade = true
+// 			for _, wish := range item.Wishes {
+// 				if wish.Outdated {
+// 					fmt.Println(item.Name + " is outdated for: " + characterName)
+// 				}
 
-				fmt.Println(item.Name + " timestamp: " + wish.Timestamp)
-				parsedTimestamp, err := time.Parse(time.RFC3339, wish.Timestamp)
+// 				fmt.Println(item.Name + " timestamp: " + wish.Timestamp)
+// 				parsedTimestamp, err := time.Parse(time.RFC3339, wish.Timestamp)
 
-				if err != nil {
-					fmt.Println(err.Error())
-				} else {
-					if parsedTimestamp.Add(time.Hour * 36).Before(time.Now()) {
-						fmt.Println(characterName + " should be notified that his simc is potentially outdated!")
-					}
-				}
-			}
-		}
-	}
+// 				if err != nil {
+// 					fmt.Println(err.Error())
+// 				} else {
+// 					if parsedTimestamp.Add(time.Hour * 36).Before(time.Now()) {
+// 						fmt.Println(characterName + " should be notified that his simc is potentially outdated!")
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}
 
-	if !hasAtLeastOneItemAsUpgrade {
-		fmt.Println(characterName + " either has no upgrades or sim has not been run!")
-	}
+// 	if !hasAtLeastOneItemAsUpgrade {
+// 		fmt.Println(characterName + " either has no upgrades or sim has not been run!")
+// 	}
 
-	return hasAtLeastOneItemAsUpgrade
-}
+// 	return hasAtLeastOneItemAsUpgrade
+// }
