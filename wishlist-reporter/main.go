@@ -28,6 +28,7 @@ func main() {
 		ctx.IndentedJSON(http.StatusOK, result)
 	})
 
+	//Depracted, please use v2 endpoint
 	router.GET("/v1/report", func(ctx *gin.Context) {
 		roster := wac.QueryRoster()
 		coreUsers := []Report{}

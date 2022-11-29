@@ -66,34 +66,3 @@ func ParseWishlist(character *CharacterWishlist, exclude map[string]bool) (chara
 
 	return &Character{}
 }
-
-// func parseEncounters(encounters *[]Encounters, characterName string) bool {
-// 	hasAtLeastOneItemAsUpgrade := false
-// 	for _, encounter := range *encounters {
-// 		for _, item := range encounter.Items {
-// 			hasAtLeastOneItemAsUpgrade = true
-// 			for _, wish := range item.Wishes {
-// 				if wish.Outdated {
-// 					fmt.Println(item.Name + " is outdated for: " + characterName)
-// 				}
-
-// 				fmt.Println(item.Name + " timestamp: " + wish.Timestamp)
-// 				parsedTimestamp, err := time.Parse(time.RFC3339, wish.Timestamp)
-
-// 				if err != nil {
-// 					fmt.Println(err.Error())
-// 				} else {
-// 					if parsedTimestamp.Add(time.Hour * 36).Before(time.Now()) {
-// 						fmt.Println(characterName + " should be notified that his simc is potentially outdated!")
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-
-// 	if !hasAtLeastOneItemAsUpgrade {
-// 		fmt.Println(characterName + " either has no upgrades or sim has not been run!")
-// 	}
-
-// 	return hasAtLeastOneItemAsUpgrade
-// }

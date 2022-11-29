@@ -3,7 +3,7 @@ application:
 quarkus:
   rest-client:
     wow-api:
-      url: "http://localhost:8080"
+      url: "http://localhost:8083"
       scope: "javax.inject.Singleton"
     wishlist-reporter:
       url: "http://localhost:8084"
