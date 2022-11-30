@@ -1,7 +1,4 @@
-{#include base}
-{#title}Una Familia - Roster Report{/title}
-{#content}
-<div class="container-fluid">
+<div class="container-fluid mt-2">
   <div class="row border border-1 rounded p-3">
     <form id="target">
       <h5>Exclude Difficulty from evaluation:</h5>
@@ -23,14 +20,11 @@
           Normal
         </label>
       </div>
-      <button type="submit" class="btn btn-primary">Generate Wishlist Report</button>
+      <button type="submit" class="btn btn-primary my-3" id="report-generate-button">Generate Wishlist Report</button>
     </form>
   </div>
   <div class="row py-3">
-    <div class="spinner-grow visually-hidden" role="status" id="loader">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <div id="report-partial"></div>
+    <div id="report-partial" class="pt-0"></div>
   </div>
 </div>
 
@@ -42,9 +36,11 @@
       data: $('form#target').serialize(),
       beforeSend: function() {
         $('#loader').removeClass("visually-hidden");
+        $('#report-generate-button').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
       },
       complete: function(){
-        $('#loader').hide();
+        $('#loader').addClass("visually-hidden");
+        $('#report-generate-button').html('Generate Wishlist Report');
       },
       success: function(html){
         $("#report-partial").html(html).focus();
@@ -52,5 +48,3 @@
     })
   });
 </script>
-{/content}
-{/include}

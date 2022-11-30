@@ -1,9 +1,9 @@
 {#if reports != null && !reports.isEmpty}
-<div class="container-fluid">
+<div class="container-fluid p-0">
     <div class="row">
-      <div class="col-2">
+      <div class="col-md-3">
         <nav id="navbar-example3" class="navbar navbar-light bg-light flex-column align-items-stretch">
-          <a class="navbar-brand" href="#">Character List <span class="badge rounded-pill bg-danger">{reports.size()}</span></a>
+          <a class="navbar-brand px-3">Character List <span class="badge rounded-pill bg-danger">{reports.size()}</span></a>
           <nav class="nav nav-pills flex-column">
             {#for report in reports}
             <a class="nav-link" href="#{report.characterName}">{report.characterName}</a>
@@ -12,7 +12,7 @@
         </nav>
       </div>
       <div
-        class="col-8"
+        class="col p-0"
         data-bs-spy="scroll"
         data-bs-target="#navbar-example3"
         data-bs-offset="0"
