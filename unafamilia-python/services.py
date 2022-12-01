@@ -13,6 +13,7 @@ import requests
 from constants import BASE_API_URL
 from constants import CORE_API_URL
 from constants import ORDER_API_URL
+from discordbot import Order
 
 ORDERABLE_ITEMS_URL = urljoin(BASE_API_URL, '/consumables')
 # endpoint returns session token for user to link account
@@ -34,14 +35,18 @@ def get_registration_url(user_id):
     except Exception as e:
         logging.error(e)
         
+def handle_order_posting(order_json, order: Order):
+    order_id = post_order(order, order_json)
+    
+
 def post_order(order_json):
     try:
         response = requests.post(POST_NEW_ORDER_URL, data=order_json, headers={'Content-Type': 'application/json'})
-        logging.info(response.status_code)
         if response.status_code == 201:
-            logging.info(response.headers["Location"])
-            
-            # logging.info(f"Order ID: {str(orderId)}")
+            url = response.headers["Location"]
+            order_id = url.rsplit('/', 1)[-1]
+            logging.info(f"Order ID: {order_id}")
+            return order_id
     except Exception as e:
         logging.error(e)
 

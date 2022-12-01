@@ -16,7 +16,7 @@ from services import check_interaction_correct_user
 from services import sort_valid_items
 from services import is_user_authorised_to_manage_orders
 from services import get_registration_url
-from services import post_order
+from services import handle_order_posting
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
@@ -105,7 +105,7 @@ class Order():
         
         json += "]}"
         
-        post_order(json)
+        handle_order_posting(json, self)
         
         # logging.info(json)
 
