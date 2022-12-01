@@ -30,6 +30,7 @@ services:
       - QUARKUS_REST_CLIENT_WOW_API_URL=http://wow-api:8080
       - QUARKUS_REST_CLIENT_EVENTS_V1_URL=http://events:8080
       - QUARKUS_REST_CLIENT_ORDERS_V1_URL=http://orders:8080
+      - QUARKUS_REST_CLIENT_WISHLIST_REPORTER_URL=http://wishlist-reporter:8080
     env_file:
       - .env
     depends_on:

@@ -1,0 +1,50 @@
+<div class="container-fluid mt-2">
+  <div class="row border border-1 rounded p-3">
+    <form id="target">
+      <h5>Exclude Difficulty from evaluation:</h5>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="mythic" id="mythic">
+        <label class="form-check-label" for="mythic">
+          Mythic
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="heroic" id="heroic">
+        <label class="form-check-label" for="heroic">
+          Heroic
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="normal" id="normal">
+        <label class="form-check-label" for="normal">
+          Normal
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary my-3" id="report-generate-button">Generate Wishlist Report</button>
+    </form>
+  </div>
+  <div class="row py-3">
+    <div id="report-partial" class="pt-0"></div>
+  </div>
+</div>
+
+<script>
+  $( "#target" ).submit(function( event ) {
+    event.preventDefault();
+    $.ajax({
+      url: "/v2/report/partial",
+      data: $('form#target').serialize(),
+      beforeSend: function() {
+        $('#loader').removeClass("visually-hidden");
+        $('#report-generate-button').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+      },
+      complete: function(){
+        $('#loader').addClass("visually-hidden");
+        $('#report-generate-button').html('Generate Wishlist Report');
+      },
+      success: function(html){
+        $("#report-partial").html(html).focus();
+      }
+    })
+  });
+</script>

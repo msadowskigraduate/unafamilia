@@ -1,0 +1,82 @@
+{#if reports != null && !reports.isEmpty}
+<div class="container-fluid p-0">
+    <div class="row">
+      <div class="col-md-3">
+        <nav id="navbar-example3" class="navbar navbar-light bg-light flex-column align-items-stretch">
+          <a class="navbar-brand px-3">Character List <span class="badge rounded-pill bg-danger">{reports.size()}</span></a>
+          <nav class="nav nav-pills flex-column">
+            {#for report in reports}
+            <a class="nav-link" href="#{report.characterName}">{report.characterName}</a>
+            {/for}
+          </nav>
+        </nav>
+      </div>
+      <div
+        class="col p-0"
+        data-bs-spy="scroll"
+        data-bs-target="#navbar-example3"
+        data-bs-offset="0"
+        tabindex="0"
+      >
+        {#for report in reports}
+        <div id="{report.characterName}" class="card">
+          <div class="row">
+            <div class="col">
+              <div class="card-body">
+                <h5 class="card-title">{report.characterName}</h5>
+                {#if report.error != null}
+                <div class="alert alert-danger" role="alert">
+                  {report.error}
+                </div>
+                {/if}
+  
+                {#if report.discordUserId != 0}
+                  <p class="card-text"><small class="text-muted">Discord ID: {report.discordUserId}</small></p>
+                {/if}
+                {#if report.name != null}
+                  <p class="card-text"><small class="text-muted">BattleNet: {report.name}</small></p>
+                {/if}
+                {#if report.rank != null}
+                  <p class="card-text"><small class="text-muted">Rank: {report.rank}</small></p>
+                {/if}
+              
+              <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample-{report.characterName}" aria-expanded="false" aria-controls="collapseExample">
+                Show Issues <span class="badge rounded-pill bg-danger">{report.issues.size()}</span>
+              </button>
+                  <div class="collapse" id="collapseExample-{report.characterName}">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">timestamp</th>
+                            <th scope="col">item</th>
+                            <th scope="col">instanceName</th>
+                            <th scope="col">wishlistName</th>
+                            <th scope="col">reason</th>
+                            <th scope="col">difficulty</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {#for issue in report.issues}
+                          <tr>
+                            <th>{issue.timestamp}</th>
+                            <td>{issue.item}</td>
+                            <td>{issue.instanceName}</td>
+                            <td>{issue.wishlistName}</td>
+                            <td>{issue.reason}</td>
+                            <td>{issue.difficulty}</td>
+                          </tr>
+                          {/for}
+                        </tbody>
+                      </table>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/for}
+      </div>
+    </div>
+  </div>
+  {#else}
+  <h3 class="row">All good!</h3>
+  {/if}
