@@ -5,18 +5,20 @@ import json
 import logging
 
 from discord import Option
-from discord import option
 
 
 import os  # default module
 from dotenv import load_dotenv
 
-from services import get_orderable_items
-from services import check_interaction_correct_user
-from services import sort_valid_items
-from services import is_user_authorised_to_manage_orders
-from services import get_registration_url
-from services import handle_order_posting
+from order_services import get_orderable_items
+from order_services import check_interaction_correct_user
+from order_services import sort_valid_items
+from order_services import is_user_authorised_to_manage_orders
+from order_services import get_registration_url
+from order_services import handle_order_posting
+
+from wishlist_services import get_wishlist
+from wishlist_services import process_wishlist
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
@@ -435,9 +437,12 @@ async def link_account(ctx: discord.ApplicationContext):
     registration_url = get_registration_url(ctx.author.id)
     await ctx.respond("Click the link below to connect your account:\n" + registration_url, ephemeral=True)
 
-@bot.slash_command(name="test", description="test")
-async def test(ctx: discord.ApplicationContext, candidates: Option(str, "Language", choices=['Devs', 'Artists', 'Moderators'])):
-    pass
+@bot.slash_command(name="wishlist", description="run the wishlist command")
+async def wishlist_reminders(ctx: discord.ApplicationContext):
+    await ctx.respond("Working on it, this may take some time..", ephemeral=True)
+    wishlist_report = get_wishlist()
+    process_wishlist(wishlist_report, "Castle Nathria", "mythic")
+    
 
     
 bot.run(os.getenv("TOKEN"))  # run bot using token
