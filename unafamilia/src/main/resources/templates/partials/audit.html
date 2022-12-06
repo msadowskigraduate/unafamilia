@@ -1,0 +1,31 @@
+<div class="container-fluid p-0">
+    <div class="row pt-3">
+        <div class="col p-0">
+            <button type="button" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-striped text-center">
+            <thead>
+              <tr>
+                <th class="text-start">Name</th>
+                <th class="text-start">Realm</th>
+                <th>Average Item Level</th>
+                <th>Equipped Item Level</th>
+                <th>Level</th>
+              </tr>
+            </thead>
+            <tbody>
+            {#for character in data}
+              <tr>
+                <td class="text-start">{character.name}</td>
+                <td class="text-start">{character.realm}</td>
+                <td>{character.averageItemLevel}</td>
+                <td>{character.equippedItemLevel}</td>
+                <td>{character.level}</td>
+              </tr>
+            {/for}
+            </tbody>
+          </table>
+    </div>
+</div>

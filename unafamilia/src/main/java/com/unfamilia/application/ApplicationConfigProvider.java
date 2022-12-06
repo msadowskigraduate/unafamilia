@@ -11,6 +11,17 @@ public interface ApplicationConfigProvider {
     @WithName("wow")
     WoWApiConfig wowApi();
 
+    @WithName("discord")
+    DiscordConfigurationProvider discordProvider();
+
+    interface DiscordConfigurationProvider {
+        @WithName("id")
+        String clientId();
+
+        @WithName("secret")
+        String clientSecret();
+    }
+
     interface WoWApiConfig {
         @WithName("id")
         String clientId();

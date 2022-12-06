@@ -1,7 +1,7 @@
 {#include base}
 {#title}Una Familia - User{/title}
 {#navbar}
-<div class="navbar-nav px-2">
+<div class="navbar-nav px-2 mx-2">
     Welcome, {data.name}!
 </div>
 {/navbar}
@@ -15,10 +15,22 @@
                         <i class="bi bi-house"></i> Home
                       </a> 
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark active" href="/orders">
+                      <i class="bi bi-basket-fill"></i> Orders
+                      </a> 
+                </li>
+
                 {#if data.isAdmin}
                 <li class="nav-item">
                     <a class="nav-link text-dark" id="href-report" href="#">
-                        <i class="bi bi-heart-pulse-fill"></i> Report
+                        <i class="bi bi-heart-pulse-fill"></i> Wishlist Report
+                      </a> 
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark" id="href-audit" href="#">
+                        <i class="bi bi-grid-3x3"></i> Audit Team
                       </a> 
                 </li>
                 {/if}
@@ -27,12 +39,22 @@
                 <span>Profile</span>
             </h6>
             <ul class="nav flex-column mb-2">
+            {#if data.hasDiscordId} 
+            <li class="nav-item">
+                <a class="nav-link text-dark active" id="discord-auth" href="#">
+                  <i class="bi bi-exclamation-lg bg-danger my-1 rounded-pill"></i><i class="bi bi-discord"></i> Connect Discord Account  
+                  </a> 
+            </li>
+            {/if}
               <li class="nav-item">
                 <a class="nav-link text-dark" href="/logout">
                   <i class="bi bi-power"></i> Logout
                 </a>
               </li>
             </ul>
+            <h6 class="sidebar-heading d-flex justify-content-between px-3 mt-4 mb-1 bottom-0 bg-secondary">
+              <span><i class="bi bi-discord"></i> ID: {data.discordUserId}</span>
+            </h6>
         </div>
     </nav>
 
@@ -46,6 +68,33 @@
         url: "/v2/report",
         success: function(html){
           $("#data-container").html(html);
+        }
+      })
+    });
+
+    $( "#href-audit" ).click(function( event ) {
+      event.preventDefault();
+      $.ajax({
+        url: "/v1/audit",
+        beforeSend: function() {
+          $('#data-container').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        },
+        success: function(html){
+          $("#data-container").html(html);
+        }
+      })
+    });
+
+    $( "#discord-auth" ).click(function( event ) {
+      event.preventDefault();
+      $.ajax({
+        url: "/discord/oauth2/authorize",
+        method: "POST",
+        beforeSend: function() {
+          $('#data-container').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        },
+        success: function(data){
+          window.location.replace(data)
         }
       })
     });

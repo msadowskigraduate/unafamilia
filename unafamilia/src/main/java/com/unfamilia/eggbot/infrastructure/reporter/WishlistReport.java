@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record WishlistReport(
     @JsonProperty("user_name") String name,
     @JsonProperty("name") String characterName,
+    @JsonProperty("realm") String realm,
     @JsonProperty("discord_user_id") Integer discordUserId,
     @JsonProperty("battle_net_user_id") Integer battleNetUserId,
     @JsonProperty("rank") Integer rank,

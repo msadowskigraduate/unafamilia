@@ -1,5 +1,6 @@
 package com.unfamilia.application.user.command;
 
+import com.unfamilia.application.command.Command;
 import com.unfamilia.application.command.CommandHandler;
 import com.unfamilia.application.user.Character;
 import com.unfamilia.application.user.User;
@@ -27,8 +28,8 @@ public class NewUserCommandHandler implements CommandHandler<NewUserCommand> {
     WoWApiGuildAdapter guild;
 
     @Override
-    public boolean supports(NewUserCommand command) {
-        return command != null;
+    public boolean supports(Command command) {
+        return command instanceof NewUserCommand;
     }
 
     /*
@@ -51,7 +52,7 @@ public class NewUserCommandHandler implements CommandHandler<NewUserCommand> {
                 .min(Comparator.comparing(WoWGuildRosterResponse.Member::rank));
 
         if (min.isPresent()) {
-            Log.info("Creating user: " + command.battleTag());
+            Log.info("Creating user: " + command.battleTag() + "|| DiscordID: " + command.discordUserId());
 
             var characters = wowProfile.getWowAccounts().stream()
                     .flatMap(wowAccount -> wowAccount.getCharacters().stream())
