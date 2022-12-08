@@ -10,8 +10,8 @@ public record WishlistReport(
     @JsonProperty("user_name") String name,
     @JsonProperty("name") String characterName,
     @JsonProperty("realm") String realm,
-    @JsonProperty("discord_user_id") Integer discordUserId,
-    @JsonProperty("battle_net_user_id") Integer battleNetUserId,
+    @JsonProperty("discord_user_id") Long discordUserId,
+    @JsonProperty("battle_net_user_id") Long battleNetUserId,
     @JsonProperty("rank") Integer rank,
     @JsonProperty("error") String error,
     @JsonProperty("issues") List<Issue> issues
