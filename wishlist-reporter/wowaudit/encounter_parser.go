@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func ParseWishlist(character *CharacterWishlist, exclude map[string]bool) (characterData *Character) {
+func ParseWishlist(character *CharacterWishlist, include map[string]bool) (characterData *Character) {
 	issues := []Issue{}
 	for _, wishlist := range character.Wishlists {
 		if wishlist.Name == "Overall" {
@@ -15,11 +15,11 @@ func ParseWishlist(character *CharacterWishlist, exclude map[string]bool) (chara
 		// There are two wishlists (reports) Single Target and Overall - that is why the records might seem duplicated
 		for _, instances := range wishlist.Instances {
 			for _, difficulty := range instances.Difficulties {
-				//if the difficulty is excluded
-				_, ok := exclude[strings.ToLower(difficulty.Difficulty)]
+				//if the difficulty is included
+				_, ok := include[strings.ToLower(difficulty.Difficulty)]
 
-				if ok {
-					fmt.Println("Excluding " + difficulty.Difficulty + " difficulty from parse.")
+				if !ok {
+					fmt.Println(difficulty.Difficulty + " is not an included difficulty for report generation.")
 					continue
 				}
 

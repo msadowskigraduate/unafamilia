@@ -70,15 +70,15 @@ func main() {
 
 		req := ctx.Request
 		req.ParseForm()
-		r := req.Form["exclude"]
-		exclude := make(map[string]bool)
+		r := req.Form["include"]
+		include := make(map[string]bool)
 		for _, difficulty := range r {
 			fmt.Println("Parsing Query parameter: " + difficulty)
-			exclude[difficulty] = true
+			include[difficulty] = true
 		}
 
 		cwish := wac.QueryWishlistForCharacter(intVar)
-		cdata := wowaudit.ParseWishlist(cwish, exclude)
+		cdata := wowaudit.ParseWishlist(cwish, include)
 		cuser, err := core.QueryUserForCharacter(cdata.Name, core.RealmToSlug(cdata.Realm))
 		if err != nil {
 			ctx.IndentedJSON(http.StatusOK, Report{Name: cuser.Name, CharacterName: cwish.Name, DiscordUserId: cuser.DiscordUserId, BattleNetUserId: cuser.BattleNetUserId, Rank: cuser.Rank, Error: err.Error(), Issues: cdata.Issues})
