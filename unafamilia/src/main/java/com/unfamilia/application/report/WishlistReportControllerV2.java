@@ -43,22 +43,22 @@ public class WishlistReportControllerV2 {
     @Path("/partial")
     @Authenticated
     public TemplateInstance queryReportData(@QueryParam("mythic") String mythic, @QueryParam("heroic") String heroic, @QueryParam("normal") String normal) {
-        List<String> toBeExcluded = new ArrayList<>();
+        List<String> toBeIncluded = new ArrayList<>();
         
         if(Objects.nonNull(mythic)) {
-            toBeExcluded.add("mythic");
+            toBeIncluded.add("mythic");
         }
         
         if(Objects.nonNull(heroic)) {
-            toBeExcluded.add("heroic");
+            toBeIncluded.add("heroic");
         }
         
         if(Objects.nonNull(normal)) {
-            toBeExcluded.add("normal");
+            toBeIncluded.add("normal");
         }
-        System.out.println(toBeExcluded);
+        
         List<Roster> roster = adapter.queryRoster();
-        var reports = roster.stream().map(character -> adapter.queryReportForRosterV2(String.valueOf(character.id()), toBeExcluded))
+        var reports = roster.stream().map(character -> adapter.queryReportForRosterV2(String.valueOf(character.id()), toBeIncluded))
             .collect(Collectors.toList());
         return reportPartials.data("reports", reports);
     }

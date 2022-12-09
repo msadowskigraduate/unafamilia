@@ -22,5 +22,5 @@ public interface WishlistReporterAdapter {
     
     @Path("v2/report")
     @GET
-    WishlistReport queryReportForRosterV2(@QueryParam("character_id") String characterId, @QueryParam("exclude") List<String> exclude);
+    WishlistReport queryReportForRosterV2(@QueryParam("character_id") String characterId, @QueryParam("include") List<String> include);
 }
