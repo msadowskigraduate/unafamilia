@@ -30,7 +30,7 @@
                 </div>
                 {/if}
   
-                {#if report.discordUserId != 0}
+                {#if report.hasDiscordId}
                   <p class="card-text"><small class="text-muted">Discord ID: {report.discordUserId}</small></p>
                 {/if}
                 {#if report.name != null}
