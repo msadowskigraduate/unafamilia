@@ -14,4 +14,8 @@ public class TemplateExtensions {
     public static Boolean hasDiscordId(UserDto userDto) {
         return userDto.discordUserId() == null;
     }
+
+    public static Integer numberOfIssues(WishlistReport report) {
+        return report.issues() == null ? 0 : report.issues().size();
+    }
 }

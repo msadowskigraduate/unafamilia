@@ -21,6 +21,10 @@ func main() {
 
 	wac := wowaudit.NewWowAuditClient(wowauditApiKey)
 
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.Status(200)
+	})
+
 	router.GET("/v1/team", func(ctx *gin.Context) {
 		result := wac.QueryRoster()
 

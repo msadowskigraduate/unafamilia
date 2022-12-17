@@ -1,0 +1,18 @@
+image:
+  repository: registry.digitalocean.com/uf-default-registry/wishlist-reporter
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "2a5fa52"
+
+imagePullSecrets: 
+  - name: uf-default-registry
+
+nameOverride: "unafamilia-wishlist-app"
+fullnameOverride: "unafamilia-wishlist-chart"
+env:
+  - name: "WOWAUDIT_API_KEY"
+    valueFrom:
+      secretKeyRef:
+        name: wowaudit
+        key: secret
+        optional: false

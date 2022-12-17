@@ -66,6 +66,11 @@ func main() {
 		ctx.Status(http.StatusCreated)
 	})
 
+	//Health Check
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.Status(200)
+	})
+
 	//Query Character Profile Summary
 	router.GET("/character", func(ctx *gin.Context) {
 		characterName := ctx.Query("character_name")
