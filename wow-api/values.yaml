@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  repository: registry.digitalocean.com/uf-default-registry/wow-api
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "2a5fa52"
+
+imagePullSecrets: 
+  - name: uf-default-registry
+nameOverride: "unafamilia-wow-api-app"
+fullnameOverride: "unafamilia-wow-api-chart"
+env:
+  - name: "REDIS_URL"
+    value: "redis:6379"
+  - name: "APPLICATION_WOW_ID"
+    valueFrom:
+      secretKeyRef:
+        name: wowclient
+        key: id
+        optional: false
+  - name: "APPLICATION_WOW_SECRET"
+    valueFrom:
+      secretKeyRef:
+        name: wowclient
+        key: secret
+        optional: false
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "wow-api"

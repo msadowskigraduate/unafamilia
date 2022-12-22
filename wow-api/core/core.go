@@ -17,6 +17,7 @@ var classes = map[int]string{
 	10: "Monk",
 	11: "Druid",
 	12: "Demon Hunter",
+	13: "Evoker",
 }
 
 type RestError struct {

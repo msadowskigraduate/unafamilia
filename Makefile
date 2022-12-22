@@ -9,9 +9,9 @@ build_event:
 build_orders:
 	mvn clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.builder=jib "-Dquarkus.container-image.image=unafamilia/orders:latest" -Dmaven.test.skip --file orders/pom.xml
 build_wow_api:
-	docker build wow-api -t "unafamilia/wow-api:latest" 
+	docker build wow-api -t "unafamilia/wow-api:latest" -f ./docker/go/Dockerfile
 build_wishlist_reporter:
-	docker build wishlist-reporter -t "unafamilia/wishlist-reporter:latest" 
+	docker build wishlist-reporter -t "unafamilia/wishlist-reporter:latest" -f ./docker/go/Dockerfile
 build_core:
 	mvn clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.builder=jib "-Dquarkus.container-image.image=unafamilia/core:latest" -Dmaven.test.skip --file unafamilia/pom.xml
 
@@ -44,3 +44,10 @@ logs: ## Show logs for all or c=<name> containers
 
 clean: confirm ## Clean all data
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
+
+helm-install-postgres:
+	helm upgrade postgresql --set global.postgresql.auth.postgresPassword=postgres --set global.postgresql.auth.database=postgres bitnami/postgresql  \
+  --set livenessProbe.initialDelaySeconds=200 \
+  --set readinessProbe.initialDelaySeconds=200 \
+  --set persistence.storageClass=ibmc-file-gold-delayed \
+  --set volumePermissions.enabled=true -i

@@ -1,0 +1,74 @@
+replicaCount: 1
+
+image:
+  repository: registry.digitalocean.com/uf-default-registry/core
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: 
+  - name: uf-default-registry
+nameOverride: "core-app"
+fullnameOverride: "core-chart"
+env:
+  - name: "APPLICATION_DISCORD_ID"
+    valueFrom:
+      secretKeyRef:
+        name: discordclient
+        key: id
+        optional: false
+  - name: "APPLICATION_DISCORD_SECRET"
+    valueFrom:
+      secretKeyRef:
+        name: discordclient
+        key: secret
+        optional: false
+  - name: "APPLICATION_WOW_ID"
+    valueFrom:
+      secretKeyRef:
+        name: wowclient
+        key: id
+        optional: false
+  - name: "APPLICATION_WOW_SECRET"
+    valueFrom:
+      secretKeyRef:
+        name: wowclient
+        key: secret
+        optional: false
+  - name: "QUARKUS_DATASOURCE_USERNAME"
+    valueFrom:
+      secretKeyRef:
+        name: dodbpostgresql
+        key: username
+        optional: false
+  - name: "QUARKUS_DATASOURCE_PASSWORD"
+    valueFrom:
+      secretKeyRef:
+        name: dodbpostgresql
+        key: password
+        optional: false
+  - name: "QUARKUS_DATASOURCE_JDBC_DRIVER"
+    value: "org.postgresql.Driver"
+  - name: "QUARKUS_DATASOURCE_JDBC_URL"
+    valueFrom:
+      secretKeyRef:
+        name: dodbpostgresql
+        key: url
+        optional: false
+  - name: "QUARKUS_PROFILE"
+    value: "prod"
+  - name: "QUARKUS_REST_CLIENT_WOW_API_URL"
+    value: "http://unafamilia-wow-api-chart"
+  - name: "QUARKUS_REST_CLIENT_WISHLIST_REPORTER_URL"
+    value: "http://unafamilia-wishlist-chart"
+  - name: "APPLICATION_HOSTNAME"
+    value: "http://unafamilia.online"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "core"

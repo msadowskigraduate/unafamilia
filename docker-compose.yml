@@ -86,9 +86,7 @@ services:
   wishlist-reporter:
     image: unafamilia/wishlist-reporter:latest
     ports:
-      - "8084:8080"    
-    environment:
-      - CORE_URL=http://core:9000
+      - "8084:8080"
     env_file:
       - .env
     depends_on:

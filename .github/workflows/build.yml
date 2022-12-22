@@ -1,0 +1,82 @@
+name: Build the Glorious UnaFamilia Project
+
+on: [push]
+
+env:
+  IMAGE_REGISTRY_BASE: registry.digitalocean.com
+  IMAGE_REGISTRY: uf-default-registry
+
+
+jobs:
+  build_wishlist_reporter:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install doctl 
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DO Container Registry 
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Build Wishlist Reporter
+        env:
+          IMAGE_NAME: wishlist-reporter
+        run: |
+          docker build wishlist-reporter -t "$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)" -f ./docker/go/Dockerfile
+          docker push $IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)
+          echo "::set-output name=image::$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)"
+  
+  build_wow_api:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install doctl 
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DO Container Registry 
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Build WoW API
+        env:
+          IMAGE_NAME: wow-api
+        run: |
+          docker build wow-api -t "$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)" -f ./docker/go/Dockerfile
+          docker push $IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)
+          echo "::set-output name=image::$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)"
+
+  build_core:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install doctl 
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DO Container Registry 
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Set up JDK 18
+        uses: actions/setup-java@v3
+        with:
+          java-version: '18'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build Core
+        env:
+          IMAGE_NAME: core
+        run: |
+          cd unafamilia
+          mvn package -Dquarkus.container-image.build=true -Dquarkus.container-image.builder=jib "-Dquarkus.container-image.image=$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)"
+          docker push $IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)
+          echo "::set-output name=image::$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)"

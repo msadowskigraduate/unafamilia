@@ -14,13 +14,11 @@ quarkus:
     orders-v1:
       url: "http://localhost:8082"
       scope: "javax.inject.Singleton"
+    discord-auth:
+      url: "https://discord.com/api/v10"
+      scope: "javax.inject.Singleton"    
   datasource:
     db-kind: postgresql
-    # username: postgres
-    # password: mysecretpassword
-    # jdbc:
-    #   url: jdbc:postgresql://localhost/default
-    #   driver: org.postgresql.Driver
   hibernate-orm:
     database:
       generation: drop-and-create
