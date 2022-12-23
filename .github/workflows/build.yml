@@ -13,7 +13,7 @@ env:
 jobs:
   build_wishlist_reporter:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
       
@@ -35,7 +35,7 @@ jobs:
   
   build_wow_api:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
       
@@ -57,7 +57,7 @@ jobs:
 
   build_core:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
       
