@@ -1,6 +1,9 @@
 name: Build the Glorious UnaFamilia Project
 
-on: [push]
+on:
+  push:
+    branches:
+     - main
 
 env:
   IMAGE_REGISTRY_BASE: registry.digitalocean.com
