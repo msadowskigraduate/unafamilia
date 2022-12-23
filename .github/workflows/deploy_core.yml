@@ -13,5 +13,5 @@ jobs:
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
-          exec: helm upgrade wishlist-reporter ./helm-charts/java --install --wait --atomic -f ./unafamilia/values.yaml  --set image.tag=$(echo $GITHUB_SHA | head -c7)
+          exec: helm upgrade core ./helm-charts/java --install --wait --atomic -f ./unafamilia/values.yaml  --set image.tag=$(echo $GITHUB_SHA | head -c7)
           kubeconfig: '${{ secrets.KUBECONFIG }}'
