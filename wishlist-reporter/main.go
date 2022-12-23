@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"unafamilia/wishlist-reporter/core"
 	"unafamilia/wishlist-reporter/wowaudit"
 
 	"github.com/gin-gonic/gin"
@@ -22,43 +21,14 @@ func main() {
 
 	wac := wowaudit.NewWowAuditClient(wowauditApiKey)
 
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.Status(200)
+	})
+
 	router.GET("/v1/team", func(ctx *gin.Context) {
 		result := wac.QueryRoster()
 
 		ctx.IndentedJSON(http.StatusOK, result)
-	})
-
-	//Depracted, please use v2 endpoint
-	router.GET("/v1/report", func(ctx *gin.Context) {
-		roster := wac.QueryRoster()
-		coreUsers := []Report{}
-
-		req := ctx.Request
-		req.ParseForm()
-		r := req.Form["exclude"]
-		var exclude map[string]bool
-		for _, difficulty := range r {
-			exclude[difficulty] = true
-		}
-
-		for _, character := range *roster {
-			cwish := wac.QueryWishlistForCharacter(character.ID)
-			cdata := wowaudit.ParseWishlist(cwish, exclude)
-			if len(cdata.Issues) == 0 {
-				continue
-			}
-
-			cuser, err := core.QueryUserForCharacter(cdata.Name, core.RealmToSlug(cdata.Realm))
-
-			if err != nil {
-				coreUsers = append(coreUsers, Report{Name: cuser.Name, CharacterName: cwish.Name, DiscordUserId: cuser.DiscordUserId, BattleNetUserId: cuser.BattleNetUserId, Rank: cuser.Rank, Error: err.Error(), Issues: cdata.Issues})
-				continue
-			} else {
-				coreUsers = append(coreUsers, Report{Name: cuser.Name, CharacterName: cwish.Name, DiscordUserId: cuser.DiscordUserId, BattleNetUserId: cuser.BattleNetUserId, Rank: cuser.Rank, Issues: cdata.Issues})
-			}
-		}
-
-		ctx.IndentedJSON(http.StatusOK, coreUsers)
 	})
 
 	router.GET("/v2/report", func(ctx *gin.Context) {
@@ -79,11 +49,10 @@ func main() {
 
 		cwish := wac.QueryWishlistForCharacter(intVar)
 		cdata := wowaudit.ParseWishlist(cwish, include)
-		cuser, err := core.QueryUserForCharacter(cdata.Name, core.RealmToSlug(cdata.Realm))
 		if err != nil {
-			ctx.IndentedJSON(http.StatusOK, Report{Name: cuser.Name, CharacterName: cwish.Name, DiscordUserId: cuser.DiscordUserId, BattleNetUserId: cuser.BattleNetUserId, Rank: cuser.Rank, Error: err.Error(), Issues: cdata.Issues})
+			ctx.IndentedJSON(http.StatusOK, Report{CharacterName: cwish.Name, Error: err.Error(), Issues: cdata.Issues, Realm: cwish.Realm})
 		} else {
-			ctx.IndentedJSON(http.StatusOK, Report{Name: cuser.Name, CharacterName: cwish.Name, DiscordUserId: cuser.DiscordUserId, BattleNetUserId: cuser.BattleNetUserId, Rank: cuser.Rank, Issues: cdata.Issues})
+			ctx.IndentedJSON(http.StatusOK, Report{CharacterName: cwish.Name, Issues: cdata.Issues, Realm: cwish.Realm})
 		}
 	})
 
@@ -93,7 +62,8 @@ func main() {
 type Report struct {
 	Name            string           `json:"user_name,omitempty"`
 	CharacterName   string           `json:"name"`
-	DiscordUserId   int              `json:"discord_user_id"`
+	Realm           string           `json:"realm"`
+	DiscordUserId   int              `json:"discord_user_id,omitempty"`
 	BattleNetUserId int              `json:"battle_net_user_id,omitempty"`
 	Rank            int              `json:"rank,omitempty"`
 	Issues          []wowaudit.Issue `json:"issues"`

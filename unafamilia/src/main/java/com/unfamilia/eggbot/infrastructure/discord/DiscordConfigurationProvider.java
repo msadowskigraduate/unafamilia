@@ -14,15 +14,21 @@ public class DiscordConfigurationProvider {
     ApplicationConfigProvider configProvider;
 
     public String provideAuthenticationUrl() {
-        return UriBuilder.fromPath("https://discord.com/oauth2/authorize")
+        return UriBuilder.fromPath(this.provideBaseDiscordUrl())
                 .queryParam("response_type", "code")
                 .queryParam("client_id", configProvider.discordProvider().clientId())
                 .queryParam("scope", "identify")
-                .queryParam("redirect_uri", "http://localhost:9000/discord/oauth2/authorize")
+                .queryParam("redirect_uri", this.provideRedirectUri())
                 .queryParam("prompt", "consent")
                 .toTemplate();
-        // return
-        // "https://discord.com/oauth2/authorize?response_type=code&client_id=902943569298489364&scope=identify&redirect_uri=http%3A%2F%2Flocalhost%3A9000%2Fdiscord%2Foauth2%2Fauthorize&prompt=consent";
+    }
+
+    public String provideDiscordClientId() {
+        return configProvider.discordProvider().clientId();
+    }
+
+    public String provideRedirectUri() {
+        return configProvider.hostname() + "/discord/oauth2/authorize";
     }
 
     public MultivaluedMap<String, String> provideAuthenticationForm(String code) {
@@ -31,8 +37,12 @@ public class DiscordConfigurationProvider {
                 .param("client_secret", configProvider.discordProvider().clientSecret())
                 .param("code", code)
                 .param("grant_type", "authorization_code")
-                .param("redirect_uri", "http://localhost:9000/discord/oauth2/authorize");
+                .param("redirect_uri",  provideRedirectUri());
 
         return tokenExchangeRequest.asMap();
+    }
+
+    public String provideBaseDiscordUrl() {
+        return "https://discord.com/oauth2/authorize";
     }
 }

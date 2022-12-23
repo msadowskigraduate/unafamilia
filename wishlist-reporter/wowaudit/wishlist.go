@@ -139,12 +139,13 @@ type Character struct {
 }
 
 type Issue struct {
-	Reason       string `json:"reason"`
-	Timestamp    string `json:"timestamp,omitempty"`
-	Item         string `json:"item,omitempty"`
-	InstanceName string `json:"instance_name"`
-	WishlistName string `json:"wishlist_name"`
-	Difficulty   string `json:"difficulty"`
+	Reason         string `json:"reason"`
+	Timestamp      string `json:"timestamp,omitempty"`
+	Item           string `json:"item,omitempty"`
+	InstanceName   string `json:"instance_name"`
+	WishlistName   string `json:"wishlist_name"`
+	Difficulty     string `json:"difficulty"`
+	Specialization string `json:"specialization,omitempty"`
 }
 
 type WowAuditClient struct {

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: external-lb
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "unafamilia.online"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: "core-chart"
+            port:
+              number: 80

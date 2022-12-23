@@ -84,7 +84,7 @@ public class HomeController {
             }
         }
         
-        UriBuilder redirectUriBuilder = UriBuilder.fromUri("http://localhost:9000/callback")
+        UriBuilder redirectUriBuilder = UriBuilder.fromUri(this.configProvider.hostname() + "/callback")
                 .queryParam("redirect_uri", redirectUri == null ? DEFAULT_REDIRECT_PAGE : redirectUri);
 
         if (sessionToken != null) {
@@ -121,6 +121,14 @@ public class HomeController {
             var sessionToken1 = SessionToken.get(sessionToken);
             var wowProfileId = Long.valueOf(idToken.getSubject());
             var battleTag = this.idToken.<String>getClaim("battle_tag");
+            
+
+            if(idToken.getSubject() != null) {
+                var user = User.findByOptionalBattleNetId(Long.valueOf(idToken.getSubject()));
+                if(user.isPresent()) {
+                    return Response.seeOther(URI.create("/user")).build();
+                }
+            }
 
             commandBus.handle(new NewUserCommand(accessToken.getToken(), sessionToken1.getUserId(), wowProfileId, battleTag));
 

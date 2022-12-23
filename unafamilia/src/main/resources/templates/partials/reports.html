@@ -3,10 +3,14 @@
     <div class="row">
       <div class="col-md-3">
         <nav id="navbar-example3" class="navbar navbar-light bg-light flex-column align-items-stretch">
-          <a class="navbar-brand px-3">Character List <span class="badge rounded-pill bg-danger">{reports.size()}</span></a>
+          <a class="navbar-brand px-3">Character List <span class="badge rounded-pill bg-danger">{reports.totalNumerOfIssues}</span></a>
           <nav class="nav nav-pills flex-column">
             {#for report in reports}
-            <a class="nav-link" href="#{report.characterName}">{report.characterName}</a>
+            <a class="nav-link" href="#{report.characterName}">{report.characterName}
+              {#if report.numberOfIssues == 0}
+              <i class="bi bi-check-all mx-1" style="font-size: 2rem; color: green;"></i>
+            {/if}
+            </a> 
             {/for}
           </nav>
         </nav>
@@ -30,7 +34,7 @@
                 </div>
                 {/if}
   
-                {#if report.discordUserId != 0}
+                {#if report.hasDiscordId}
                   <p class="card-text"><small class="text-muted">Discord ID: {report.discordUserId}</small></p>
                 {/if}
                 {#if report.name != null}
@@ -39,15 +43,16 @@
                 {#if report.rank != null}
                   <p class="card-text"><small class="text-muted">Rank: {report.rank}</small></p>
                 {/if}
-              
+              {#if report.numberOfIssues > 0}
               <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample-{report.characterName}" aria-expanded="false" aria-controls="collapseExample">
-                Show Issues <span class="badge rounded-pill bg-danger">{report.issues.size()}</span>
+                Show Issues <span class="badge rounded-pill bg-danger">{report.numberOfIssues}</span>
               </button>
                   <div class="collapse" id="collapseExample-{report.characterName}">
                       <table class="table">
                         <thead>
                           <tr>
                             <th scope="col">timestamp</th>
+                            <th scope="col">specialization</th>
                             <th scope="col">item</th>
                             <th scope="col">instanceName</th>
                             <th scope="col">wishlistName</th>
@@ -59,6 +64,7 @@
                           {#for issue in report.issues}
                           <tr>
                             <th>{issue.timestamp}</th>
+                            <th>{issue.specialization}</th>
                             <td>{issue.item}</td>
                             <td>{issue.instanceName}</td>
                             <td>{issue.wishlistName}</td>
@@ -69,6 +75,11 @@
                         </tbody>
                       </table>
                   </div>
+                {#else}
+                  <div class="alert alert-success" role="alert">
+                    No issues identified! Good to go!
+                  </div>
+                {/if}
               </div>
             </div>
           </div>

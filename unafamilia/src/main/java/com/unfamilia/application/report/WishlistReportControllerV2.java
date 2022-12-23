@@ -1,21 +1,20 @@
 package com.unfamilia.application.report;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+import javax.ws.rs.core.Response;
 
-import com.unfamilia.eggbot.infrastructure.reporter.Roster;
-import com.unfamilia.eggbot.infrastructure.reporter.WishlistReporterAdapter;
-
+import com.unfamilia.application.query.QueryBus;
+import com.unfamilia.application.report.query.NewWishlistReportQuery;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -24,9 +23,7 @@ import io.quarkus.security.Authenticated;
 @Path("/v2/report")
 @Produces(MediaType.APPLICATION_JSON)
 public class WishlistReportControllerV2 {
-    @Inject
-    @RestClient
-    WishlistReporterAdapter adapter;
+    @Inject QueryBus bus;
 
     @Inject @Location("report") Template reportTemplate;
 
@@ -35,6 +32,7 @@ public class WishlistReportControllerV2 {
     Template reportPartials;
 
     @GET
+    @Consumes(MediaType.TEXT_HTML)
     public TemplateInstance queryReportUI() {
         return reportTemplate.instance();
     }
@@ -42,24 +40,16 @@ public class WishlistReportControllerV2 {
     @GET
     @Path("/partial")
     @Authenticated
-    public TemplateInstance queryReportData(@QueryParam("mythic") String mythic, @QueryParam("heroic") String heroic, @QueryParam("normal") String normal) {
-        List<String> toBeIncluded = new ArrayList<>();
-        
-        if(Objects.nonNull(mythic)) {
-            toBeIncluded.add("mythic");
-        }
-        
-        if(Objects.nonNull(heroic)) {
-            toBeIncluded.add("heroic");
-        }
-        
-        if(Objects.nonNull(normal)) {
-            toBeIncluded.add("normal");
-        }
-        
-        List<Roster> roster = adapter.queryRoster();
-        var reports = roster.stream().map(character -> adapter.queryReportForRosterV2(String.valueOf(character.id()), toBeIncluded))
-            .collect(Collectors.toList());
-        return reportPartials.data("reports", reports);
+    public TemplateInstance queryReportData(@QueryParam("difficulty") List<String> difficulty, @QueryParam("role") List<String> role) {
+        Set<String> roles = role.stream().collect(Collectors.toSet());       
+        return reportPartials.data("reports", bus.handle(new NewWishlistReportQuery(difficulty, roles)));
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
+    public Response queryReportJson(@QueryParam("difficulty") List<String> difficulty, @QueryParam("role") List<String> role) {
+        Set<String> roles = role.stream().collect(Collectors.toSet()); 
+        return Response.ok(bus.handle(new NewWishlistReportQuery(difficulty, roles))).build();
     }
 }

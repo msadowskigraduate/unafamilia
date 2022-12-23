@@ -1,0 +1,31 @@
+.discord-body {
+  color: #b4b5ba;
+  font-family: 'Uni Sans Demo';
+}
+
+form.discord-body h3 {
+font-weight: 700;
+}
+
+button.discord-button {
+  background-color: #6894d1;
+  color: #d0d8f3;
+  border-radius: 0;
+  border: 0;
+  padding: 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+form.discord-body i {
+  font-size: 2rem;
+}
+
+form.discord-body div.vr {
+  width: 2px;
+  color: white;
+}
+
+#data-container {
+  background-color: #424549;
+}

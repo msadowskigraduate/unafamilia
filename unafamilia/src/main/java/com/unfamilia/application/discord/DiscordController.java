@@ -11,7 +11,9 @@ import com.unfamilia.eggbot.infrastructure.session.InvalidTokenException;
 import com.unfamilia.eggbot.infrastructure.session.SessionToken;
 
 import io.quarkus.oidc.IdToken;
+import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -45,6 +47,7 @@ public class DiscordController {
 
     @Inject CommandBus bus;
     @Inject DiscordConfigurationProvider discordProvider;
+    @Inject @Location("partials/discord-login") Template discordLogin;
 
     @GET
     public Response linkAccount(@QueryParam("session_token") String token) {
@@ -110,5 +113,15 @@ public class DiscordController {
         bus.handle(command);
 
         return Response.seeOther(URI.create("/user")).build();
+    }
+
+    @GET
+    @Path("/login")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance queryDiscordLoginPartial() {
+        return discordLogin
+            .data("redirectUri", discordProvider.provideRedirectUri())
+            .data("clientId", discordProvider.provideDiscordClientId())
+            .data("discordUrl", discordProvider.provideBaseDiscordUrl());
     }
 }

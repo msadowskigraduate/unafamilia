@@ -31,7 +31,7 @@ func ParseWishlist(character *CharacterWishlist, include map[string]bool) (chara
 							//Item is Outdated
 							if wish.Outdated.New.ID > 0 {
 								reason := "A different item is equipped compared to simc profile."
-								issues = append(issues, Issue{Reason: reason, Timestamp: wish.Timestamp, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty, Item: item.Name})
+								issues = append(issues, Issue{Reason: reason, Timestamp: wish.Timestamp, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty, Item: item.Name, Specialization: wish.Specialization})
 								continue
 							}
 
@@ -43,7 +43,7 @@ func ParseWishlist(character *CharacterWishlist, include map[string]bool) (chara
 							} else {
 								if parsedTimestamp.Add(time.Hour * 36).Before(time.Now()) {
 									reason := "Outdated simulation for given item."
-									issues = append(issues, Issue{Reason: reason, Timestamp: wish.Timestamp, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty, Item: item.Name})
+									issues = append(issues, Issue{Reason: reason, Timestamp: wish.Timestamp, InstanceName: instances.Name, WishlistName: wishlist.Name, Difficulty: difficulty.Difficulty, Item: item.Name, Specialization: wish.Specialization})
 									continue
 								}
 							}

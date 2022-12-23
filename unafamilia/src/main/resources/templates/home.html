@@ -66,6 +66,7 @@
       event.preventDefault();
       $.ajax({
         url: "/v2/report",
+        headers: {"Content-Type" : "text/html"},
         success: function(html){
           $("#data-container").html(html);
         }
@@ -76,6 +77,7 @@
       event.preventDefault();
       $.ajax({
         url: "/v1/audit",
+        headers: {"Content-Type" : "text/html"},
         beforeSend: function() {
           $('#data-container').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
         },
@@ -88,13 +90,9 @@
     $( "#discord-auth" ).click(function( event ) {
       event.preventDefault();
       $.ajax({
-        url: "/discord/oauth2/authorize",
-        method: "POST",
-        beforeSend: function() {
-          $('#data-container').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
-        },
-        success: function(data){
-          window.location.replace(data)
+        url: "/discord/login",
+        success: function(html){
+          $("#data-container").html(html);
         }
       })
     });
