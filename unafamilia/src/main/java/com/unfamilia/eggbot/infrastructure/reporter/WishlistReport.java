@@ -21,6 +21,7 @@ record Issue(
     @JsonProperty("reason") String reason,
     @JsonProperty("timestamp") String timestamp,
     @JsonProperty("item") String item,
+    @JsonProperty("specialization") String specialization,
     @JsonProperty("instance_name") String instanceName,
     @JsonProperty("wishlist_name") String wishlistName,
     @JsonProperty("difficulty") String difficulty

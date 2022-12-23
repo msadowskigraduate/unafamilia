@@ -1,5 +1,7 @@
 package com.unfamilia.eggbot.infrastructure.utilities;
 
+import java.util.List;
+
 import com.unfamilia.application.user.UserDto;
 import com.unfamilia.eggbot.infrastructure.reporter.WishlistReport;
 
@@ -17,5 +19,11 @@ public class TemplateExtensions {
 
     public static Integer numberOfIssues(WishlistReport report) {
         return report.issues() == null ? 0 : report.issues().size();
+    }
+
+    public static Integer totalNumerOfIssues(List<WishlistReport> reports) {
+        return reports.stream()
+                .map(TemplateExtensions::numberOfIssues)
+                .reduce(0, (prev, next) -> prev + next);
     }
 }

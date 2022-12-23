@@ -34,7 +34,8 @@ public class NewWishlistReportQueryHandler implements QueryHandler<List<Wishlist
     public List<WishlistReport> handle(NewWishlistReportQuery query) {
         List<Roster> roster = adapter.queryRoster();
         return roster.stream()
-            .map(character -> adapter.queryReportForRosterV2(String.valueOf(character.id()), query.excludedDifficulties()))
+            .filter(character -> query.roles().contains(character.role()))
+            .map(character -> adapter.queryReportForRosterV2(String.valueOf(character.id()), query.difficulty()))
             .map(this::augmentReportWithUserData)
             .collect(Collectors.toList());
     }
@@ -47,7 +48,7 @@ public class NewWishlistReportQueryHandler implements QueryHandler<List<Wishlist
                     Parameters.with("name", report.characterName()).and("realm", RealmMapper.toSlug(report.realm()))).singleResult();
             return new WishlistReport(report.name(), report.characterName(), report.realm(), user.getDiscordUserId(), user.getBattleNetUserId(), user.getRank(), report.error(), report.issues());
         } catch (NoResultException exception) {
-            return report;
+            return new WishlistReport(report.name(), report.characterName(), report.realm(), null, null, null, "User is not registered with this service. Cannot fetch World of Warcraft and Discord profile data.", report.issues());
         }
     }
 }

@@ -1,8 +1,9 @@
 package com.unfamilia.application.report;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -14,8 +15,6 @@ import javax.ws.rs.core.Response;
 
 import com.unfamilia.application.query.QueryBus;
 import com.unfamilia.application.report.query.NewWishlistReportQuery;
-import com.unfamilia.eggbot.infrastructure.reporter.WishlistReport;
-
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -41,46 +40,16 @@ public class WishlistReportControllerV2 {
     @GET
     @Path("/partial")
     @Authenticated
-    public TemplateInstance queryReportData(@QueryParam("mythic") String mythic, @QueryParam("heroic") String heroic, @QueryParam("normal") String normal) {
-        List<String> toBeIncluded = new ArrayList<>();
-        
-        if(Objects.nonNull(mythic)) {
-            toBeIncluded.add("mythic");
-        }
-        
-        if(Objects.nonNull(heroic)) {
-            toBeIncluded.add("heroic");
-        }
-        
-        if(Objects.nonNull(normal)) {
-            toBeIncluded.add("normal");
-        }
-        
-        return reportPartials.data("reports", generateWishlistReport(toBeIncluded));
+    public TemplateInstance queryReportData(@QueryParam("difficulty") List<String> difficulty, @QueryParam("role") List<String> role) {
+        Set<String> roles = role.stream().collect(Collectors.toSet());       
+        return reportPartials.data("reports", bus.handle(new NewWishlistReportQuery(difficulty, roles)));
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Authenticated
-    public Response queryReportJson(@QueryParam("mythic") String mythic, @QueryParam("heroic") String heroic, @QueryParam("normal") String normal) {
-        List<String> toBeIncluded = new ArrayList<>();
-        
-        if(Objects.nonNull(mythic)) {
-            toBeIncluded.add("mythic");
-        }
-        
-        if(Objects.nonNull(heroic)) {
-            toBeIncluded.add("heroic");
-        }
-        
-        if(Objects.nonNull(normal)) {
-            toBeIncluded.add("normal");
-        }
-        
-        return Response.ok(generateWishlistReport(toBeIncluded)).build();
-    }
-    
-    private List<WishlistReport> generateWishlistReport(List<String> toBeIncluded) {
-        return bus.handle(new NewWishlistReportQuery(toBeIncluded));
+    public Response queryReportJson(@QueryParam("difficulty") List<String> difficulty, @QueryParam("role") List<String> role) {
+        Set<String> roles = role.stream().collect(Collectors.toSet()); 
+        return Response.ok(bus.handle(new NewWishlistReportQuery(difficulty, roles))).build();
     }
 }
