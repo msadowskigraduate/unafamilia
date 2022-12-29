@@ -11,6 +11,38 @@ import (
 	"time"
 )
 
+type HistoricalAudit struct {
+	Year       int `json:"year"`
+	WeekNumber int `json:"week_number"`
+	Characters []struct {
+		ID    int    `json:"id"`
+		Name  string `json:"name"`
+		Realm string `json:"realm"`
+		Data  struct {
+			DungeonsDone        int `json:"dungeons_done"`
+			WorldQuestsDone     int `json:"world_quests_done"`
+			HighestKeystoneDone int `json:"highest_keystone_done"`
+			VaultOptions        struct {
+				Raids struct {
+					Option1 int         `json:"option_1"`
+					Option2 int         `json:"option_2"`
+					Option3 interface{} `json:"option_3"`
+				} `json:"raids"`
+				Dungeons struct {
+					Option1 interface{} `json:"option_1"`
+					Option2 interface{} `json:"option_2"`
+					Option3 interface{} `json:"option_3"`
+				} `json:"dungeons"`
+				Pvp struct {
+					Option1 interface{} `json:"option_1"`
+					Option2 interface{} `json:"option_2"`
+					Option3 interface{} `json:"option_3"`
+				} `json:"pvp"`
+			} `json:"vault_options"`
+		} `json:"data"`
+	} `json:"characters"`
+}
+
 type Wishlist struct {
 	Characters []struct {
 		ID        int    `json:"id"`
@@ -215,4 +247,14 @@ func (wac *WowAuditClient) QueryRoster() *Roster {
 	}
 
 	return dat.(*Roster)
+}
+
+func (wac *WowAuditClient) QueryHistoricDataForCurrentWeek(year int, week int) *HistoricalAudit {
+	dat, err := wac.getStructData(context.Background(), "/historical_data?year="+strconv.Itoa(year)+"&week="+strconv.Itoa(week), &HistoricalAudit{})
+
+	if err != nil {
+		fmt.Errorf(err.Error())
+	}
+
+	return dat.(*HistoricalAudit)
 }
