@@ -55,6 +55,18 @@ env:
         name: dodbpostgresql
         key: url
         optional: false
+  - name: "APPLICATION_WCL_ID"
+    valueFrom:
+      secretKeyRef:
+        name: warcraftlogs
+        key: id
+        optional: false
+  - name: "APPLICATION_WCL_SECRET"
+    valueFrom:
+      secretKeyRef:
+        name: warcraftlogs
+        key: secret
+        optional: false
   - name: "QUARKUS_PROFILE"
     value: "prod"
   - name: "QUARKUS_REST_CLIENT_WOW_API_URL"

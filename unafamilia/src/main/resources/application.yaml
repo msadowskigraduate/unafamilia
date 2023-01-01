@@ -1,4 +1,11 @@
 quarkus:
+  rest-client:
+    discord-auth:
+      url: "https://discord.com/api/v10"
+      scope: "javax.inject.Singleton"
+    wcl:
+      url: "https://www.warcraftlogs.com" 
+      scope: "javax.inject.Singleton" 
   http:
     port: 9000
   oidc:

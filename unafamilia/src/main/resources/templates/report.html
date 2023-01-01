@@ -62,6 +62,15 @@
 </div>
 
 <script>
+  $(document).ready(function() {
+    $.ajax({
+      url: "/v2/report/partial",
+      success: function(html){
+        $("#report-partial").html(html);
+      }
+    })
+  });
+
   $( "#target" ).submit(function( event ) {
     event.preventDefault();
     var data = $('form#target').serializeArray()
@@ -74,7 +83,7 @@
       return acc;
     }, {})
     $.ajax({
-      url: "/v2/report/partial",
+      url: "/v2/report/refresh",
       data: $('form#target').serialize(),
       traditional: true,
       beforeSend: function() {

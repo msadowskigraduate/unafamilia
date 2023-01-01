@@ -1,6 +1,10 @@
 {#if reports != null && !reports.isEmpty}
 <div class="container-fluid p-0">
+    <div class="row p-0 m-1 alert alert-warning">
+      <i class="bi bi-exclamation-triangle-fill"></i> Last Report Generation Timestamp: {timestamp}
+    </div>
     <div class="row">
+      
       <div class="col-md-3">
         <nav id="navbar-example3" class="navbar navbar-light bg-light flex-column align-items-stretch">
           <a class="navbar-brand px-3">Character List <span class="badge rounded-pill bg-danger">{reports.totalNumerOfIssues}</span></a>
