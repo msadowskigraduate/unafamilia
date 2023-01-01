@@ -15,7 +15,7 @@ build_wishlist_reporter:
 build_core:
 	mvn clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.builder=jib "-Dquarkus.container-image.image=unafamilia/core:latest" -Dmaven.test.skip --file unafamilia/pom.xml
 
-build: build_core build_event build_orders build_wow_api build_wishlist_reporter
+build: build_core build_wow_api build_wishlist_reporter
 
 test:
 	mvn test --file unafamilia/pom.xml
@@ -44,10 +44,3 @@ logs: ## Show logs for all or c=<name> containers
 
 clean: confirm ## Clean all data
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
-
-helm-install-postgres:
-	helm upgrade postgresql --set global.postgresql.auth.postgresPassword=postgres --set global.postgresql.auth.database=postgres bitnami/postgresql  \
-  --set livenessProbe.initialDelaySeconds=200 \
-  --set readinessProbe.initialDelaySeconds=200 \
-  --set persistence.storageClass=ibmc-file-gold-delayed \
-  --set volumePermissions.enabled=true -i

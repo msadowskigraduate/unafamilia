@@ -14,7 +14,18 @@ public interface ApplicationConfigProvider {
     @WithName("discord")
     DiscordConfigurationProvider discordProvider();
 
+    @WithName("wcl")
+    WarcraftLogsConfigurationProvider wclProvider();
+
     interface DiscordConfigurationProvider {
+        @WithName("id")
+        String clientId();
+
+        @WithName("secret")
+        String clientSecret();
+    }
+
+    interface WarcraftLogsConfigurationProvider {
         @WithName("id")
         String clientId();
 

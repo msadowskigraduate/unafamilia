@@ -16,6 +16,10 @@ public interface WishlistReporterAdapter {
     @GET
     List<WishlistReport> queryReportForRoster();
     
+    @Path("v1/audit")
+    @GET
+    AuditReport queryAudit();
+    
     @Path("v1/team")
     @GET
     List<Roster> queryRoster();

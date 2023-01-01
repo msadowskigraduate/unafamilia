@@ -17,7 +17,7 @@ public record CharacterProfileResponse(
     @JsonProperty("equipped_item_level") Integer equippedItemLevel
 ) {
 
-    record Realm(
+    public record Realm(
         String name,
         String slug
     ){}
@@ -27,7 +27,7 @@ public record CharacterProfileResponse(
         String name
     ){}
 
-    record CharacterClass(
+    public record CharacterClass(
         @JsonProperty("class_name") String characterClass,
         @JsonProperty("class_id") Integer characterClassId
     ){}
