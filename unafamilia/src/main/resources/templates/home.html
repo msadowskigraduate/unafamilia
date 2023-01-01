@@ -23,11 +23,21 @@
                       </a> 
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link text-dark" id="href-audit" href="#">
-                        <i class="bi bi-grid-3x3"></i> Audit Team
-                      </a> 
-                </li>
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                  <span>Audit Team</span>
+                </h6>
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                      <a class="nav-link text-dark" id="href-audit" href="#">
+                          <i class="bi bi-grid-3x3"></i> Weekly Audit
+                        </a> 
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link text-dark" id="href-performance" href="#">
+                          <i class="bi bi-grid-3x3"></i> Performance
+                      </a>
+                  </li>
+                </ul>
                 {/if}
             </ul>
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
@@ -75,6 +85,20 @@
         headers: {"Content-Type" : "text/html"},
         beforeSend: function() {
           $('#data-container').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        },
+        success: function(html){
+          $("#data-container").html(html);
+        }
+      })
+    });
+
+    $( "#href-performance" ).click(function( event ) {
+      event.preventDefault();
+      $.ajax({
+        url: "/v1/audit/performance",
+        headers: {"Content-Type" : "text/html"},
+        beforeSend: function() {
+          $('#data-container').html('<div class="container"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...</div>');
         },
         success: function(html){
           $("#data-container").html(html);
