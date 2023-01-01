@@ -61,7 +61,7 @@ env:
         name: warcraftlogs
         key: id
         optional: false
-  - name: "APPLICATION_WLC_SECRET"
+  - name: "APPLICATION_WCL_SECRET"
     valueFrom:
       secretKeyRef:
         name: warcraftlogs
