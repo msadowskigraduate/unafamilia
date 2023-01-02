@@ -2,7 +2,10 @@ $(document).ready(function () {
   $.ajax({
     url: "/v1/audit/performance",
     contentType: "application/json",
-    success: (data) => parseReport(data),
+    beforeSend: function() {
+      $('#loader').removeClass("visually-hidden");
+    },
+    success: (data) => parseReport(data)
   });
 });
 
@@ -17,8 +20,16 @@ function parseReport(json) {
     [1, "LFR"],
   ]);
 
+  var dates = new Set()
   //TODO: date is missing
   for (const report of json.data.reportData.reports.data) {
+    var reportDate = new Date(report.startTime).toLocaleDateString()
+
+    if(dates.has(reportDate)) {
+      continue;
+    }
+    dates.add(reportDate)
+
     for (const encounter of report.rankings.data) {
       indexes.set(encounter.encounter.id, encounter.encounter.name);
       encounter_id =
@@ -34,6 +45,7 @@ function parseReport(json) {
               {
                 rankPercent: character.rankPercent,
                 bracketPercent: character.bracketPercent,
+                date: reportDate
               },
             ]);
           } else {
@@ -41,6 +53,7 @@ function parseReport(json) {
               {
                 rankPercent: character.rankPercent,
                 bracketPercent: character.bracketPercent,
+                date: reportDate
               },
             ]);
           }
@@ -52,6 +65,7 @@ function parseReport(json) {
             {
               rankPercent: character.rankPercent,
               bracketPercent: character.bracketPercent,
+              date: reportDate
             },
           ]);
           encounters.set(encounter_id, newCharacterRank);
@@ -64,8 +78,9 @@ function parseReport(json) {
 }
 
 function visualizeData(encounters, actors) {
-  $("#title").html("DPS Rankings for the last 10 reports.");
+  $("#title").html("<h3>DPS Rankings for the last 10 reports.</h3>");
   encounters.forEach((value, key) => visualizeEncounter(value, key, actors));
+  hideSpinner();
 }
 
 function visualizeEncounter(value, key, actors) {
@@ -77,16 +92,16 @@ function visualizeEncounter(value, key, actors) {
     '<div class="row" id="'+encounter_key+'"><canvas id="' +encounter_key +'_canvas"></canvas></div>'
   );
   const ctx = document.getElementById(encounter_key + "_canvas");
-
+  var labels = new Set([...value.entries()].map((encounter) => encounter[1].flatMap((value) => value.date)).flat().sort())
   //Chart definition
   new Chart(ctx, {
     type: "line",
     data: {
-      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      labels: [...labels],
       datasets: [...value.entries()].map((encounter) => {
         return {
           label: actors.get(encounter[0]),
-          data: encounter[1].map((value) => value.rankPercent),
+          data: encounter[1].sort((a,b) => a.date.localeCompare(b.date)).map((value) => { return {x: value.date, y: value.rankPercent}}),
           borderWidth: 1,
           hidden: true,
         };
@@ -113,4 +128,8 @@ function visualizeEncounter(value, key, actors) {
     },
   });
   // End chart definition
+}
+
+function hideSpinner() {
+  $('#loader').addClass("visually-hidden");
 }

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
+	"unafamilia/wishlist-reporter/utils"
 	"unafamilia/wishlist-reporter/wowaudit"
 
 	"github.com/gin-gonic/gin"
@@ -33,7 +33,7 @@ func main() {
 	})
 
 	router.GET("/v1/audit", func(ctx *gin.Context) {
-		year, week := time.Now().ISOWeek()
+		year, week := utils.GetYearAndWeekdayOfLastReset()
 		auditData := wac.QueryHistoricDataForCurrentWeek(year, week)
 		ctx.IndentedJSON(http.StatusOK, auditData)
 	})
