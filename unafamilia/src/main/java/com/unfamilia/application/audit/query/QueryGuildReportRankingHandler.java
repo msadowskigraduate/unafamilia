@@ -15,8 +15,6 @@ import com.unfamilia.application.query.QueryHandler;
 import com.unfamilia.eggbot.infrastructure.wcl.WarcraftLogsAdapter;
 import com.unfamilia.eggbot.infrastructure.wcl.WclWebToken;
 
-import io.quarkus.logging.Log;
-
 
 @ApplicationScoped
 public class QueryGuildReportRankingHandler implements QueryHandler<Response, QueryGuildReportRanking> {

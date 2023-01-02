@@ -1,6 +1,7 @@
 package com.unfamilia.application.report;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +58,7 @@ public class WishlistReportControllerV2 {
         Set<String> roles = role.stream().collect(Collectors.toSet());       
         var template = reportPartials
             .data("reports", bus.handle(new NewWishlistReportQuery(difficulty, roles)))
-            .data("timestamp", LocalDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
+            .data("timestamp", ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
         reportRepository.writeReport(template.render());
         return template;
     }

@@ -251,7 +251,15 @@ func (wac *WowAuditClient) QueryRoster() *Roster {
 
 func (wac *WowAuditClient) QueryHistoricDataForCurrentWeek(year int, week int) *HistoricalAudit {
 	dat, err := wac.getStructData(context.Background(), "/historical_data?year="+strconv.Itoa(year)+"&week="+strconv.Itoa(week), &HistoricalAudit{})
+	if err != nil {
+		fmt.Errorf(err.Error())
+	}
 
+	return dat.(*HistoricalAudit)
+}
+
+func (wac *WowAuditClient) QueryHistoricDataForCharacter(characterId int) *HistoricalAudit {
+	dat, err := wac.getStructData(context.Background(), "/historical_data/"+strconv.Itoa(characterId), &HistoricalAudit{})
 	if err != nil {
 		fmt.Errorf(err.Error())
 	}
