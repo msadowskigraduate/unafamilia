@@ -5,7 +5,6 @@ on: workflow_dispatch
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v3
@@ -13,5 +12,5 @@ jobs:
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
-          exec: helm upgrade wow-api ./helm-charts/go --install --wait --atomic -f ./wow-api/values.yaml  --set image.tag=$(echo $GITHUB_SHA | head -c7)
+          exec: helm upgrade wow-api ./helm-charts/go --install --wait --atomic -f ./wow-api/values.yaml  --set image.tag=${{  github.ref_name }}
           kubeconfig: '${{ secrets.KUBECONFIG }}'
