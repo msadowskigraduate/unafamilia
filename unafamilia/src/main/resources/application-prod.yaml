@@ -1,7 +1,7 @@
 application:
   hostname: https://wwww.unafamilia.com
     services:
-    audit: "audit"
+      audit: "audit"
   rest-client:
     discord-auth:
       url: "https://discord.com/api/v10"
