@@ -1,4 +1,4 @@
-name: Deploy Wishlist Reporter
+name: Deploy Audit
 
 on: workflow_dispatch
  
