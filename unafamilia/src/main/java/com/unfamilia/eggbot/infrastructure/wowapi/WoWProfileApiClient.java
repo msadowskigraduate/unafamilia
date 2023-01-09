@@ -1,15 +1,16 @@
 package com.unfamilia.eggbot.infrastructure.wowapi;
 
+import com.unfamilia.eggbot.infrastructure.utilities.DefaultHttpClient;
 import com.unfamilia.eggbot.infrastructure.wowapi.model.WowProfile;
 import io.vertx.core.json.Json;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
@@ -23,7 +24,8 @@ public class WoWProfileApiClient implements WoWProfileClient {
     protected static final String NAMESPACE = "namespace";
     protected static final String LOCALE = "locale";
     protected static final String HTTPS_EU_BATTLE_NET_OAUTH_TOKEN = "https://eu.battle.net/oauth/token";
-    protected final HttpClient client = HttpClient.newBuilder().build();
+    
+    @Inject DefaultHttpClient client;
     
     @Override
     public WowProfile queryWowProfile(String authCode) throws WebApplicationException {
@@ -52,6 +54,6 @@ public class WoWProfileApiClient implements WoWProfileClient {
                 .GET()
                 .build();
 
-        return this.client.send(request, HttpResponse.BodyHandlers.ofString());
+        return this.client.getClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

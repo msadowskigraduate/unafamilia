@@ -52,6 +52,27 @@ jobs:
           docker build wow-api -t "$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:${{  github.ref_name }}" -f ./docker/go/Dockerfile
           docker push $IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:${{  github.ref_name }}
           echo "::set-output name=image::$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:${{  github.ref_name }}"
+  
+  build_audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install doctl 
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DO Container Registry 
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Build Audit
+        env:
+          IMAGE_NAME: audit
+        run: |
+          docker build audit -t "$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:${{  github.ref_name }}" -f ./docker/go/Dockerfile
+          docker push $IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:${{  github.ref_name }}
+          echo "::set-output name=image::$IMAGE_REGISTRY_BASE/$IMAGE_REGISTRY/$IMAGE_NAME:${{  github.ref_name }}"
 
   build_core:
     runs-on: ubuntu-latest

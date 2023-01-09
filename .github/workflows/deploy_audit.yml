@@ -1,0 +1,16 @@
+name: Deploy Wishlist Reporter
+
+on: workflow_dispatch
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy
+        uses: WyriHaximus/github-action-helm3@v2
+        with:
+          exec: helm upgrade audit ./helm-charts/go --install --wait --atomic -f ./audit/values.yaml --set image.tag=${{  github.ref_name }}
+          kubeconfig: '${{ secrets.KUBECONFIG }}'

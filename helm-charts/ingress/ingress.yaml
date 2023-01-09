@@ -4,6 +4,10 @@ metadata:
   name: external-lb
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - "unafamilia.online"
+      secretName: "tls-cert"
   rules:
   - host: "unafamilia.online"
     http:

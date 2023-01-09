@@ -35,6 +35,7 @@ services:
       - db
       - wow-api
       - wishlist-reporter
+      - audit
     networks:
       - internal
       - db
@@ -55,6 +56,14 @@ services:
     image: unafamilia/wishlist-reporter:latest
     ports:
       - "8084:8080"
+    env_file:
+      - .env
+    networks:
+      - internal
+  audit:
+    image: unafamilia/audit:latest
+    ports:
+      - "8080:1323"
     env_file:
       - .env
     networks:

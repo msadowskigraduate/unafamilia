@@ -1,6 +1,6 @@
 $(document).ready(function () {
   $.ajax({
-    url: "/v1/audit/performance",
+    url: "/api/audit/v1/raid/rankings/dps?limit=20&zone_id=31",
     contentType: "application/json",
     beforeSend: function() {
       $('#loader').removeClass("visually-hidden");
@@ -22,8 +22,14 @@ function parseReport(json) {
 
   var dates = new Set()
   //TODO: date is missing
-  for (const report of json.data.reportData.reports.data) {
-    var reportDate = new Date(report.startTime).toLocaleDateString()
+  for (const report of json.reportData.reports.data) {
+    var daynumber = new Date(report.startTime).getDay()
+
+    if(daynumber != 1 || daynumber != 3) {
+      continue;
+    }
+
+    var reportDate = new Date(report.startTime).toLocaleDateString()   
 
     if(dates.has(reportDate)) {
       continue;
@@ -92,7 +98,7 @@ function visualizeEncounter(value, key, actors) {
     '<div class="row" id="'+encounter_key+'"><canvas id="' +encounter_key +'_canvas"></canvas></div>'
   );
   const ctx = document.getElementById(encounter_key + "_canvas");
-  var labels = new Set([...value.entries()].map((encounter) => encounter[1].flatMap((value) => value.date)).flat().sort())
+  var labels = new Set([...value.entries()].map((encounter) => encounter[1].flatMap((value) => value.date)).flat().sort((a,b) => {return a.date - b.date}).reverse())
   //Chart definition
   new Chart(ctx, {
     type: "line",
@@ -125,6 +131,11 @@ function visualizeEncounter(value, key, actors) {
           max: 100,
         },
       },
+      elements: {
+        line: {
+          borderWidth: 15
+        }
+      }
     },
   });
   // End chart definition
