@@ -2,6 +2,7 @@ application:
   hostname: https://wwww.unafamilia.com
   services:
     audit: "audit"
+quarkus:
   rest-client:
     discord-auth:
       url: "https://discord.com/api/v10"
