@@ -5,7 +5,7 @@ import com.unfamilia.application.command.CommandHandler;
 import com.unfamilia.application.user.Character;
 import com.unfamilia.application.user.User;
 import com.unfamilia.application.user.UserNotFromGuildException;
-import com.unfamilia.eggbot.infrastructure.WoWProfileClient;
+import com.unfamilia.eggbot.infrastructure.wowapi.WoWProfileClient;
 import com.unfamilia.eggbot.infrastructure.wowguild.WoWApiGuildAdapter;
 import com.unfamilia.eggbot.infrastructure.wowguild.model.WoWGuildRosterResponse;
 import io.quarkus.logging.Log;

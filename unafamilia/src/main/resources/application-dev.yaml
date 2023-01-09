@@ -1,5 +1,7 @@
 application:
   hostname: "http://localhost:9000"
+  services:
+    audit: "audit:1323"
 quarkus:
   rest-client:
     wow-api:
@@ -7,12 +9,6 @@ quarkus:
       scope: "javax.inject.Singleton"
     wishlist-reporter:
       url: "http://localhost:8084"
-      scope: "javax.inject.Singleton"
-    events-v1:
-      url: "http://localhost:8081"
-      scope: "javax.inject.Singleton"
-    orders-v1:
-      url: "http://localhost:8082"
       scope: "javax.inject.Singleton"
     discord-auth:
       url: "https://discord.com/api/v10"
@@ -31,4 +27,4 @@ quarkus:
       error-path: http://localhost:9000/error
       scopes:
         - 'wow.profile'
-    application-type: web-app
+    application-type: web-app 

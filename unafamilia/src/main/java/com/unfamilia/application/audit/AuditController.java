@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.unfamilia.application.audit.query.GenerateNewAuditQuery;
-import com.unfamilia.application.audit.query.QueryGuildReportRanking;
 import com.unfamilia.application.query.QueryBus;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -42,15 +41,6 @@ public class AuditController {
     public Response queryAuditAsJson() {
         var result = queryBus.handle(GenerateNewAuditQuery.of());
         return Response.ok(result).build();
-    }
-
-    @GET
-    @Path("/performance")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response queryWarcraftlogsData() throws IOException {
-        var wclResponse = queryBus.handle(new QueryGuildReportRanking());
-        return Response.ok(wclResponse.getEntity()).build();
     }
 
     @GET

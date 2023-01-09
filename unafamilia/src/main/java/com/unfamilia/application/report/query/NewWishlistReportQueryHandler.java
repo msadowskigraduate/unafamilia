@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
-
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import com.unfamilia.application.query.QueryHandler;
@@ -40,7 +38,6 @@ public class NewWishlistReportQueryHandler implements QueryHandler<List<Wishlist
             .collect(Collectors.toList());
     }
 
-    @Transactional
     private WishlistReport augmentReportWithUserData(WishlistReport report) {
         try {
             var user = User.<User>find(

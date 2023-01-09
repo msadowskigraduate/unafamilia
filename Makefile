@@ -12,10 +12,12 @@ build_wow_api:
 	docker build wow-api -t "unafamilia/wow-api:latest" -f ./docker/go/Dockerfile
 build_wishlist_reporter:
 	docker build wishlist-reporter -t "unafamilia/wishlist-reporter:latest" -f ./docker/go/Dockerfile
+build_audit:
+	docker build audit -t "unafamilia/audit:latest" -f ./docker/go/Dockerfile
 build_core:
 	mvn clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.builder=jib "-Dquarkus.container-image.image=unafamilia/core:latest" -Dmaven.test.skip --file unafamilia/pom.xml
 
-build: build_core build_wow_api build_wishlist_reporter
+build: build_core build_wow_api build_wishlist_reporter build_audit
 
 test:
 	mvn test --file unafamilia/pom.xml

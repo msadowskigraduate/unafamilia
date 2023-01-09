@@ -1,6 +1,0 @@
-quarkus:
-  application:
-    name: "Una Familia Orders"
-  hibernate-orm:
-    database:
-      generation: drop-and-create

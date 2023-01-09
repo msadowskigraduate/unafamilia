@@ -1,4 +1,4 @@
-name: Deploy WoW Client
+name: Deploy Wishlist Reporter
 
 on: workflow_dispatch
  
@@ -12,5 +12,5 @@ jobs:
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
-          exec: helm upgrade wow-api ./helm-charts/go --install --wait --atomic -f ./wow-api/values.yaml  --set image.tag=${{  github.ref_name }}
+          exec: helm upgrade audit ./helm-charts/go --install --wait --atomic -f ./audit/values.yaml --set image.tag=${{  github.ref_name }}
           kubeconfig: '${{ secrets.KUBECONFIG }}'
