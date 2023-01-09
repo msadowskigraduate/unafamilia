@@ -75,6 +75,10 @@ func main() {
 		return c.JSON(http.StatusOK, result)
 	})
 
+	e.GET("/", func(c echo.Context) error {
+		return c.NoContent(http.StatusOK)
+	})
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
