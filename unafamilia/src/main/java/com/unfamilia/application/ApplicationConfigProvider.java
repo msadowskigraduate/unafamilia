@@ -1,5 +1,7 @@
 package com.unfamilia.application;
 
+import java.util.Map;
+
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithName;
 
@@ -14,18 +16,10 @@ public interface ApplicationConfigProvider {
     @WithName("discord")
     DiscordConfigurationProvider discordProvider();
 
-    @WithName("wcl")
-    WarcraftLogsConfigurationProvider wclProvider();
+    @WithName("services")
+    Map<String, String> services();
 
     interface DiscordConfigurationProvider {
-        @WithName("id")
-        String clientId();
-
-        @WithName("secret")
-        String clientSecret();
-    }
-
-    interface WarcraftLogsConfigurationProvider {
         @WithName("id")
         String clientId();
 

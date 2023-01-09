@@ -32,8 +32,8 @@ func main() {
 	guildUpdateJob := guild.GuildUpdate{GuildName: "una-familia", GuildRealm: "magtheridon", Client: client, ReJsonHandler: rh}
 
 	jobrunner.Now(&guildUpdateJob)
-	jobrunner.Every(time.Minute, &guildUpdateJob)
-	jobrunner.Every(time.Minute, characters.CharacterTracking{Client: client, ReJsonHandler: rh, Redis: rdb})
+	jobrunner.Every(time.Hour, &guildUpdateJob)
+	jobrunner.Every(time.Hour, characters.CharacterTracking{Client: client, ReJsonHandler: rh, Redis: rdb})
 
 	//Get Consumables
 	router.GET("/consumables", func(ctx *gin.Context) {
@@ -76,6 +76,7 @@ func main() {
 		characterName := ctx.Query("character_name")
 		characterRealm := ctx.Query("character_realm")
 		profile := characters.QueryCharacter(characterName, characterRealm, client, rh)
+		characters.AddCharacterToTracking(characterName, characterRealm, client, rh, rdb)
 		ctx.IndentedJSON(http.StatusOK, &profile)
 	})
 

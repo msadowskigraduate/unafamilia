@@ -1,6 +1,6 @@
 package com.unfamilia.application.report;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
@@ -29,10 +29,10 @@ public class ReportScheduler {
     
     @Scheduled(cron="0 0 19 ? * MON,WED *") 
     void generate() {
-        List<String> difficulty = Stream.of("heroic").toList();
+        List<String> difficulty = Stream.of("heroic","mythic").toList();
         Set<String> roles = Stream.of("Melee", "Ranged").collect(Collectors.toSet());
         String result = reportPartials
-            .data("timestamp", LocalDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME))
+            .data("timestamp", ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME))
             .data("reports", bus.handle(new NewWishlistReportQuery(difficulty, roles)))
             .render();
         

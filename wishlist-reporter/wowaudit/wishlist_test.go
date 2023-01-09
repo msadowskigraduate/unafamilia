@@ -33,7 +33,7 @@ func TestQueryRoster(t *testing.T) {
 
 	result := client.QueryRoster()
 
-	if len(&result) == 0 {
+	if len(*result) == 0 {
 		t.Errorf("Failed!")
 	}
 }
