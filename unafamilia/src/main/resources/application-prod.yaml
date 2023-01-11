@@ -1,7 +1,7 @@
 application:
   hostname: https://wwww.unafamilia.com
   services:
-    audit: "audit-chart"
+    audit: "http://audit-chart"
 quarkus:
   rest-client:
     discord-auth:

@@ -17,28 +17,28 @@ services:
     networks:
       - redis_network
 
-  core:
-    image: unafamilia/core:latest
-    ports:
-      - "9000:9000"
-    environment:
-      - QUARKUS_DATASOURCE_USERNAME=postgres
-      - QUARKUS_DATASOURCE_PASSWORD=postgres
-      - QUARKUS_DATASOURCE_JDBC_DRIVER=org.postgresql.Driver
-      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://db/postgres
-      - QUARKUS_PROFILE=dev
-      - QUARKUS_REST_CLIENT_WOW_API_URL=http://wow-api:8080
-      - QUARKUS_REST_CLIENT_WISHLIST_REPORTER_URL=http://wishlist-reporter:8080
-    env_file:
-      - .env
-    depends_on:
-      - db
-      - wow-api
-      - wishlist-reporter
-      - audit
-    networks:
-      - internal
-      - db
+  # core:
+  #   image: unafamilia/core:latest
+  #   ports:
+  #     - "9000:9000"
+  #   environment:
+  #     - QUARKUS_DATASOURCE_USERNAME=postgres
+  #     - QUARKUS_DATASOURCE_PASSWORD=postgres
+  #     - QUARKUS_DATASOURCE_JDBC_DRIVER=org.postgresql.Driver
+  #     - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://db/postgres
+  #     - QUARKUS_PROFILE=dev
+  #     - QUARKUS_REST_CLIENT_WOW_API_URL=http://wow-api:8080
+  #     - QUARKUS_REST_CLIENT_WISHLIST_REPORTER_URL=http://wishlist-reporter:8080
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - db
+  #     - wow-api
+  #     - wishlist-reporter
+  #     - audit
+  #   networks:
+  #     - internal
+  #     - db
   wow-api:
     image: unafamilia/wow-api:latest
     ports:
@@ -63,7 +63,7 @@ services:
   audit:
     image: unafamilia/audit:latest
     ports:
-      - "8080:1323"
+      - "8080:8080"
     env_file:
       - .env
     networks:

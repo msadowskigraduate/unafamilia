@@ -15,6 +15,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.unfamilia.eggbot.infrastructure.utilities.DefaultHttpClient;
 
+import io.quarkus.logging.Log;
 import io.quarkus.security.Authenticated;
 
 @Path("/api")
@@ -28,10 +29,9 @@ public class ApiGateway {
     @Path("/{s:.*}")
     public Response proxyRequest(@Context UriInfo uriInfo, @Context HttpHeaders headers, @Context Request request, String body) throws IOException, InterruptedException {
         var proxyRequest = transformer.transform(uriInfo, headers, request, body);
-        System.out.println(proxyRequest.uri().toString());
+        Log.info(String.format("Forwarding request from API Gateway to: %s", proxyRequest.uri().toString()));
         var proxyResponse = client.getClient()
             .send(proxyRequest, HttpResponse.BodyHandlers.ofString());
-        System.out.println(proxyResponse.body());
         var responseBuilder = Response
             .status(proxyResponse.statusCode())
             .entity(proxyResponse.body());

@@ -23,12 +23,14 @@ class UrlRequestTransformer {
         var systemName = provider.services().get(pathParameters.get(1).getPath());
         Optional.ofNullable(systemName).orElseThrow(() -> new MalformedURLException());
         
-        UriBuilder uriBuilder = UriBuilder.fromPath("http://" + systemName);
+        UriBuilder uriBuilder = UriBuilder.fromPath(systemName);
         pathParameters.subList(2, pathParameters.size())
             .forEach(segment -> uriBuilder.path(segment.getPath()));
         
         uriInfo.getQueryParameters()
-            .forEach((key, values) -> uriBuilder.queryParam(key, values));
+            .forEach((key, values) -> {
+                values.forEach(value -> uriBuilder.queryParam(key, value));
+            });
 
         var requestBuilder = HttpRequest.newBuilder(uriBuilder.build());
 
