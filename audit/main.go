@@ -75,6 +75,22 @@ func main() {
 		return c.JSON(http.StatusOK, result)
 	})
 
+	e.GET("/v1/expansion", func(c echo.Context) error {
+		idParam := c.QueryParam("id")
+
+		if idParam != "" {
+			idValue, error := strconv.Atoi(idParam)
+			if error != nil {
+				return c.JSON(http.StatusBadRequest, Error{Error: "Bad Request", ErrorDescription: error.Error(), Hint: "id must be a valid integer!"})
+			}
+			result := client.QueryExpansionData(idValue)
+			return c.JSON(http.StatusOK, result)
+		}
+
+		result := client.QueryExpansionData(5)
+		return c.JSON(http.StatusOK, result)
+	})
+
 	e.GET("/", func(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
 	})

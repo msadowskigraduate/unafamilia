@@ -175,3 +175,36 @@ func (client *WowAuditClient) QueryDeathsForReport(deathId int, fightIds string,
 	json.Unmarshal(resp, &data)
 	return data
 }
+
+func (client *WowAuditClient) QueryExpansionData(id int) any {
+	var Query struct {
+		WorldData struct {
+			Expansion struct {
+				Name  graphql.String
+				Zones []struct {
+					Id           graphql.Int
+					Name         graphql.String
+					Difficulties []struct {
+						Id   graphql.Int
+						Name graphql.String
+					}
+					Encounters []struct {
+						Id   graphql.Int
+						Name graphql.String
+					}
+				}
+			} `graphql:"expansion(id: $id)"`
+		}
+	}
+
+	variables := map[string]interface{}{
+		"id": graphql.Int(id),
+	}
+
+	err := client.graphQlClient.WithDebug(true).Query(context.Background(), &Query, variables)
+
+	if err != nil {
+		return err
+	}
+	return Query
+}

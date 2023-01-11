@@ -1,18 +1,20 @@
 <script type="text/javascript" src="/js/wcl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.1.1/dist/chart.umd.min.js"></script>
-<div class="position-relative visually-hidden" id="loader">
-    <div class="position-absolute top-50 start-50 translate-middle">
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 4rem; height: 4rem;"></span>
-    </div>
-</div>
-<div id="title" class="container text-center"></div>
 <div class="container p-0">
-    <div class="row">
+    <div class="row p-1">
         <div class="alert alert-warning" role="alert">
-            This page is still under construction! Only DPS rankings are included for Damage Dealing Characters. Duplicated reports may be present!
+            This page is still under construction!
           </div>
     </div>
     <div class="row">
-        <div class="col" id="charts"></div> 
+        <div class="container d-flex align-items-start" id="metadata-container">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" id="charts">
+            <div class="container m-5 visually-hidden" id="loader">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 4rem; height: 4rem;"></span>
+            </div>
+        </div> 
     </div>
 </div>
