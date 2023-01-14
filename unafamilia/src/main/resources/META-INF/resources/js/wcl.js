@@ -1,6 +1,18 @@
 var difficulties = new Map()
 var encounterMap = new Map()
 
+$(document).on('click', '.choice', function() {
+  $('.choice').removeClass('choice-selected');
+  $( this ).addClass('choice-selected');
+
+  var isDisabled = $( this ).prop("disabled");
+  if(isDisabled === 'true') {return;}
+  
+  var zoneId = $( this ).attr("zoneId");
+  $('.choice').prop("disabled", "false");
+  $(this).prop("disabled", "true");
+});
+
 $(document).ready(function () {
   $.ajax({
     url: "/api/audit/v1/expansion?id=5",
@@ -14,32 +26,25 @@ $(document).ready(function () {
 
 //Metadata Parsing
 function parseMetadata(json) {
-  $('#metadata-container').append('<h2 class="pb-2 border-bottom" id="metadata-title">' + json.WorldData.Expansion.Name + '</h2>')
+  $('#title').append('<h2 class="pb-2 border-bottom" id="metadata-title">' + json.WorldData.Expansion.Name + '</h2>')
   for (const zone of json.WorldData.Expansion.Zones) {
-    var title = $('#metadata-container').append('<h4 class="pb-2 border-bottom" id="metadata-title-'+ zone.id+'">' + zone.Name + '</h4>')
-    var container = title.append('<div class="col d-flex align-items-start border" id="metadata-' + zone.id + '"></div>');
-
-    for (const difficulty of zone.Difficulties) {
-      difficulties.set(difficulty.Id, difficulty.Name)
-      container.append('<h4 class="border-bottom">' + difficulty.Name + '</h4>')
-    }
-    for (const encounter of zone.Encounters) {
-      container.append('<div class="col encounter-button"><h4>' + encounter.Name + '</h4></div>');
-    }
+    $('#metadata-container').append('<div class="col border border-2 py-2 mx-5 text-center choice" id=metadata-form-container-'+ zone.Id+'" type="button" zoneId='+ zone.Id + '></div>');
+    $('#metadata-form-container-'+ zone.Id).append('<h4 class="my-4" id="metadata-title-'+ zone.Id+'">' + zone.Name + '</h4>')
   }
+  hideSpinner();
 }
 
-// //Report Parsing
-// $(document).ready(function () {
-//   $.ajax({
-//     url: "/api/audit/v1/raid/rankings/dps?limit=20&zone_id=31",
-//     contentType: "application/json",
-//     beforeSend: function() {
-//       $('#loader').removeClass("visually-hidden");
-//     },
-//     success: (data) => parseReport(data)
-//   });
-// });
+//Report Parsing
+function queryRankingsData(zoneid) {
+  $.ajax({
+    url: "/api/audit/v1/raid/rankings/dps?limit=20&zone_id="+zoneid,
+    contentType: "application/json",
+    beforeSend: function() {
+      $('#loader').removeClass("visually-hidden");
+    },
+    success: (data) => parseReport(data)
+  });
+}
 
 function parseReport(json) {
   encounters = new Map();
@@ -103,6 +108,7 @@ function parseReport(json) {
 }
 
 function visualizeData(encounters, actors) {
+  $("#charts").empty();
   encounters.forEach((value, key) => visualizeEncounter(value, key, actors));
   hideSpinner();
 }

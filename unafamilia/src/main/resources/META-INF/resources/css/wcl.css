@@ -1,0 +1,9 @@
+.choice:hover {
+    background-color: grey;
+    color: white;
+  }
+  
+  .choice-selected {
+    background-color: grey;
+    color: white;
+  }
