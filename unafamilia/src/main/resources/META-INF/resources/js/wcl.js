@@ -11,6 +11,7 @@ $(document).on('click', '.choice', function() {
   var zoneId = $( this ).attr("zoneId");
   $('.choice').prop("disabled", "false");
   $(this).prop("disabled", "true");
+  // queryRankingsData(zoneId);
 });
 
 $(document).ready(function () {
@@ -28,8 +29,10 @@ $(document).ready(function () {
 function parseMetadata(json) {
   $('#title').append('<h2 class="pb-2 border-bottom" id="metadata-title">' + json.WorldData.Expansion.Name + '</h2>')
   for (const zone of json.WorldData.Expansion.Zones) {
-    $('#metadata-container').append('<div class="col border border-2 py-2 mx-5 text-center choice" id=metadata-form-container-'+ zone.Id+'" type="button" zoneId='+ zone.Id + '></div>');
-    $('#metadata-form-container-'+ zone.Id).append('<h4 class="my-4" id="metadata-title-'+ zone.Id+'">' + zone.Name + '</h4>')
+    $('#metadata-container').append('<div class="col border border-2 py-2 mx-5 text-center choice" id=metadata-form-container-'+ zone.Id+'" type="button" zoneId='+ zone.Id + '><p>' + zone.Name + '</p></div>');
+    for (const difficulty of zone.Difficulties) {
+      difficulties.set(difficulty.Id, difficulty.Name);
+    }
   }
   hideSpinner();
 }

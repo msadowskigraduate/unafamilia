@@ -1,5 +1,6 @@
 {#include base}
 {#title}Una Familia - User{/title}
+{#scripts} <link rel="stylesheet" type="text/css" href="/css/sidebars.css">{/scripts}
 {#navbar}
 <div class="navbar-nav px-2 mx-2">
     Welcome, {data.name}!
@@ -19,7 +20,7 @@
       <li>
         <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right"
           data-bs-original-title="Performance" id="href-performance">
-          <i class="bi bi-speedometer" width="24" height="24" role="img" aria-label="Performance"></i>
+          <i class="bi bi-graph-up" width="24" height="24" role="img" aria-label="Performance"></i>
         </a>
       </li>
       <li>
@@ -46,9 +47,11 @@
         <li>
           <a class="dropdown-item disabled" style="color: black">{data.name}</a>
         </li>
+        {#if !data.hasDiscordId} 
         <li>
           <a class="dropdown-item disabled" style="color: black"><i class="bi bi-discord"></i> ID: {data.discordUserId}</a>
         </li>
+        {/if}
         {#if data.hasDiscordId} 
         <li>
           <a class="dropdown-item" href="#" id="discord-auth">Link Discord Account</a>
@@ -61,12 +64,12 @@
       </ul>
     </div>
   </div>
-  <div id="data-container" class="d-flex gap-3 align-items-start p-2">
+  <div id="data-container" class="d-flex gap-3 align-items-start p-2 w-100 overflow-auto">
     <div class="card h-25 choice" style="width: 18rem;" type="button" id="home-audit">
       <div class="card-body">
         <h5 class="card-title">Weekly Status</h5>
         <h6 class="card-subtitle mb-2 text-muted">Audit Raid Roster</h6>
-        <p class="card-text">chech the Item Level and forecasted weekly rewards for raid roster.</p>
+        <p class="card-text">Check the Item Level and forecasted weekly rewards for raid roster.</p>
       </div>
     </div>
     <div class="card h-25 choice" style="width: 18rem;" type="button" id="home-report">

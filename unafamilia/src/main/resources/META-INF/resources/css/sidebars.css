@@ -1,18 +1,16 @@
 body {
-    min-height: 90vh;
-    min-height: -webkit-fill-available;
+    min-height: 100vh;
   }
   
   html {
-    height: -webkit-fill-available;
+    height: 100vh;
   }
   
   main {
     display: flex;
     flex-wrap: nowrap;
     height: 90vh;
-    height: -webkit-fill-available;
-    max-height: 95vh;
+    max-height: 100vh;
     overflow-x: auto;
     overflow-y: hidden;
   }
