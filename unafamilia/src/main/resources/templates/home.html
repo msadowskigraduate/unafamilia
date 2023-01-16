@@ -6,114 +6,86 @@
 </div>
 {/navbar}
 {#content}
-<div class="row">
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar position-fixed top-0 bottom-0 pt-5">
-        <div class="sidebar-sticky pt-3">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link text-dark active" href="/user">
-                        <i class="bi bi-house"></i> Home
-                      </a> 
-                </li>
-
-                {#if data.isAdmin}
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-                  <span>Audit Team</span>
-                </h6>
-                <ul class="nav flex-column">
-                  <li class="nav-item">
-                    <a class="nav-link text-dark" id="href-report" href="#">
-                        <i class="bi bi-heart-pulse-fill"></i> Wishlist Report
-                      </a> 
-                </li>
-                  <li class="nav-item">
-                      <a class="nav-link text-dark" id="href-audit" href="#">
-                          <i class="bi bi-grid-3x3"></i> Weekly Audit
-                        </a> 
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link text-dark" id="href-performance" href="#">
-                          <i class="bi bi-grid-3x3"></i> Performance
-                      </a>
-                  </li>
-                </ul>
-                {/if}
-            </ul>
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-                <span>Profile</span>
-            </h6>
-            <ul class="nav flex-column mb-2">
-            {#if data.hasDiscordId} 
-            <li class="nav-item">
-                <a class="nav-link text-dark active" id="discord-auth" href="#">
-                  <i class="bi bi-exclamation-lg bg-danger my-1 rounded-pill"></i><i class="bi bi-discord"></i> Connect Discord Account  
-                  </a> 
-            </li>
-            {/if}
-              <li class="nav-item">
-                <a class="nav-link text-dark" href="/logout">
-                  <i class="bi bi-power"></i> Logout
-                </a>
-              </li>
-            </ul>
-            <h6 class="sidebar-heading d-flex justify-content-between px-3 mt-4 mb-1 bottom-0 bg-secondary">
-              <span><i class="bi bi-discord"></i> ID: {data.discordUserId}</span>
-            </h6>
-        </div>
-    </nav>
-
-    <div id="data-container" class="col-md-9 ms-sm-auto col-lg-10 px-md-4"></div>
-</div>
-
-<script>
-    $( "#href-report" ).click(function( event ) {
-      event.preventDefault();
-      $.ajax({
-        url: "/v2/report",
-        headers: {"Content-Type" : "text/html"},
-        success: function(html){
-          $("#data-container").html(html);
-        }
-      })
-    });
-
-    $( "#href-audit" ).click(function( event ) {
-      event.preventDefault();
-      $.ajax({
-        url: "/v1/audit",
-        headers: {"Content-Type" : "text/html"},
-        beforeSend: function() {
-          $('#data-container').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
-        },
-        success: function(html){
-          $("#data-container").html(html);
-        }
-      })
-    });
-
-    $( "#href-performance" ).click(function( event ) {
-      event.preventDefault();
-      $.ajax({
-        url: "/v1/audit/performance",
-        headers: {"Content-Type" : "text/html"},
-        beforeSend: function() {
-          $('#data-container').html('<div class="container"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...</div>');
-        },
-        success: function(html){
-          $("#data-container").html(html);
-        }
-      })
-    });
-
-    $( "#discord-auth" ).click(function( event ) {
-      event.preventDefault();
-      $.ajax({
-        url: "/discord/login",
-        success: function(html){
-          $("#data-container").html(html);
-        }
-      })
-    });
-  </script>
+<main>
+  <div class="d-flex flex-column flex-shrink-0 bg-light" style="width: 4.5rem;">
+    <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+      {#if data.isAdmin}
+      <li class="nav-item">
+        <a href="/user" class="nav-link active py-3 border-bottom" aria-current="page" title="" data-bs-toggle="tooltip"
+          data-bs-placement="right" data-bs-original-title="Home">
+          <i class="bi bi-house" width="24" height="24" role="img" aria-label="Home"></i>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right"
+          data-bs-original-title="Performance" id="href-performance">
+          <i class="bi bi-speedometer" width="24" height="24" role="img" aria-label="Performance"></i>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right"
+          data-bs-original-title="Audit" id="href-audit">
+          <i class="bi bi-card-checklist" width="24" height="24" role="img" aria-label="Audit"></i>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right"
+          data-bs-original-title="Report" id="href-report">
+          <i class="bi bi-flag" width="24" height="24" role="img" aria-label="Report"></i>
+        </a>
+      </li>
+      {/if}
+    </ul>
+    <div class="dropdown border-top">
+      <a href="#"
+        class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle"
+        id="dropdownUser3" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://render.worldofwarcraft.com/shadow/avatar/1-1.jpg" alt="mdo" width="24" height="24" class="rounded-circle">
+      </a>
+      <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser3">
+        <li>
+          <a class="dropdown-item disabled" style="color: black">{data.name}</a>
+        </li>
+        <li>
+          <a class="dropdown-item disabled" style="color: black"><i class="bi bi-discord"></i> ID: {data.discordUserId}</a>
+        </li>
+        {#if data.hasDiscordId} 
+        <li>
+          <a class="dropdown-item" href="#" id="discord-auth">Link Discord Account</a>
+        </li>
+        {/if}
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="data-container" class="d-flex gap-3 align-items-start p-2">
+    <div class="card h-25 choice" style="width: 18rem;" type="button" id="home-audit">
+      <div class="card-body">
+        <h5 class="card-title">Weekly Status</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Audit Raid Roster</h6>
+        <p class="card-text">chech the Item Level and forecasted weekly rewards for raid roster.</p>
+      </div>
+    </div>
+    <div class="card h-25 choice" style="width: 18rem;" type="button" id="home-report">
+      <div class="card-body">
+        <h5 class="card-title">Wishlist Analyzer</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Look for issues with droptimizer reports.</h6>
+        <p class="card-text">Check if all raid members have uploaded their Droptimizer reports before the raid starts.</p>
+      </div>
+    </div>
+    <div class="card h-25 choice" style="width: 18rem;" type="button" id="home-rankings">
+      <div class="card-body">
+        <h5 class="card-title">Performance</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Analyze Performance</h6>
+        <p class="card-text">Analyze DPS performance for the last couple of guild raid reports.</p>
+      </div>
+    </div>
+  </div>
+</main>
+<script type="text/javascript" charset="utf8" src="/js/sidebars.js"></script>
+<script type="text/javascript" charset="utf8" src="/js/home.js"></script>
 {/content}
 {/include}
