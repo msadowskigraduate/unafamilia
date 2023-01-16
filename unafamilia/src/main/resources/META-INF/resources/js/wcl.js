@@ -11,7 +11,7 @@ $(document).on('click', '.choice', function() {
   var zoneId = $( this ).attr("zoneId");
   $('.choice').prop("disabled", "false");
   $(this).prop("disabled", "true");
-  // queryRankingsData(zoneId);
+  queryRankingsData(zoneId);
 });
 
 $(document).ready(function () {
@@ -30,8 +30,9 @@ function parseMetadata(json) {
   $('#title').append('<h2 class="pb-2 border-bottom" id="metadata-title">' + json.WorldData.Expansion.Name + '</h2>')
   for (const zone of json.WorldData.Expansion.Zones) {
     $('#metadata-container').append('<div class="col border border-2 py-2 mx-5 text-center choice" id=metadata-form-container-'+ zone.Id+'" type="button" zoneId='+ zone.Id + '><p>' + zone.Name + '</p></div>');
+    difficulties.set(zone.Id, new Map());
     for (const difficulty of zone.Difficulties) {
-      difficulties.set(difficulty.Id, difficulty.Name);
+      difficulties.get(zone.Id).set(difficulty.Id, difficulty.Name);
     }
   }
   hideSpinner();
@@ -45,28 +46,18 @@ function queryRankingsData(zoneid) {
     beforeSend: function() {
       $('#loader').removeClass("visually-hidden");
     },
-    success: (data) => parseReport(data)
+    success: (data) => parseReport(data, zoneid)
   });
 }
 
-function parseReport(json) {
+function parseReport(json, zoneid) {
   encounters = new Map();
-  indexes = new Map();
   actors = new Map();
-  difficulties = new Map([
-    [5, "Mythic"],
-    [4, "Heroic"],
-    [3, "Normal"],
-    [1, "LFR"],
-  ]);
 
-  //TODO: date is missing
   for (const report of json.reportData.reports.data) {
     var reportDate = new Date(report.startTime).toLocaleDateString()   
     for (const encounter of report.rankings.data) {
-      indexes.set(encounter.encounter.id, encounter.encounter.name);
-      encounter_id =
-        encounter.encounter.name + "_" + difficulties.get(encounter.difficulty);
+      encounter_id = encounter.encounter.name + "_" + encounter.difficulty;
       for (const character of encounter.roles.dps.characters) {
         actors.set(character.id, character.name);
 
@@ -107,23 +98,34 @@ function parseReport(json) {
     }
   }
 
-  visualizeData(encounters, actors);
+  visualizeData(encounters, actors, zoneid);
 }
 
-function visualizeData(encounters, actors) {
+function visualizeData(encounters, actors, zoneid) {
   $("#charts").empty();
-  encounters.forEach((value, key) => visualizeEncounter(value, key, actors));
+  $('#scroll-spy-menu').removeClass('visually-hidden');
+  difficulties.get(parseInt(zoneid)).forEach((v,k) => {
+    $("#charts").append('<div class="row my-3" id="difficulty-'+k+'"><h5>' + v + '</h5></div>');
+    $('#difficulty-example').append('<a class="p-1 rounded rounded btn btn-secondary" href="#difficulty-'+k+'">' + v + '</a>');
+  });
+  encounters.forEach((value, key) => visualizeEncounter(value, key, actors, zoneid));
+
+  const dataSpyList = document.querySelectorAll('[data-bs-spy="scroll"]')
+  dataSpyList.forEach(dataSpyEl => {
+    bootstrap.ScrollSpy.getInstance(dataSpyEl).refresh()
+  })
   hideSpinner();
 }
 
-function visualizeEncounter(value, key, actors) {
+function visualizeEncounter(value, key, actors, zoneid) {
   var encounter_key = ("encounter_" + key)
     .replaceAll(" ", "_")
     .replaceAll(",", "_");
 
-  var chart_title = key.replaceAll("_", " ");
-
-  $("#charts").append(
+  var difficulty = key.split("_").at(-1);
+  var chart_title = key.split("_")[0]+ " " + difficulties.get(parseInt(zoneid)).get(parseInt(key.split("_").at(-1)));
+console.log(difficulty)
+  $("#difficulty-" + difficulty).append(
     '<div class="row" id="'+encounter_key+'"><canvas id="' + encounter_key +'_canvas"></canvas></div>'
   );
   const ctx = document.getElementById(encounter_key + "_canvas");
