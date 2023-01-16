@@ -1,20 +1,27 @@
-<script type="text/javascript" src="/js/wcl.js"></script>
+<link rel="stylesheet" href="/css/wcl.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.1.1/dist/chart.umd.min.js"></script>
-<div class="container p-0">
+<div class="w-100 m-3">
     <div class="row p-1">
         <div class="alert alert-warning" role="alert">
             This page is still under construction!
           </div>
     </div>
-    <div class="row">
-        <div class="container d-flex align-items-start" id="metadata-container">
+    <div class="row" id="title"></div>
+    <div class="row" id="performance-form">
+        <div class="container d-flex align-items-start" id="metadata-container"></div>
+    </div>
+    <div class="row w-100 px-2 my-2 border-bottom">
+        <h6 class="visually-hidden" id="scroll-spy-menu">Quick Difficulty Access</h6>
+        <div id="difficulty-example" class="d-flex gap-3 justify-content-evenly p-2 w-100">
+
         </div>
     </div>
-    <div class="row">
-        <div class="col" id="charts">
-            <div class="container m-5 visually-hidden" id="loader">
+    <div class="row my-5">
+        <div class="col" id="charts" data-bs-spy="scroll" data-bs-target="#difficulty-example" data-bs-offset="0" data-bs-smooth-scroll="true" class="scrollspy-example" tabindex="0">
+            <div class="container mx-10 visually-hidden" id="loader">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 4rem; height: 4rem;"></span>
             </div>
         </div> 
     </div>
 </div>
+<script type="text/javascript" src="/js/wcl.js"></script>
