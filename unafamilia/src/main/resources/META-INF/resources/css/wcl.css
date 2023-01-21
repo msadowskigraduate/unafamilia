@@ -1,9 +1,21 @@
 .choice:hover {
-    background-color: grey;
+    background-color: #CCCCCC;
     color: white;
   }
   
-  .choice-selected {
-    background-color: grey;
-    color: white;
-  }
+.choice-selected {
+  background-color: #CCCCCC;
+  color: white;
+}
+
+.dark-button {
+  background-color: #666666;
+  color: white;
+}
+
+.dark-button:hover {
+  background-color: #CCCCCC;
+  color: white;
+}
+
+

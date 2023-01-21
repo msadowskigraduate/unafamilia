@@ -29,7 +29,7 @@ $(document).ready(function () {
 function parseMetadata(json) {
   $('#title').append('<h2 class="pb-2 border-bottom" id="metadata-title">' + json.WorldData.Expansion.Name + '</h2>')
   for (const zone of json.WorldData.Expansion.Zones) {
-    $('#metadata-container').append('<div class="col border border-2 py-2 mx-5 text-center choice" id=metadata-form-container-'+ zone.Id+'" type="button" zoneId='+ zone.Id + '><p>' + zone.Name + '</p></div>');
+    $('#metadata-container').append('<div class="dark-button col shadow rounded zone-option border border-2 mx-5 text-center text-white align-middle choice" id=metadata-form-container-'+ zone.Id+'" type="button" zoneId='+ zone.Id + '><p class="my-2">' + zone.Name + '</p></div>');
     difficulties.set(zone.Id, new Map());
     for (const difficulty of zone.Difficulties) {
       difficulties.get(zone.Id).set(difficulty.Id, difficulty.Name);
@@ -105,8 +105,8 @@ function visualizeData(encounters, actors, zoneid) {
   $("#charts").empty();
   $('#scroll-spy-menu').removeClass('visually-hidden');
   difficulties.get(parseInt(zoneid)).forEach((v,k) => {
-    $("#charts").append('<div class="row my-3" id="difficulty-'+k+'"><h5>' + v + '</h5></div>');
-    $('#difficulty-example').append('<a class="p-1 rounded rounded btn btn-secondary" href="#difficulty-'+k+'">' + v + '</a>');
+    $("#charts").append('<div class="row my-3 text-white" id="difficulty-'+k+'"><h5>' + v + '</h5></div>');
+    $('#difficulty-example').append('<a class="p-1 shadow rounded dark-button btn btn-secondary border border-2" href="#difficulty-'+k+'">' + v + '</a>');
   });
   encounters.forEach((value, key) => visualizeEncounter(value, key, actors, zoneid));
 
@@ -140,7 +140,6 @@ console.log(difficulty)
         return {
           label: actors.get(encounter[0]),
           data: encounter[1].sort((a,b) => {return a.date - b.date}).reverse().map((value) => { return {x: value.date, y: value.rankPercent}}),
-          borderWidth: 1,
           hidden: true,
         };
       }),
@@ -151,22 +150,37 @@ console.log(difficulty)
         title: {
           display: true,
           text: chart_title,
+          color: 'white',
           padding: {
             top: 10,
             bottom: 30,
           },
         },
+      legend: {
+        labels: {
+          color: "white",
+        }
+      }
       },
       scales: {
         y: {
           beginAtZero: true,
           max: 100,
+          ticks: {
+            color: 'white',
+          },
+        },
+        x: {
+          ticks: {
+            color: 'white',
+          },
         },
       },
       elements: {
         line: {
-          borderWidth: 15
-        }
+          borderWidth: 5,
+          spanGaps: true,
+        },
       }
     },
   });
