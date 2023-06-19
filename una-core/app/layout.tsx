@@ -5,7 +5,7 @@ import { Inter, Nunito } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Una Familia',
+  title: 'Una Familia - Where men become gods.',
   description: 'Mythic Raiding PvE Guild',
 }
 
@@ -13,17 +13,16 @@ const font = Nunito({
   subsets: ['latin'],
 })
 
-export default function RootLayout({
-  children,
+export default async function RootLayout({
+  children
 }: {
   children: React.ReactNode
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Navbar />
-        {children}
-        </body>
+      <body className={font.className}>
+          {children}
+      </body>
     </html>
   )
 }

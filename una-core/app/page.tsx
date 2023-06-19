@@ -1,9 +1,31 @@
-import Image from "next/image";
+import Login from "@/components/login/Login";
+import Navbar from "@/components/navbar/Navbar";
+import getCurrentUser from "./actions/getCurrentUser";
 
-export default function Home() {
+export default async function Home() {
+
+  const currentUser = await getCurrentUser();
+
   return (
-    <div className="text-rose-500 text-2xl">
-      Hello Una Familia Core 2.0 App!
+    <div>
+      <Navbar currentUser={currentUser} />
+
+      <div className="
+            flex
+            items-center
+            justify-center
+            h-screen
+            w-screen
+            bg-[url('https://wow.zamimg.com/uploads/screenshots/normal/1074416.jpg')]
+            bg-center
+          "
+      >
+        {currentUser == null && (
+          <Login />
+        )}
+
+      </div>
+
     </div>
   );
 }

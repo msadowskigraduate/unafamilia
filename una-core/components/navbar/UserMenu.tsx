@@ -1,11 +1,19 @@
 'use client';
 
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "./Avatar";
 import MenuItem from "./MenuItem";
+import { signOut } from "next-auth/react";
+import { SafeUser } from "@/app/types";
 
-const UserMenu = () => {
+interface UserMenuProps {
+    currentUser?: SafeUser | null
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({
+    currentUser
+}) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleOpen = useCallback(() => {
@@ -14,47 +22,39 @@ const UserMenu = () => {
 
     return (
         <div className="relative">
-            <div className="flex flex-row items-center gap-3">
-                <div
-                    onClick={() => { }}
-                    className="
-                        hidden
-                        md:block
-                        text-sm
-                        font-semibold
-                        py-3
-                        px-4
-                        rounded-full
-                        hover:bg-neutral-100
-                        transition
-                        cursor-pointer
-                    "
-                >
-                </div>
-
-                <div
-                    onClick={toggleOpen}
-                    className="
-                    p-4
-                    md:py-1
-                    md:px-2
-                    bg-neutral-700
-                    flex
-                    flex-row
-                    items-center
-                    gap-3
-                    cursor-pointer
-                    rounded-full
-                    hover:shadow-md
-                    transition
-                    "
-                >
-                    <AiOutlineMenu />
-                    <div className="hidden md:block">
-                        <Avatar />
+            {currentUser != null && (
+                <div className="flex flex-row items-center gap-3">
+                    <div
+                        onClick={toggleOpen}
+                        className="
+                            p-4
+                            md:py-1
+                            md:px-2
+                            bg-neutral-700
+                            flex
+                            flex-row
+                            items-center
+                            gap-3
+                            rounded-full
+                            hover:shadow-md
+                            transition
+                            cursor-pointer
+                        "
+                    >
+                        <AiOutlineMenu />
+                        <div className="
+                            text-amber-400
+                        "
+                        >{currentUser.name}</div>
+                        <div className="hidden md:block">
+                            <Avatar />
+                        </div>
+                        
                     </div>
+
+
                 </div>
-            </div>
+            )}
 
             {isOpen && (
                 <div
@@ -72,9 +72,9 @@ const UserMenu = () => {
                     "
                 >
                     <div className="flex flex-col cursor-pointer">
-                        <MenuItem 
-                            onClick={() => {}}
-                            label="Login"
+                        <MenuItem
+                            onClick={() => { signOut() }}
+                            label="Sign Out"
                         />
                     </div>
                 </div>
