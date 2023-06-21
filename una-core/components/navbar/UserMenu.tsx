@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useCallback, useState } from "react";
-import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "./Avatar";
 import MenuItem from "./MenuItem";
 import { signOut } from "next-auth/react";
@@ -23,30 +22,29 @@ const UserMenu: React.FC<UserMenuProps> = ({
     return (
         <div className="relative">
             {currentUser != null && (
-                <div className="flex flex-row items-center gap-3">
+                <div className="flex flex-col align-middle items-center gap-3">
                     <div
                         onClick={toggleOpen}
                         className="
                             p-4
                             md:py-1
                             md:px-2
-                            bg-neutral-700
                             flex
                             flex-row
                             items-center
                             gap-3
-                            rounded-full
                             hover:shadow-md
+                            hover:border-amber-500
                             transition
                             cursor-pointer
                         "
                     >
-                        <AiOutlineMenu />
                         <div className="
+                            sm:hidden
                             text-amber-400
                         "
                         >{currentUser.name}</div>
-                        <div className="hidden md:block">
+                        <div className="md:block">
                             <Avatar />
                         </div>
                         
@@ -64,9 +62,9 @@ const UserMenu: React.FC<UserMenuProps> = ({
                         shadow-md
                         w-[40vw]
                         md:w-3/4
-                        bg-white
+                        bg-neutral-600
                         overflow-hidden
-                        right-0
+                        left-0
                         top-12
                         text-sm
                     "

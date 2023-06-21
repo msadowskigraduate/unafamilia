@@ -20,6 +20,8 @@ const Login = () => {
                 text-white font-semibold
                 md:py-4
                 md:px-8
+                px-4
+                py-2
                 rounded-full
                 focus:outline-none
                 focus:shadow-outline
@@ -30,13 +32,13 @@ const Login = () => {
       }}
       disabled={isLogging}
     >
-      <FaBattleNet size="64"></FaBattleNet>
+      <FaBattleNet className="w-16 h-16"></FaBattleNet>
       {!isLogging && (
         <div className="hidden md:block">Login using Battle.net!</div>
       )}
 
       {isLogging && (
-        <div className="flex flex-row items-center justify-between animate-[pulse_1.25s_linear_infinite] space-x-6">
+        <div className="flex flex-row items-center justify-between animate-[pulse_1.25s_linear_infinite] space-x-6 sm:space-x-3">
           {[...Array(3)].map((_) => (
             <div
               className="
@@ -44,6 +46,8 @@ const Login = () => {
                         rounded-full
                         h-4
                         w-4 
+                        sm:h-2
+                        sm:w-2
                 "
             ></div>
           ))}
