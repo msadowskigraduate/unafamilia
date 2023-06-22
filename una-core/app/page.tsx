@@ -24,7 +24,13 @@ export default async function Home() {
       )}
 
       {currentUser != null && (
-        <div className="sm:flex sm:flex-col sm:gap-0">     
+        <div className="
+          sm:flex
+          sm:flex-col
+          sm:gap-0
+          h-screen
+          w-screen
+        ">     
           <Navbar currentUser={currentUser} />
           <Container><div>Dupa</div></Container>
         </div>

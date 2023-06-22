@@ -7,7 +7,7 @@ module.exports = {
   ],
   theme: {
     extend: {
-      screens: { 'sm': { 'max': '640px' } },
+      screens: { 'sm': { 'max': '640px' }, 'md': {'min': '641px'} },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

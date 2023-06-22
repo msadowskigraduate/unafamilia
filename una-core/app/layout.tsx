@@ -1,7 +1,5 @@
 import "./globals.css";
-import { Inter, Nunito } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
+import { Nunito } from "next/font/google";
 
 export const metadata = {
   title: "Una Familia - Where men become gods.",
@@ -22,6 +20,7 @@ export default async function RootLayout({
       <body
         className={`
                   ${font.className}
+                  text-amber-500
                   bg-center
                   bg-[url('https://wow.zamimg.com/uploads/screenshots/normal/1074416.jpg')]
         `}>
