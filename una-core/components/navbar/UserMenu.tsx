@@ -26,31 +26,34 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     <div
                         onClick={toggleOpen}
                         className="
-                            p-4
-                            md:py-1
-                            md:px-2
+                            py-3
+                            px-3
                             flex
-                            flex-row
+                            flex-col
                             items-center
                             gap-3
-                            hover:shadow-md
+                            border-2
+                            border-neutral-800
+                            hover:border-solid
                             hover:border-amber-500
                             transition
                             cursor-pointer
+                            my-0
                         "
                     >
                         <div className="
-                            sm:hidden
-                            text-amber-400
-                        "
-                        >{currentUser.name}</div>
-                        <div className="md:block">
-                            <Avatar />
-                        </div>
-                        
+                                sm:hidden
+                                text-amber-400
+                            ">
+                                {currentUser.name}
+                            </div>
+                            
+                            <div className="md:block">
+                                <Avatar />
+                            </div>
                     </div>
 
-
+                        
                 </div>
             )}
 
@@ -60,16 +63,18 @@ const UserMenu: React.FC<UserMenuProps> = ({
                         absolute
                         rounder-xl
                         shadow-md
-                        w-[40vw]
+                        w-[30vw]
                         md:w-3/4
-                        bg-neutral-600
+                        bg-neutral-300
                         overflow-hidden
-                        left-0
-                        top-12
                         text-sm
                     "
                 >
                     <div className="flex flex-col cursor-pointer">
+                        <MenuItem
+                                onClick={() => { }}
+                                label="Profile"
+                            />
                         <MenuItem
                             onClick={() => { signOut() }}
                             label="Sign Out"

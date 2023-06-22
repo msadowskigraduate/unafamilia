@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from "next-auth";
+import { AiOutlineMore } from "react-icons/ai";
 import Container from "../Container";
 import Logo from "./Logo";
 import UserMenu from "./UserMenu";
@@ -18,7 +18,19 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="h-full bg-neutral-800 z-10 shadow-sm fixed  transition">
+    <div className={`
+                  flex
+                  flex-col
+                  h-full
+                  max-w-lg
+                  bg-neutral-800 
+                  z-10 
+                  shadow-sm 
+                  fixed 
+                  transition
+                  
+                `}
+    >
       <div className="py-4 border-b-[1px] border-neutral-700">
         <Container>
           <div
@@ -32,11 +44,31 @@ const Navbar: React.FC<NavbarProps> = ({
                     md:gap-0
                     "
           >
-            <Logo />
+          
+          <Logo />
+
           </div>
+
+          <button className="
+              hidden
+              sm:block
+              sm:text-amber-500
+              sm:cursor-pointer
+              sm:hover:bg-amber-500
+              sm:hover:text-neutral-800
+              sm:transition
+              sm:rounded-full
+            "
+            onClick={() => setIsOpen(!isOpen)}>
+            <AiOutlineMore size={48} />
+          </button>
         </Container>
       </div>
-      <UserMenu currentUser={currentUser}/>
+
+      <div className="w-full">
+        <UserMenu currentUser={currentUser} />
+      </div>
+      
     </div>
   );
 };
