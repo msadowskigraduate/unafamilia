@@ -87,6 +87,7 @@ const Navbar: React.FC<NavbarProps> = ({
         <AiOutlineMore size={24}/> 
       </NavbarItem>
 
+      
     </div>
   );
 };

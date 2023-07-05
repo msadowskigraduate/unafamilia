@@ -25,7 +25,8 @@ export default async function Home() {
 
       {currentUser != null && (
         <div className="
-          sm:flex
+          flex
+          flex-row
           sm:flex-col
           sm:gap-0
           h-screen
