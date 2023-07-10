@@ -1,11 +1,12 @@
+import AuthProvider from "../context/AuthProvider";
+
 export const metadata = {
     title: "Una Familia - Welcome shit nugget!",
     description: "Mythic Raiding PvE Guild",
 };
 
 export default async function DashboardLayout({
-    children,
-}: {
+    children}: {
     children: React.ReactNode;
 }) {
     return (
@@ -17,7 +18,9 @@ export default async function DashboardLayout({
           h-screen
           w-screen
         ">
-            {children}
+            <AuthProvider>
+                {children}
+            </AuthProvider>
         </div>
     );
 }

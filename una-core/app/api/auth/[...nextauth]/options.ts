@@ -1,4 +1,4 @@
-import NextAuth, { Account, AuthOptions } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import BattleNetProvider from "next-auth/providers/battlenet";
 import axios from "axios";
 
@@ -24,7 +24,7 @@ type WoWGuildRosterResponse = {
   members: WoWGuildRosterMemberResponse[];
 };
 
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     BattleNetProvider({
       issuer: "https://eu.battle.net/oauth",
@@ -35,7 +35,7 @@ export const authOptions: AuthOptions = {
     // maybe additional mail
   ],
   pages: {
-    signIn: "/",
+    signIn: "/login",
   },
   debug: process.env.NODE_ENV === "development",
   session: {
@@ -52,19 +52,19 @@ export const authOptions: AuthOptions = {
         const result = await isProfileInGuild(token);
 
         if (result) {
+          console.log(`${result.character.id}`);
           account.scope = `${result.rank}`;
-          return true;
+          return '/dashboard';
         }
       }
 
-      return false;
+      return '/unauthorized';
     },
     async jwt({ token, account, profile }) {
         // Persist the OAuth access_token and or the user id to the token right after signin
         if (account) {
           token.accessToken = account.access_token;
           token.scope = account.scope;
-          console.log(`Token scopes ${token.scope}`);
         }
         return token
       }
@@ -122,4 +122,4 @@ async function isProfileInGuild(token: string) {
   }
 }
 
-export default NextAuth(authOptions);
+export default authOptions;
