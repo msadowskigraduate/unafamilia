@@ -36,6 +36,7 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/login",
+    signOut: "/login"
   },
   debug: process.env.NODE_ENV === "development",
   session: {
@@ -54,11 +55,11 @@ export const authOptions: NextAuthOptions = {
         if (result) {
           console.log(`${result.character.id}`);
           account.scope = `${result.rank}`;
-          return '/dashboard';
+          return true;
         }
       }
 
-      return '/unauthorized';
+      return false;
     },
     async jwt({ token, account, profile }) {
         // Persist the OAuth access_token and or the user id to the token right after signin

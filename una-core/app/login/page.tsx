@@ -30,7 +30,7 @@ const Login = () => {
                 text-xl`}
       onClick={() => {
         setIsLogging(true);
-        signIn("battlenet");
+        signIn("battlenet", {callbackUrl: "/dashboard"});
       }}
       disabled={isLogging}
     >
@@ -41,8 +41,8 @@ const Login = () => {
 
       {isLogging && (
         <div className="flex flex-row items-center justify-between animate-[pulse_1.25s_linear_infinite] space-x-6 sm:space-x-3 min-h-fit">
-          {[...Array(3)].map((_) => (
-            <div
+          {[...Array(3)].map((_, index) => (
+            <div key={index}
               className="
                         bg-white
                         rounded-xl
@@ -51,7 +51,7 @@ const Login = () => {
                         sm:h-2
                         sm:w-2
                 "
-            ></div>
+            />
           ))}
         </div>
       )}

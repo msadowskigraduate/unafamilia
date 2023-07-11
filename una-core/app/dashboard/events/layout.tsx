@@ -17,7 +17,7 @@ export default async function EventLayout({
 }) {
   return (
     <>
-        Hello world!
+        {children}
     </>
   );
 }
