@@ -22,6 +22,7 @@ export default async function RootLayout({
                   ${font.className}
                   text-amber-500
                   bg-center
+                  bg-no-repeat
                   bg-[url('https://wow.zamimg.com/uploads/screenshots/normal/1074416.jpg')]
         `}>
         {children}

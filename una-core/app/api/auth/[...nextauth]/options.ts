@@ -68,7 +68,12 @@ export const authOptions: NextAuthOptions = {
           token.scope = account.scope;
         }
         return token
-      }
+      },
+    async session({ session, token, user }) {
+      console.log('session', session)
+      
+      return session
+    }
   },
 };
 
