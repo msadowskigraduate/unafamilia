@@ -1,6 +1,7 @@
 'use client'
 
 import { EventData } from "@/app/types";
+import { GiEvilMinion } from "react-icons/gi";
 
 interface EventCardComponentProps {
     event: EventData
@@ -11,18 +12,19 @@ const EventCardComponent: React.FC<EventCardComponentProps> = (
 ) => {
     return ( 
         <div className={`
-                        flex
+                        grid
                         border-amber-500
                         border-4
                         bg-cover
                         bg-center
                         bg-no-repeat
                         flex-col
-                        xl:w-48
-                        xl:h-72
-                        md:w-36
-                        md:h-48
-                        grid-rows-3
+                        gap-3
+                        content-around
+                        p-4
+                        min-h-full
+                        h-64
+                        w-48
         `}
         style={{ backgroundImage: "url(" + event.event.backgroundUrl + ")" }}
         >
@@ -30,9 +32,30 @@ const EventCardComponent: React.FC<EventCardComponentProps> = (
             <div className="
                 text-xl
                 font-semibold
-            ">{event.event.name}</div>
+                text-center
+                text-wrap
+            ">
+                {event.event.name}
+            </div>
 
-            <div></div>
+            <div className="
+                row-start-2
+            ">
+                {event.event.date.toUTCString()}
+            </div>
+
+            <div className="
+                flex
+                flex-row
+                gap-2
+                row-start-3
+                place-self-end
+                items-center
+                sm:hidden
+            ">
+                <GiEvilMinion size={24}/>  
+                {event.event.accepted} / {event.event.roster}
+            </div>
         </div>
     );
 }

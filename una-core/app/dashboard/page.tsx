@@ -4,12 +4,10 @@ import getCurrentUser from "../actions/getCurrentUser";
 import { Suspense } from "react";
 import Loading from "./events/loading";
 import Events from "./events/page";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 export default async function DashboardHome() {
     const currentUser = await getCurrentUser();
-    const session = await getServerSession();
 
     if(currentUser === null) redirect('/login');
 

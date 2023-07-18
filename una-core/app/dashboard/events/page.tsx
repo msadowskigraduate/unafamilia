@@ -21,6 +21,7 @@ export default function Events() {
                 flex-nowrap
                 gap-2
                 p-4  
+                overflow-x-scroll
             ">
                 <NewEventCardComponent />
                 {events.map((event: EventData) => (

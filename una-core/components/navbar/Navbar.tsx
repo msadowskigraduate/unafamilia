@@ -29,8 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   flex-col
                   bg-neutral-800 
                   z-10 
-                  shadow-lg 
-                  fixed
+                  shadow-lg
                   inset-y-0
                   left-0
                   transition

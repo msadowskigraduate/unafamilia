@@ -13,7 +13,6 @@ export default async function DashboardLayout({
         <div className="
           flex
           flex-row
-          sm:flex-col
           sm:gap-0
           h-screen
           w-screen

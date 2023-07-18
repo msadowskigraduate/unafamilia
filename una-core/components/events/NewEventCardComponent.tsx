@@ -10,16 +10,12 @@ const NewEventCardComponent = () => {
             rounded-md
             border-amber-500
             backdrop-blur-md
-            relative
             p-2
-            xl:w-48
-            xl:h-72
-            md:w-36
-            md:h-48
             cursor-pointer
-            flex
             flex-col
             grid
+            h-64
+            w-48
             place-items-center
             text-amber-500
             hover:invert
@@ -28,7 +24,11 @@ const NewEventCardComponent = () => {
         >
 
         <IoMdAddCircleOutline size={48} opacity={0.5}/>
-        <div>Create new Event!</div>
+        <div className="
+            text-center
+            sm:hidden
+        ">
+            Create new Event!</div>
         </div>
     );
 }
