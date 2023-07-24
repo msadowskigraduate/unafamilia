@@ -9,6 +9,7 @@ export default function Events() {
             p-4
             flex
             flex-col
+            h-full
         ">
             <h2 className="
                 text-left
@@ -17,11 +18,10 @@ export default function Events() {
             ">Upcoming Events</h2>
             <div className="
                 flex
-                flex-row
                 flex-nowrap
                 gap-2
-                p-4  
-                overflow-x-scroll
+                p-4
+                h-4/6
             ">
                 <NewEventCardComponent />
                 {events.map((event: EventData) => (
@@ -51,5 +51,14 @@ function getEventStubs() {
         accepted: 19,
         date: new Date()
     }
-    return [e, p]
+
+    let pe: EventData = {
+        id: "1234",
+        name: "Social Raid - Aberrus Heroic",
+        backgroundUrl: "https://fr.roccat.com/cdn/shop/articles/unnamed_f871487a-771d-48ac-930b-d4ed53f622d7.jpg?v=1685109788",
+        roster: 30,
+        accepted: 19,
+        date: new Date()
+    }
+    return [e, p, pe, pe,e, p, e]
 }

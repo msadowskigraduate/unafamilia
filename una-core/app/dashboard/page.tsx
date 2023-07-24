@@ -17,12 +17,19 @@ export default async function DashboardHome() {
             <Container>
                 <div
                     className="
-                        flex
-                        flex-col
+                        grid
+                        grid-rows-3
+                        grid-flow-col
+                        h-screen
                     ">
-                    <Suspense fallback={<Loading />}>
-                        <Events />
-                    </Suspense>     
+                    <div>
+                        <Suspense fallback={<Loading />}>
+                            <Events />
+                        </Suspense>
+                    </div>
+
+                    <div>Dupa</div>
+                    <div>Dupa 2</div>
                 </div>
             </Container>
         </>

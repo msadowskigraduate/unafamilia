@@ -17,14 +17,11 @@ const EventCardComponent: React.FC<EventCardComponentProps> = (
                         border-4
                         bg-cover
                         bg-center
-                        bg-no-repeat
                         flex-col
                         gap-3
                         content-around
                         p-4
-                        min-h-full
-                        h-64
-                        w-48
+                        w-80
         `}
         style={{ backgroundImage: "url(" + event.event.backgroundUrl + ")" }}
         >

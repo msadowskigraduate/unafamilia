@@ -21,8 +21,9 @@ export default async function RootLayout({
         className={`
                   ${font.className}
                   text-amber-500
-                  bg-center
+                  bg-left-bottom
                   bg-no-repeat
+                  bg-cover
                   bg-[url('https://wow.zamimg.com/uploads/screenshots/normal/1074416.jpg')]
         `}>
         {children}

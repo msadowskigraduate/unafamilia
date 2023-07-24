@@ -14,11 +14,10 @@ const NewEventCardComponent = () => {
             cursor-pointer
             flex-col
             grid
-            h-64
-            w-48
             place-items-center
             text-amber-500
             hover:invert
+            w-80
         "
         onClick={() => {console.log('New Event!')}}
         >
